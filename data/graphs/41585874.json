@@ -1,0 +1,4375 @@
+{
+  "elements": [
+    {
+      "group": "nodes",
+      "data": {
+        "id": "DRUG_11H",
+        "label": "11h",
+        "type": "drug",
+        "category": "pathway_biology",
+        "flagged": false
+      }
+    },
+    {
+      "group": "nodes",
+      "data": {
+        "id": "ENZYME_PDE4",
+        "label": "PDE4",
+        "type": "enzyme",
+        "category": "pathway_biology",
+        "flagged": false
+      }
+    },
+    {
+      "group": "nodes",
+      "data": {
+        "id": "UNKNOWN_PDE4_SUBTYPES",
+        "label": "PDE4 subtypes",
+        "type": "other",
+        "category": "pathway_biology",
+        "flagged": true
+      }
+    },
+    {
+      "group": "nodes",
+      "data": {
+        "id": "UNKNOWN_ANTI_INFLAMMATORY_EFFICACY",
+        "label": "anti-inflammatory efficacy",
+        "type": "other",
+        "category": "pathway_biology",
+        "flagged": true
+      }
+    },
+    {
+      "group": "nodes",
+      "data": {
+        "id": "UNKNOWN_FAVORABLE_PHARMACOKINETICS",
+        "label": "favorable pharmacokinetics",
+        "type": "other",
+        "category": "pharmacokinetics",
+        "flagged": true
+      }
+    },
+    {
+      "group": "nodes",
+      "data": {
+        "id": "UNKNOWN_CNS_PENETRATION",
+        "label": "CNS penetration",
+        "type": "other",
+        "category": "pharmacokinetics",
+        "flagged": true
+      }
+    },
+    {
+      "group": "nodes",
+      "data": {
+        "id": "UNKNOWN_DOSE_PROPORTIONALITY",
+        "label": "dose proportionality",
+        "type": "other",
+        "category": "pharmacokinetics",
+        "flagged": true
+      }
+    },
+    {
+      "group": "nodes",
+      "data": {
+        "id": "UNKNOWN_REPEAT_DOSING_SUITABILITY",
+        "label": "repeat dosing suitability",
+        "type": "other",
+        "category": "pharmacokinetics",
+        "flagged": true
+      }
+    },
+    {
+      "group": "nodes",
+      "data": {
+        "id": "UNKNOWN_WELL_TOLERATED_SAFETY_PROFILE",
+        "label": "well-tolerated safety profile",
+        "type": "other",
+        "category": "safety_tolerability",
+        "flagged": true
+      }
+    },
+    {
+      "group": "nodes",
+      "data": {
+        "id": "OUTCOME_EMESIS",
+        "label": "emesis",
+        "type": "outcome",
+        "category": "safety_tolerability",
+        "flagged": false
+      }
+    },
+    {
+      "group": "nodes",
+      "data": {
+        "id": "UNKNOWN_BEHAVIORAL_TOXICITY",
+        "label": "behavioral toxicity",
+        "type": "other",
+        "category": "safety_tolerability",
+        "flagged": true
+      }
+    },
+    {
+      "group": "nodes",
+      "data": {
+        "id": "UNKNOWN_EARLIER_PDE4_INHIBITORS",
+        "label": "earlier PDE4 inhibitors",
+        "type": "other",
+        "category": "safety_tolerability",
+        "flagged": true
+      }
+    },
+    {
+      "group": "nodes",
+      "data": {
+        "id": "UNKNOWN_CLINICAL_DEVELOPMENT",
+        "label": "clinical development",
+        "type": "other",
+        "category": "study_design",
+        "flagged": true
+      }
+    },
+    {
+      "group": "nodes",
+      "data": {
+        "id": "UNKNOWN_NEXT_GENERATION_PDE4_INHIBITOR",
+        "label": "next-generation PDE4 inhibitor",
+        "type": "other",
+        "category": "molecular_properties",
+        "flagged": true
+      }
+    },
+    {
+      "group": "nodes",
+      "data": {
+        "id": "ENZYME_PDE4A1",
+        "label": "PDE4A1",
+        "type": "enzyme",
+        "category": "pathway_biology",
+        "flagged": false
+      }
+    },
+    {
+      "group": "nodes",
+      "data": {
+        "id": "ENZYME_PDE4B2",
+        "label": "PDE4B2",
+        "type": "enzyme",
+        "category": "pathway_biology",
+        "flagged": false
+      }
+    },
+    {
+      "group": "nodes",
+      "data": {
+        "id": "ENZYME_PDE4C1",
+        "label": "PDE4C1",
+        "type": "enzyme",
+        "category": "pathway_biology",
+        "flagged": false
+      }
+    },
+    {
+      "group": "nodes",
+      "data": {
+        "id": "ENZYME_PDE4D2",
+        "label": "PDE4D2",
+        "type": "enzyme",
+        "category": "pathway_biology",
+        "flagged": false
+      }
+    },
+    {
+      "group": "nodes",
+      "data": {
+        "id": "ENZYME_PDE4D3",
+        "label": "PDE4D3",
+        "type": "enzyme",
+        "category": "pathway_biology",
+        "flagged": false
+      }
+    },
+    {
+      "group": "nodes",
+      "data": {
+        "id": "UNKNOWN_PDE4_ISOFORMS",
+        "label": "PDE4 isoforms",
+        "type": "other",
+        "category": "pathway_biology",
+        "flagged": true
+      }
+    },
+    {
+      "group": "nodes",
+      "data": {
+        "id": "UNKNOWN_IC50_VALUES",
+        "label": "IC50 values",
+        "type": "other",
+        "category": "molecular_properties",
+        "flagged": true
+      }
+    },
+    {
+      "group": "nodes",
+      "data": {
+        "id": "UNKNOWN_CAMP_INHIBITION_ASSAY",
+        "label": "cAMP inhibition assay",
+        "type": "other",
+        "category": "study_design",
+        "flagged": true
+      }
+    },
+    {
+      "group": "nodes",
+      "data": {
+        "id": "UNKNOWN_PDE4_ISOFORM_SELECTIVITY",
+        "label": "PDE4 isoform selectivity",
+        "type": "other",
+        "category": "study_design",
+        "flagged": true
+      }
+    },
+    {
+      "group": "nodes",
+      "data": {
+        "id": "UNKNOWN_DOSE_RESPONSE_DATA",
+        "label": "dose-response data",
+        "type": "other",
+        "category": "study_design",
+        "flagged": true
+      }
+    },
+    {
+      "group": "nodes",
+      "data": {
+        "id": "UNKNOWN_FOUR_PARAMETER_LOGISTIC_REGRESSION_MODEL",
+        "label": "four-parameter logistic regression model",
+        "type": "other",
+        "category": "study_design",
+        "flagged": true
+      }
+    },
+    {
+      "group": "nodes",
+      "data": {
+        "id": "MOLECULE_CAMP",
+        "label": "cAMP",
+        "type": "molecule",
+        "category": "pathway_biology",
+        "flagged": false
+      }
+    },
+    {
+      "group": "nodes",
+      "data": {
+        "id": "UNKNOWN_LPS_INDUCED_TNF\u0391",
+        "label": "LPS-induced TNF\u03b1",
+        "type": "other",
+        "category": "pathway_biology",
+        "flagged": true
+      }
+    },
+    {
+      "group": "nodes",
+      "data": {
+        "id": "UNKNOWN_LPS_INDUCED_NITRITE_LEVELS",
+        "label": "LPS-induced nitrite levels",
+        "type": "other",
+        "category": "pathway_biology",
+        "flagged": true
+      }
+    },
+    {
+      "group": "nodes",
+      "data": {
+        "id": "UNKNOWN_RAW_264.7_CELL_VIABILITY",
+        "label": "RAW 264.7 cell viability",
+        "type": "other",
+        "category": "safety_tolerability",
+        "flagged": true
+      }
+    },
+    {
+      "group": "nodes",
+      "data": {
+        "id": "UNKNOWN_LPS_INDUCED_IL_6",
+        "label": "LPS-induced IL-6",
+        "type": "other",
+        "category": "pathway_biology",
+        "flagged": true
+      }
+    },
+    {
+      "group": "nodes",
+      "data": {
+        "id": "UNKNOWN_IMG_CELL_VIABILITY",
+        "label": "IMG cell viability",
+        "type": "other",
+        "category": "safety_tolerability",
+        "flagged": true
+      }
+    },
+    {
+      "group": "nodes",
+      "data": {
+        "id": "UNKNOWN_LPS_INDUCED_TNF\u0391_RELEASE",
+        "label": "LPS-induced TNF\u03b1 release",
+        "type": "other",
+        "category": "pathway_biology",
+        "flagged": true
+      }
+    },
+    {
+      "group": "nodes",
+      "data": {
+        "id": "CONDITION_LPS",
+        "label": "LPS",
+        "type": "condition",
+        "category": "pathway_biology",
+        "flagged": false
+      }
+    },
+    {
+      "group": "nodes",
+      "data": {
+        "id": "UNKNOWN_PRO_INFLAMMATORY_CYTOKINE_PRODUCTION",
+        "label": "pro-inflammatory cytokine production",
+        "type": "other",
+        "category": "pathway_biology",
+        "flagged": true
+      }
+    },
+    {
+      "group": "nodes",
+      "data": {
+        "id": "UNKNOWN_LPS_STIMULATION_PROTOCOL",
+        "label": "LPS stimulation protocol",
+        "type": "other",
+        "category": "study_design",
+        "flagged": true
+      }
+    },
+    {
+      "group": "nodes",
+      "data": {
+        "id": "UNKNOWN_RAW_264.7_AND_IMG_CYTOKINE_ASSAY",
+        "label": "RAW 264.7 and IMG cytokine assay",
+        "type": "other",
+        "category": "study_design",
+        "flagged": true
+      }
+    },
+    {
+      "group": "nodes",
+      "data": {
+        "id": "UNKNOWN_HUMAN_PBMC_ASSAY",
+        "label": "human PBMC assay",
+        "type": "other",
+        "category": "study_design",
+        "flagged": true
+      }
+    },
+    {
+      "group": "nodes",
+      "data": {
+        "id": "UNKNOWN_TNF\u0391_RELEASE_MEASUREMENT",
+        "label": "TNF\u03b1 release measurement",
+        "type": "other",
+        "category": "study_design",
+        "flagged": true
+      }
+    },
+    {
+      "group": "nodes",
+      "data": {
+        "id": "UNKNOWN_CELL_VIABILITY",
+        "label": "cell viability",
+        "type": "other",
+        "category": "safety_tolerability",
+        "flagged": true
+      }
+    },
+    {
+      "group": "nodes",
+      "data": {
+        "id": "UNKNOWN_CXCL10_MRNA_EXPRESSION",
+        "label": "CXCL10 mRNA expression",
+        "type": "other",
+        "category": "pathway_biology",
+        "flagged": true
+      }
+    },
+    {
+      "group": "nodes",
+      "data": {
+        "id": "UNKNOWN_TNF\u0391_MRNA_EXPRESSION",
+        "label": "TNF\u03b1 mRNA expression",
+        "type": "other",
+        "category": "pathway_biology",
+        "flagged": true
+      }
+    },
+    {
+      "group": "nodes",
+      "data": {
+        "id": "UNKNOWN_NFKB_MRNA_EXPRESSION",
+        "label": "NFkB mRNA expression",
+        "type": "other",
+        "category": "pathway_biology",
+        "flagged": true
+      }
+    },
+    {
+      "group": "nodes",
+      "data": {
+        "id": "UNKNOWN_MYD88_MRNA_EXPRESSION",
+        "label": "MYD88 mRNA expression",
+        "type": "other",
+        "category": "pathway_biology",
+        "flagged": true
+      }
+    },
+    {
+      "group": "nodes",
+      "data": {
+        "id": "UNKNOWN_IL1R1_MRNA_EXPRESSION",
+        "label": "IL1R1 mRNA expression",
+        "type": "other",
+        "category": "pathway_biology",
+        "flagged": true
+      }
+    },
+    {
+      "group": "nodes",
+      "data": {
+        "id": "UNKNOWN_FBL_MRNA_EXPRESSION",
+        "label": "FBL mRNA expression",
+        "type": "other",
+        "category": "pathway_biology",
+        "flagged": true
+      }
+    },
+    {
+      "group": "nodes",
+      "data": {
+        "id": "UNKNOWN_TRAAD_MRNA_EXPRESSION",
+        "label": "TRAAD mRNA expression",
+        "type": "other",
+        "category": "pathway_biology",
+        "flagged": true
+      }
+    },
+    {
+      "group": "nodes",
+      "data": {
+        "id": "UNKNOWN_PRO_INFLAMMATORY_GENE_EXPRESSION_IN_MYD88_PATHWAY",
+        "label": "pro-inflammatory gene expression in MYD88 pathway",
+        "type": "other",
+        "category": "pathway_biology",
+        "flagged": true
+      }
+    },
+    {
+      "group": "nodes",
+      "data": {
+        "id": "CYTOKINE_CXCL10",
+        "label": "CXCL10",
+        "type": "cytokine",
+        "category": "pathway_biology",
+        "flagged": false
+      }
+    },
+    {
+      "group": "nodes",
+      "data": {
+        "id": "UNKNOWN_MYD88_DEPENDENT_SIGNALING",
+        "label": "MyD88-dependent signaling",
+        "type": "other",
+        "category": "pathway_biology",
+        "flagged": true
+      }
+    },
+    {
+      "group": "nodes",
+      "data": {
+        "id": "UNKNOWN_TNF\u0391",
+        "label": "TNF\u03b1",
+        "type": "other",
+        "category": "pathway_biology",
+        "flagged": true
+      }
+    },
+    {
+      "group": "nodes",
+      "data": {
+        "id": "TRANSCRIPTION_FACTOR_NFKB",
+        "label": "NFkB",
+        "type": "transcription_factor",
+        "category": "pathway_biology",
+        "flagged": false
+      }
+    },
+    {
+      "group": "nodes",
+      "data": {
+        "id": "PROTEIN_MYD88",
+        "label": "MYD88",
+        "type": "protein",
+        "category": "pathway_biology",
+        "flagged": false
+      }
+    },
+    {
+      "group": "nodes",
+      "data": {
+        "id": "RECEPTOR_IL1R1",
+        "label": "IL1R1",
+        "type": "receptor",
+        "category": "pathway_biology",
+        "flagged": false
+      }
+    },
+    {
+      "group": "nodes",
+      "data": {
+        "id": "GENE_FBL",
+        "label": "FBL",
+        "type": "gene",
+        "category": "pathway_biology",
+        "flagged": false
+      }
+    },
+    {
+      "group": "nodes",
+      "data": {
+        "id": "UNKNOWN_TRAAD",
+        "label": "TRAAD",
+        "type": "other",
+        "category": "pathway_biology",
+        "flagged": true
+      }
+    },
+    {
+      "group": "nodes",
+      "data": {
+        "id": "UNKNOWN_RT_QPCR",
+        "label": "RT-qPCR",
+        "type": "other",
+        "category": "study_design",
+        "flagged": true
+      }
+    },
+    {
+      "group": "nodes",
+      "data": {
+        "id": "UNKNOWN_BRAIN_SAMPLES",
+        "label": "brain samples",
+        "type": "other",
+        "category": "study_design",
+        "flagged": true
+      }
+    },
+    {
+      "group": "nodes",
+      "data": {
+        "id": "UNKNOWN_BRAIN_MRNA_LEVELS",
+        "label": "brain mRNA levels",
+        "type": "other",
+        "category": "pharmacokinetics",
+        "flagged": true
+      }
+    },
+    {
+      "group": "nodes",
+      "data": {
+        "id": "UNKNOWN_SIX_MAJOR_HUMAN_CYP450_ISOENZYMES",
+        "label": "six major human CYP450 isoenzymes",
+        "type": "other",
+        "category": "safety_tolerability",
+        "flagged": true
+      }
+    },
+    {
+      "group": "nodes",
+      "data": {
+        "id": "ENZYME_CYP1A2",
+        "label": "CYP1A2",
+        "type": "enzyme",
+        "category": "safety_tolerability",
+        "flagged": false
+      }
+    },
+    {
+      "group": "nodes",
+      "data": {
+        "id": "ENZYME_CYP2C19",
+        "label": "CYP2C19",
+        "type": "enzyme",
+        "category": "safety_tolerability",
+        "flagged": false
+      }
+    },
+    {
+      "group": "nodes",
+      "data": {
+        "id": "UNKNOWN_CYP_MEDIATED_DRUG_DRUG_INTERACTIONS",
+        "label": "CYP-mediated drug-drug interactions",
+        "type": "other",
+        "category": "safety_tolerability",
+        "flagged": true
+      }
+    },
+    {
+      "group": "nodes",
+      "data": {
+        "id": "TARGET_HERG",
+        "label": "hERG",
+        "type": "target",
+        "category": "safety_tolerability",
+        "flagged": false
+      }
+    },
+    {
+      "group": "nodes",
+      "data": {
+        "id": "TARGET_CAV12",
+        "label": "Cav1.2",
+        "type": "target",
+        "category": "safety_tolerability",
+        "flagged": false
+      }
+    },
+    {
+      "group": "nodes",
+      "data": {
+        "id": "TARGET_NAV15",
+        "label": "Nav1.5",
+        "type": "target",
+        "category": "safety_tolerability",
+        "flagged": false
+      }
+    },
+    {
+      "group": "nodes",
+      "data": {
+        "id": "UNKNOWN_PROARRHYTHMIC_LIABILITY",
+        "label": "proarrhythmic liability",
+        "type": "other",
+        "category": "safety_tolerability",
+        "flagged": true
+      }
+    },
+    {
+      "group": "nodes",
+      "data": {
+        "id": "UNKNOWN_IN_VITRO_SAFETY_PHARMACOLOGY_PROFILE",
+        "label": "in vitro safety pharmacology profile",
+        "type": "other",
+        "category": "study_design",
+        "flagged": true
+      }
+    },
+    {
+      "group": "nodes",
+      "data": {
+        "id": "UNKNOWN_ADVERSE_EFFECTS",
+        "label": "adverse effects",
+        "type": "other",
+        "category": "safety_tolerability",
+        "flagged": true
+      }
+    },
+    {
+      "group": "nodes",
+      "data": {
+        "id": "MEASUREMENT_BODY_WEIGHT",
+        "label": "body weight",
+        "type": "measurement",
+        "category": "safety_tolerability",
+        "flagged": false
+      }
+    },
+    {
+      "group": "nodes",
+      "data": {
+        "id": "MEASUREMENT_MTD",
+        "label": "MTD",
+        "type": "measurement",
+        "category": "safety_tolerability",
+        "flagged": false
+      }
+    },
+    {
+      "group": "nodes",
+      "data": {
+        "id": "UNKNOWN_TOXICITY_THRESHOLD",
+        "label": "toxicity threshold",
+        "type": "other",
+        "category": "safety_tolerability",
+        "flagged": true
+      }
+    },
+    {
+      "group": "nodes",
+      "data": {
+        "id": "UNKNOWN_TOLERABILITY",
+        "label": "tolerability",
+        "type": "other",
+        "category": "safety_tolerability",
+        "flagged": true
+      }
+    },
+    {
+      "group": "nodes",
+      "data": {
+        "id": "UNKNOWN_BEHAVIORAL_CHANGES",
+        "label": "behavioral changes",
+        "type": "other",
+        "category": "safety_tolerability",
+        "flagged": true
+      }
+    },
+    {
+      "group": "nodes",
+      "data": {
+        "id": "UNKNOWN_MTD_STUDY_IN_MICE",
+        "label": "MTD study in mice",
+        "type": "other",
+        "category": "study_design",
+        "flagged": true
+      }
+    },
+    {
+      "group": "nodes",
+      "data": {
+        "id": "UNKNOWN_BEHAVIOR,_BODY_WEIGHT,_FOOD_WATER_INTAKE,_GENERAL_HEALTH",
+        "label": "behavior, body weight, food/water intake, general health",
+        "type": "other",
+        "category": "study_design",
+        "flagged": true
+      }
+    },
+    {
+      "group": "nodes",
+      "data": {
+        "id": "UNKNOWN_REPEAT_DOSE_STUDY_IN_RATS",
+        "label": "repeat-dose study in rats",
+        "type": "other",
+        "category": "study_design",
+        "flagged": true
+      }
+    },
+    {
+      "group": "nodes",
+      "data": {
+        "id": "UNKNOWN_BODY_WEIGHT_AND_GENERAL_HEALTH",
+        "label": "body weight and general health",
+        "type": "other",
+        "category": "study_design",
+        "flagged": true
+      }
+    },
+    {
+      "group": "nodes",
+      "data": {
+        "id": "UNKNOWN_DATA_PRESENTATION",
+        "label": "data presentation",
+        "type": "other",
+        "category": "study_design",
+        "flagged": true
+      }
+    },
+    {
+      "group": "nodes",
+      "data": {
+        "id": "UNKNOWN_MEAN_\u00b1_SEM",
+        "label": "mean \u00b1 SEM",
+        "type": "other",
+        "category": "study_design",
+        "flagged": true
+      }
+    },
+    {
+      "group": "nodes",
+      "data": {
+        "id": "DRUG_IBUDILAST",
+        "label": "ibudilast",
+        "type": "drug",
+        "category": "safety_tolerability",
+        "flagged": false
+      }
+    },
+    {
+      "group": "nodes",
+      "data": {
+        "id": "UNKNOWN_11H_(0.5_MG_KG)",
+        "label": "11h (0.5 mg/kg)",
+        "type": "other",
+        "category": "pathway_biology",
+        "flagged": true
+      }
+    },
+    {
+      "group": "nodes",
+      "data": {
+        "id": "UNKNOWN_TNF\u0391_REDUCTION",
+        "label": "TNF\u03b1 reduction",
+        "type": "other",
+        "category": "pathway_biology",
+        "flagged": true
+      }
+    },
+    {
+      "group": "nodes",
+      "data": {
+        "id": "UNKNOWN_IBUDILAST_(10_MG_KG)",
+        "label": "ibudilast (10 mg/kg)",
+        "type": "other",
+        "category": "pathway_biology",
+        "flagged": true
+      }
+    },
+    {
+      "group": "nodes",
+      "data": {
+        "id": "UNKNOWN_FERRET_EMETIC_LIABILITY_AND_ANTI_INFLAMMATORY_STUDY",
+        "label": "ferret emetic liability and anti-inflammatory study",
+        "type": "other",
+        "category": "study_design",
+        "flagged": true
+      }
+    },
+    {
+      "group": "nodes",
+      "data": {
+        "id": "UNKNOWN_STUDY_DESIGN_PARAMETERS",
+        "label": "study design parameters",
+        "type": "other",
+        "category": "study_design",
+        "flagged": true
+      }
+    },
+    {
+      "group": "nodes",
+      "data": {
+        "id": "UNKNOWN_TNF\u0391_SUPPRESSION_DOSE_RESPONSE",
+        "label": "TNF\u03b1 suppression dose-response",
+        "type": "other",
+        "category": "pharmacokinetics",
+        "flagged": true
+      }
+    },
+    {
+      "group": "nodes",
+      "data": {
+        "id": "UNKNOWN_OTHER_ADVERSE_EFFECTS",
+        "label": "other adverse effects",
+        "type": "other",
+        "category": "safety_tolerability",
+        "flagged": true
+      }
+    },
+    {
+      "group": "nodes",
+      "data": {
+        "id": "UNKNOWN_TIME_SPENT_IN_OPEN_ARMS_(ELEVATED_PLUS_MAZE)",
+        "label": "time spent in open arms (elevated plus maze)",
+        "type": "other",
+        "category": "safety_tolerability",
+        "flagged": true
+      }
+    },
+    {
+      "group": "nodes",
+      "data": {
+        "id": "UNKNOWN_ENTRIES_INTO_OPEN_ARMS_(ELEVATED_PLUS_MAZE)",
+        "label": "entries into open arms (elevated plus maze)",
+        "type": "other",
+        "category": "safety_tolerability",
+        "flagged": true
+      }
+    },
+    {
+      "group": "nodes",
+      "data": {
+        "id": "DRUG_RIMONABANT",
+        "label": "rimonabant",
+        "type": "drug",
+        "category": "safety_tolerability",
+        "flagged": false
+      }
+    },
+    {
+      "group": "nodes",
+      "data": {
+        "id": "UNKNOWN_OPEN_ARM_ENTRIES_(ELEVATED_PLUS_MAZE)",
+        "label": "open-arm entries (elevated plus maze)",
+        "type": "other",
+        "category": "safety_tolerability",
+        "flagged": true
+      }
+    },
+    {
+      "group": "nodes",
+      "data": {
+        "id": "UNKNOWN_TIME_SPENT_IN_OPEN_ARMS_(ZERO_MAZE)",
+        "label": "time spent in open arms (zero maze)",
+        "type": "other",
+        "category": "safety_tolerability",
+        "flagged": true
+      }
+    },
+    {
+      "group": "nodes",
+      "data": {
+        "id": "UNKNOWN_ENTRIES_INTO_OPEN_ARMS_(ZERO_MAZE)",
+        "label": "entries into open arms (zero maze)",
+        "type": "other",
+        "category": "safety_tolerability",
+        "flagged": true
+      }
+    },
+    {
+      "group": "nodes",
+      "data": {
+        "id": "UNKNOWN_IMMOBILITY_DURATION_(FORCED_SWIM_TEST)",
+        "label": "immobility duration (forced swim test)",
+        "type": "other",
+        "category": "safety_tolerability",
+        "flagged": true
+      }
+    },
+    {
+      "group": "nodes",
+      "data": {
+        "id": "UNKNOWN_LETHARGY",
+        "label": "lethargy",
+        "type": "other",
+        "category": "safety_tolerability",
+        "flagged": true
+      }
+    },
+    {
+      "group": "nodes",
+      "data": {
+        "id": "UNKNOWN_AGITATION",
+        "label": "agitation",
+        "type": "other",
+        "category": "safety_tolerability",
+        "flagged": true
+      }
+    },
+    {
+      "group": "nodes",
+      "data": {
+        "id": "UNKNOWN_ABNORMAL_BEHAVIORS",
+        "label": "abnormal behaviors",
+        "type": "other",
+        "category": "safety_tolerability",
+        "flagged": true
+      }
+    },
+    {
+      "group": "nodes",
+      "data": {
+        "id": "UNKNOWN_ANXIETY_LIKE_BEHAVIOR_(ELEVATED_PLUS_MAZE)",
+        "label": "anxiety-like behavior (elevated plus maze)",
+        "type": "other",
+        "category": "safety_tolerability",
+        "flagged": true
+      }
+    },
+    {
+      "group": "nodes",
+      "data": {
+        "id": "UNKNOWN_ANXIETY_LIKE_BEHAVIOR",
+        "label": "anxiety-like behavior",
+        "type": "other",
+        "category": "safety_tolerability",
+        "flagged": true
+      }
+    },
+    {
+      "group": "nodes",
+      "data": {
+        "id": "UNKNOWN_ELEVATED_PLUS_MAZE_STUDY",
+        "label": "elevated plus maze study",
+        "type": "other",
+        "category": "study_design",
+        "flagged": true
+      }
+    },
+    {
+      "group": "nodes",
+      "data": {
+        "id": "UNKNOWN_NEUROBEHAVIORAL_SAFETY_ASSESSMENT",
+        "label": "neurobehavioral safety assessment",
+        "type": "other",
+        "category": "study_design",
+        "flagged": true
+      }
+    },
+    {
+      "group": "nodes",
+      "data": {
+        "id": "UNKNOWN_ZERO_MAZE_STUDY",
+        "label": "zero maze study",
+        "type": "other",
+        "category": "study_design",
+        "flagged": true
+      }
+    },
+    {
+      "group": "nodes",
+      "data": {
+        "id": "UNKNOWN_FORCED_SWIM_TEST_STUDY",
+        "label": "forced swim test study",
+        "type": "other",
+        "category": "study_design",
+        "flagged": true
+      }
+    },
+    {
+      "group": "nodes",
+      "data": {
+        "id": "UNKNOWN_DEPRESSIVE_LIKE_BEHAVIOR_(FST_IMMOBILITY)",
+        "label": "depressive-like behavior (FST immobility)",
+        "type": "other",
+        "category": "pathway_biology",
+        "flagged": true
+      }
+    },
+    {
+      "group": "nodes",
+      "data": {
+        "id": "UNKNOWN_PDE4A10_BINDING_SITES",
+        "label": "PDE4A10 binding sites",
+        "type": "other",
+        "category": "molecular_properties",
+        "flagged": true
+      }
+    },
+    {
+      "group": "nodes",
+      "data": {
+        "id": "UNKNOWN_PDE4A10_SITE_2",
+        "label": "PDE4A10 Site 2",
+        "type": "other",
+        "category": "molecular_properties",
+        "flagged": true
+      }
+    },
+    {
+      "group": "nodes",
+      "data": {
+        "id": "UNKNOWN_PDE4A10_SITE_3",
+        "label": "PDE4A10 Site 3",
+        "type": "other",
+        "category": "molecular_properties",
+        "flagged": true
+      }
+    },
+    {
+      "group": "nodes",
+      "data": {
+        "id": "UNKNOWN_PDE4A10_SITES_2_AND_3",
+        "label": "PDE4A10 Sites 2 and 3",
+        "type": "other",
+        "category": "molecular_properties",
+        "flagged": true
+      }
+    },
+    {
+      "group": "nodes",
+      "data": {
+        "id": "UNKNOWN_MOST_FAVORABLE_BINDING_SITES",
+        "label": "most favorable binding sites",
+        "type": "other",
+        "category": "molecular_properties",
+        "flagged": true
+      }
+    },
+    {
+      "group": "nodes",
+      "data": {
+        "id": "UNKNOWN_GLIDE_DOCKING_SCORE",
+        "label": "Glide docking score",
+        "type": "other",
+        "category": "molecular_properties",
+        "flagged": true
+      }
+    },
+    {
+      "group": "nodes",
+      "data": {
+        "id": "UNKNOWN_PDE4A10_BINDING_SITE_EVALUATION",
+        "label": "PDE4A10 binding site evaluation",
+        "type": "other",
+        "category": "molecular_properties",
+        "flagged": true
+      }
+    },
+    {
+      "group": "nodes",
+      "data": {
+        "id": "UNKNOWN_EMODEL_ENERGY",
+        "label": "Emodel energy",
+        "type": "other",
+        "category": "molecular_properties",
+        "flagged": true
+      }
+    },
+    {
+      "group": "nodes",
+      "data": {
+        "id": "UNKNOWN_LIPO_(LIPOPHILIC_CONTRIBUTION)",
+        "label": "Lipo (lipophilic contribution)",
+        "type": "other",
+        "category": "molecular_properties",
+        "flagged": true
+      }
+    },
+    {
+      "group": "nodes",
+      "data": {
+        "id": "UNKNOWN_ECOUL_(ELECTROSTATIC_ENERGY)",
+        "label": "Ecoul (electrostatic energy)",
+        "type": "other",
+        "category": "molecular_properties",
+        "flagged": true
+      }
+    },
+    {
+      "group": "nodes",
+      "data": {
+        "id": "UNKNOWN_GLIDE_CONFNUM",
+        "label": "Glide confnum",
+        "type": "other",
+        "category": "molecular_properties",
+        "flagged": true
+      }
+    },
+    {
+      "group": "nodes",
+      "data": {
+        "id": "UNKNOWN_CONFORMATIONAL_FLEXIBILITY",
+        "label": "conformational flexibility",
+        "type": "other",
+        "category": "molecular_properties",
+        "flagged": true
+      }
+    },
+    {
+      "group": "nodes",
+      "data": {
+        "id": "UNKNOWN_DOCKING_METRICS_ENERGY_VALUES",
+        "label": "docking metrics energy values",
+        "type": "other",
+        "category": "molecular_properties",
+        "flagged": true
+      }
+    },
+    {
+      "group": "nodes",
+      "data": {
+        "id": "UNKNOWN_KCAL_MOL",
+        "label": "kcal/mol",
+        "type": "other",
+        "category": "molecular_properties",
+        "flagged": true
+      }
+    },
+    {
+      "group": "nodes",
+      "data": {
+        "id": "UNKNOWN_FOUR_PREDICTED_PDE4A10_BINDING_SITES",
+        "label": "four predicted PDE4A10 binding sites",
+        "type": "other",
+        "category": "study_design",
+        "flagged": true
+      }
+    },
+    {
+      "group": "nodes",
+      "data": {
+        "id": "UNKNOWN_PDE4_BINDING_SITES",
+        "label": "PDE4 binding sites",
+        "type": "other",
+        "category": "study_design",
+        "flagged": true
+      }
+    },
+    {
+      "group": "edges",
+      "data": {
+        "id": "DRUG_11H__ENZYME_PDE4__inhibits",
+        "source": "DRUG_11H",
+        "target": "ENZYME_PDE4",
+        "relationship": "inhibits",
+        "relationship_direction": "inhibition",
+        "category": "pathway_biology",
+        "evidence_type": "paper_claims",
+        "glp": false,
+        "quantitative_values": [],
+        "experimental_conditions": [
+          {
+            "in_vivo_vitro": "in_silico",
+            "species": "in_silico",
+            "glp": false
+          }
+        ],
+        "sources": [
+          {
+            "section": "discussion",
+            "direct_quote": "11h emerges as a differentiated next-generation PDE4 inhibitor"
+          },
+          {
+            "section": "figure_caption",
+            "figure": "FIGURE 10",
+            "direct_quote": "In silico interaction mapping of 11h across PDE4 binding sites"
+          }
+        ]
+      }
+    },
+    {
+      "group": "edges",
+      "data": {
+        "id": "DRUG_11H__UNKNOWN_PDE4_SUBTYPES__broadly inhibits",
+        "source": "DRUG_11H",
+        "target": "UNKNOWN_PDE4_SUBTYPES",
+        "relationship": "broadly inhibits",
+        "relationship_direction": "inhibition",
+        "category": "pathway_biology",
+        "evidence_type": "paper_claims",
+        "glp": false,
+        "quantitative_values": [],
+        "experimental_conditions": [],
+        "sources": [
+          {
+            "section": "discussion",
+            "direct_quote": "coupling broad PDE4 inhibition with favorable pharmacokinetics and CNS penetration"
+          }
+        ]
+      }
+    },
+    {
+      "group": "edges",
+      "data": {
+        "id": "DRUG_11H__UNKNOWN_ANTI_INFLAMMATORY_EFFICACY__achieves",
+        "source": "DRUG_11H",
+        "target": "UNKNOWN_ANTI_INFLAMMATORY_EFFICACY",
+        "relationship": "achieves",
+        "relationship_direction": "activation",
+        "category": "pathway_biology",
+        "evidence_type": "paper_claims",
+        "glp": false,
+        "quantitative_values": [],
+        "experimental_conditions": [],
+        "sources": [
+          {
+            "section": "discussion",
+            "direct_quote": "11h achieves anti-inflammatory efficacy without inducing emesis or behavioral toxicity"
+          }
+        ]
+      }
+    },
+    {
+      "group": "edges",
+      "data": {
+        "id": "DRUG_11H__UNKNOWN_FAVORABLE_PHARMACOKINETICS__demonstrates",
+        "source": "DRUG_11H",
+        "target": "UNKNOWN_FAVORABLE_PHARMACOKINETICS",
+        "relationship": "demonstrates",
+        "relationship_direction": "measurement",
+        "category": "pharmacokinetics",
+        "evidence_type": "paper_claims",
+        "glp": false,
+        "quantitative_values": [],
+        "experimental_conditions": [],
+        "sources": [
+          {
+            "section": "discussion",
+            "direct_quote": "coupling broad PDE4 inhibition with favorable pharmacokinetics and CNS penetration"
+          }
+        ]
+      }
+    },
+    {
+      "group": "edges",
+      "data": {
+        "id": "DRUG_11H__UNKNOWN_CNS_PENETRATION__demonstrates",
+        "source": "DRUG_11H",
+        "target": "UNKNOWN_CNS_PENETRATION",
+        "relationship": "demonstrates",
+        "relationship_direction": "measurement",
+        "category": "pharmacokinetics",
+        "evidence_type": "paper_claims",
+        "glp": false,
+        "quantitative_values": [],
+        "experimental_conditions": [],
+        "sources": [
+          {
+            "section": "discussion",
+            "direct_quote": "coupling broad PDE4 inhibition with favorable pharmacokinetics and CNS penetration"
+          }
+        ]
+      }
+    },
+    {
+      "group": "edges",
+      "data": {
+        "id": "DRUG_11H__UNKNOWN_DOSE_PROPORTIONALITY__demonstrates",
+        "source": "DRUG_11H",
+        "target": "UNKNOWN_DOSE_PROPORTIONALITY",
+        "relationship": "demonstrates",
+        "relationship_direction": "measurement",
+        "category": "pharmacokinetics",
+        "evidence_type": "paper_claims",
+        "glp": false,
+        "quantitative_values": [],
+        "experimental_conditions": [],
+        "sources": [
+          {
+            "section": "discussion",
+            "direct_quote": "Its dose proportionality and suitability for repeat dosing further strengthen"
+          }
+        ]
+      }
+    },
+    {
+      "group": "edges",
+      "data": {
+        "id": "DRUG_11H__UNKNOWN_REPEAT_DOSING_SUITABILITY__demonstrates",
+        "source": "DRUG_11H",
+        "target": "UNKNOWN_REPEAT_DOSING_SUITABILITY",
+        "relationship": "demonstrates",
+        "relationship_direction": "measurement",
+        "category": "pharmacokinetics",
+        "evidence_type": "paper_claims",
+        "glp": false,
+        "quantitative_values": [],
+        "experimental_conditions": [],
+        "sources": [
+          {
+            "section": "discussion",
+            "direct_quote": "Its dose proportionality and suitability for repeat dosing further strengthen"
+          }
+        ]
+      }
+    },
+    {
+      "group": "edges",
+      "data": {
+        "id": "DRUG_11H__UNKNOWN_WELL_TOLERATED_SAFETY_PROFILE__maintains",
+        "source": "DRUG_11H",
+        "target": "UNKNOWN_WELL_TOLERATED_SAFETY_PROFILE",
+        "relationship": "maintains",
+        "relationship_direction": "measurement",
+        "category": "safety_tolerability",
+        "evidence_type": "paper_claims",
+        "glp": false,
+        "quantitative_values": [],
+        "experimental_conditions": [],
+        "sources": [
+          {
+            "section": "discussion",
+            "direct_quote": "while maintaining a well-tolerated safety profile"
+          }
+        ]
+      }
+    },
+    {
+      "group": "edges",
+      "data": {
+        "id": "DRUG_11H__OUTCOME_EMESIS__does not induce",
+        "source": "DRUG_11H",
+        "target": "OUTCOME_EMESIS",
+        "relationship": "does not induce",
+        "relationship_direction": "neutral",
+        "category": "safety_tolerability",
+        "evidence_type": "directly_measured",
+        "glp": false,
+        "quantitative_values": [],
+        "experimental_conditions": [
+          {
+            "result_direction": "no_change",
+            "species": "not_specified",
+            "in_vivo_vitro": "not_specified",
+            "glp": false
+          },
+          {
+            "species": "ferret",
+            "in_vivo_vitro": "in_vivo",
+            "route": "oral",
+            "dose": "0.5\u201319.2 mg/kg",
+            "n_per_group": "5",
+            "assay_or_model": "emetic liability assessment (retching, salivation, vomiting)",
+            "result_direction": "no_change",
+            "glp": false
+          }
+        ],
+        "sources": [
+          {
+            "section": "discussion",
+            "direct_quote": "11h achieves anti-inflammatory efficacy without inducing emesis or behavioral toxicity"
+          },
+          {
+            "section": "figure_caption",
+            "figure": "FIGURE 8",
+            "direct_quote": "11h caused no vomiting at any tested dose"
+          }
+        ]
+      }
+    },
+    {
+      "group": "edges",
+      "data": {
+        "id": "DRUG_11H__UNKNOWN_BEHAVIORAL_TOXICITY__does not induce",
+        "source": "DRUG_11H",
+        "target": "UNKNOWN_BEHAVIORAL_TOXICITY",
+        "relationship": "does not induce",
+        "relationship_direction": "neutral",
+        "category": "safety_tolerability",
+        "evidence_type": "paper_claims",
+        "glp": false,
+        "quantitative_values": [],
+        "experimental_conditions": [
+          {
+            "result_direction": "no_change",
+            "species": "not_specified",
+            "in_vivo_vitro": "not_specified",
+            "glp": false
+          }
+        ],
+        "sources": [
+          {
+            "section": "discussion",
+            "direct_quote": "11h achieves anti-inflammatory efficacy without inducing emesis or behavioral toxicity"
+          }
+        ]
+      }
+    },
+    {
+      "group": "edges",
+      "data": {
+        "id": "DRUG_11H__UNKNOWN_EARLIER_PDE4_INHIBITORS__overcomes clinical barriers of",
+        "source": "DRUG_11H",
+        "target": "UNKNOWN_EARLIER_PDE4_INHIBITORS",
+        "relationship": "overcomes clinical barriers of",
+        "relationship_direction": "other",
+        "category": "safety_tolerability",
+        "evidence_type": "paper_claims",
+        "glp": false,
+        "quantitative_values": [],
+        "experimental_conditions": [],
+        "sources": [
+          {
+            "section": "discussion",
+            "direct_quote": "potential to overcome historical barriers to clinical adoption"
+          }
+        ]
+      }
+    },
+    {
+      "group": "edges",
+      "data": {
+        "id": "DRUG_11H__UNKNOWN_CLINICAL_DEVELOPMENT__is rationalized for advancement into",
+        "source": "DRUG_11H",
+        "target": "UNKNOWN_CLINICAL_DEVELOPMENT",
+        "relationship": "is rationalized for advancement into",
+        "relationship_direction": "other",
+        "category": "study_design",
+        "evidence_type": "paper_claims",
+        "glp": false,
+        "quantitative_values": [],
+        "experimental_conditions": [],
+        "sources": [
+          {
+            "section": "discussion",
+            "direct_quote": "providing a compelling rationale for its advancement into clinical development"
+          }
+        ]
+      }
+    },
+    {
+      "group": "edges",
+      "data": {
+        "id": "DRUG_11H__UNKNOWN_NEXT_GENERATION_PDE4_INHIBITOR__is classified as",
+        "source": "DRUG_11H",
+        "target": "UNKNOWN_NEXT_GENERATION_PDE4_INHIBITOR",
+        "relationship": "is classified as",
+        "relationship_direction": "other",
+        "category": "molecular_properties",
+        "evidence_type": "paper_claims",
+        "glp": false,
+        "quantitative_values": [],
+        "experimental_conditions": [],
+        "sources": [
+          {
+            "section": "discussion",
+            "direct_quote": "11h emerges as a differentiated next-generation PDE4 inhibitor"
+          }
+        ]
+      }
+    },
+    {
+      "group": "edges",
+      "data": {
+        "id": "DRUG_11H__ENZYME_PDE4A1__inhibits",
+        "source": "DRUG_11H",
+        "target": "ENZYME_PDE4A1",
+        "relationship": "inhibits",
+        "relationship_direction": "inhibition",
+        "category": "pathway_biology",
+        "evidence_type": "directly_measured",
+        "glp": false,
+        "quantitative_values": [],
+        "experimental_conditions": [
+          {
+            "assay_or_model": "high-throughput cAMP inhibition assay",
+            "in_vivo_vitro": "in_vitro",
+            "species": "in_vitro",
+            "result_direction": "decreased",
+            "glp": false
+          }
+        ],
+        "sources": [
+          {
+            "section": "figure_caption",
+            "figure": "FIGURE 1",
+            "direct_quote": "Dose-response curves show complete inhibition of PDE4A1"
+          }
+        ]
+      }
+    },
+    {
+      "group": "edges",
+      "data": {
+        "id": "DRUG_11H__ENZYME_PDE4B2__inhibits",
+        "source": "DRUG_11H",
+        "target": "ENZYME_PDE4B2",
+        "relationship": "inhibits",
+        "relationship_direction": "inhibition",
+        "category": "pathway_biology",
+        "evidence_type": "directly_measured",
+        "glp": false,
+        "quantitative_values": [],
+        "experimental_conditions": [
+          {
+            "assay_or_model": "high-throughput cAMP inhibition assay",
+            "in_vivo_vitro": "in_vitro",
+            "species": "in_vitro",
+            "result_direction": "decreased",
+            "glp": false
+          }
+        ],
+        "sources": [
+          {
+            "section": "figure_caption",
+            "figure": "FIGURE 1",
+            "direct_quote": "Dose-response curves show complete inhibition of PDE4A1, PDE4B2"
+          }
+        ]
+      }
+    },
+    {
+      "group": "edges",
+      "data": {
+        "id": "DRUG_11H__ENZYME_PDE4C1__partially inhibits",
+        "source": "DRUG_11H",
+        "target": "ENZYME_PDE4C1",
+        "relationship": "partially inhibits",
+        "relationship_direction": "inhibition",
+        "category": "pathway_biology",
+        "evidence_type": "directly_measured",
+        "glp": false,
+        "quantitative_values": [],
+        "experimental_conditions": [
+          {
+            "assay_or_model": "high-throughput cAMP inhibition assay",
+            "in_vivo_vitro": "in_vitro",
+            "species": "in_vitro",
+            "result_direction": "decreased",
+            "glp": false
+          }
+        ],
+        "sources": [
+          {
+            "section": "figure_caption",
+            "figure": "FIGURE 1",
+            "direct_quote": "and partial inhibition of PDE4C1"
+          }
+        ]
+      }
+    },
+    {
+      "group": "edges",
+      "data": {
+        "id": "DRUG_11H__ENZYME_PDE4D2__inhibits",
+        "source": "DRUG_11H",
+        "target": "ENZYME_PDE4D2",
+        "relationship": "inhibits",
+        "relationship_direction": "inhibition",
+        "category": "pathway_biology",
+        "evidence_type": "directly_measured",
+        "glp": false,
+        "quantitative_values": [],
+        "experimental_conditions": [
+          {
+            "assay_or_model": "high-throughput cAMP inhibition assay",
+            "in_vivo_vitro": "in_vitro",
+            "species": "in_vitro",
+            "result_direction": "decreased",
+            "glp": false
+          }
+        ],
+        "sources": [
+          {
+            "section": "figure_caption",
+            "figure": "FIGURE 1",
+            "direct_quote": "Dose-response curves show complete inhibition of PDE4A1, PDE4B2, PDE4D2"
+          }
+        ]
+      }
+    },
+    {
+      "group": "edges",
+      "data": {
+        "id": "DRUG_11H__ENZYME_PDE4D3__inhibits",
+        "source": "DRUG_11H",
+        "target": "ENZYME_PDE4D3",
+        "relationship": "inhibits",
+        "relationship_direction": "inhibition",
+        "category": "pathway_biology",
+        "evidence_type": "directly_measured",
+        "glp": false,
+        "quantitative_values": [],
+        "experimental_conditions": [
+          {
+            "assay_or_model": "high-throughput cAMP inhibition assay",
+            "in_vivo_vitro": "in_vitro",
+            "species": "in_vitro",
+            "result_direction": "decreased",
+            "glp": false
+          }
+        ],
+        "sources": [
+          {
+            "section": "figure_caption",
+            "figure": "FIGURE 1",
+            "direct_quote": "Dose-response curves show complete inhibition of PDE4A1, PDE4B2, PDE4D2, and PDE4D3"
+          }
+        ]
+      }
+    },
+    {
+      "group": "edges",
+      "data": {
+        "id": "DRUG_11H__UNKNOWN_PDE4_ISOFORMS__demonstrates dose-dependent inhibition",
+        "source": "DRUG_11H",
+        "target": "UNKNOWN_PDE4_ISOFORMS",
+        "relationship": "demonstrates dose-dependent inhibition",
+        "relationship_direction": "inhibition",
+        "category": "pathway_biology",
+        "evidence_type": "directly_measured",
+        "glp": false,
+        "quantitative_values": [],
+        "experimental_conditions": [
+          {
+            "assay_or_model": "high-throughput cAMP inhibition assay",
+            "in_vivo_vitro": "in_vitro",
+            "species": "in_vitro",
+            "result_direction": "decreased",
+            "glp": false
+          }
+        ],
+        "sources": [
+          {
+            "section": "figure_caption",
+            "figure": "FIGURE 1",
+            "direct_quote": "Potent, dose-dependent inhibition of multiple PDE4 isoforms by 11h"
+          }
+        ]
+      }
+    },
+    {
+      "group": "edges",
+      "data": {
+        "id": "DRUG_11H__UNKNOWN_IC50_VALUES__measures",
+        "source": "DRUG_11H",
+        "target": "UNKNOWN_IC50_VALUES",
+        "relationship": "measures",
+        "relationship_direction": "measurement",
+        "category": "molecular_properties",
+        "evidence_type": "directly_measured",
+        "glp": false,
+        "quantitative_values": [],
+        "experimental_conditions": [
+          {
+            "assay_or_model": "high-throughput cAMP inhibition assay",
+            "in_vivo_vitro": "in_vitro",
+            "species": "in_vitro",
+            "glp": false
+          }
+        ],
+        "sources": [
+          {
+            "section": "figure_caption",
+            "figure": "FIGURE 1",
+            "direct_quote": "to determine IC 50 values"
+          }
+        ]
+      }
+    },
+    {
+      "group": "edges",
+      "data": {
+        "id": "DRUG_11H__MOLECULE_CAMP__inhibits degradation of",
+        "source": "DRUG_11H",
+        "target": "MOLECULE_CAMP",
+        "relationship": "inhibits degradation of",
+        "relationship_direction": "inhibition",
+        "category": "pathway_biology",
+        "evidence_type": "directly_measured",
+        "glp": false,
+        "quantitative_values": [],
+        "experimental_conditions": [
+          {
+            "assay_or_model": "high-throughput cAMP inhibition assay",
+            "in_vivo_vitro": "in_vitro",
+            "species": "in_vitro",
+            "glp": false
+          }
+        ],
+        "sources": [
+          {
+            "section": "figure_caption",
+            "figure": "FIGURE 1",
+            "direct_quote": "assessed in a high-throughput cAMP inhibition assay against PDE4A1, PDE4B2, PDE4C1, PDE4D2"
+          }
+        ]
+      }
+    },
+    {
+      "group": "edges",
+      "data": {
+        "id": "DRUG_11H__UNKNOWN_LPS_INDUCED_TNF\u0391__reduces",
+        "source": "DRUG_11H",
+        "target": "UNKNOWN_LPS_INDUCED_TNF\u0391",
+        "relationship": "reduces",
+        "relationship_direction": "inhibition",
+        "category": "pathway_biology",
+        "evidence_type": "directly_measured",
+        "glp": false,
+        "quantitative_values": [],
+        "experimental_conditions": [
+          {
+            "species": "mouse",
+            "in_vivo_vitro": "in_vitro",
+            "cell_line": "RAW 264.7",
+            "assay_or_model": "LPS-stimulated macrophage cytokine production",
+            "dose": "increasing concentrations",
+            "result_direction": "decreased",
+            "glp": false
+          },
+          {
+            "species": "mouse",
+            "in_vivo_vitro": "in_vitro",
+            "cell_line": "IMG",
+            "assay_or_model": "LPS-stimulated microglia cytokine production",
+            "dose": "increasing concentrations",
+            "result_direction": "decreased",
+            "glp": false
+          }
+        ],
+        "sources": [
+          {
+            "section": "figure_caption",
+            "figure": "FIGURE 2",
+            "direct_quote": "In RAW cells, 11h significantly reduced (A) TNF\u03b1"
+          },
+          {
+            "section": "figure_caption",
+            "figure": "FIGURE 2",
+            "direct_quote": "In IMG cells, 11h likewise reduced (D) TNF\u03b1"
+          }
+        ]
+      }
+    },
+    {
+      "group": "edges",
+      "data": {
+        "id": "DRUG_11H__UNKNOWN_LPS_INDUCED_NITRITE_LEVELS__reduces",
+        "source": "DRUG_11H",
+        "target": "UNKNOWN_LPS_INDUCED_NITRITE_LEVELS",
+        "relationship": "reduces",
+        "relationship_direction": "inhibition",
+        "category": "pathway_biology",
+        "evidence_type": "directly_measured",
+        "glp": false,
+        "quantitative_values": [],
+        "experimental_conditions": [
+          {
+            "species": "mouse",
+            "in_vivo_vitro": "in_vitro",
+            "cell_line": "RAW 264.7",
+            "assay_or_model": "LPS-stimulated macrophage nitrite production",
+            "dose": "increasing concentrations",
+            "result_direction": "decreased",
+            "glp": false
+          }
+        ],
+        "sources": [
+          {
+            "section": "figure_caption",
+            "figure": "FIGURE 2",
+            "direct_quote": "11h significantly reduced...nitrite levels"
+          }
+        ]
+      }
+    },
+    {
+      "group": "edges",
+      "data": {
+        "id": "DRUG_11H__UNKNOWN_RAW_264.7_CELL_VIABILITY__does not affect",
+        "source": "DRUG_11H",
+        "target": "UNKNOWN_RAW_264.7_CELL_VIABILITY",
+        "relationship": "does not affect",
+        "relationship_direction": "neutral",
+        "category": "safety_tolerability",
+        "evidence_type": "directly_measured",
+        "glp": false,
+        "quantitative_values": [],
+        "experimental_conditions": [
+          {
+            "species": "mouse",
+            "in_vivo_vitro": "in_vitro",
+            "cell_line": "RAW 264.7",
+            "assay_or_model": "cell viability assay",
+            "dose": "increasing concentrations",
+            "result_direction": "no_change",
+            "glp": false
+          }
+        ],
+        "sources": [
+          {
+            "section": "figure_caption",
+            "figure": "FIGURE 2",
+            "direct_quote": "without impacting (C) cell viability"
+          }
+        ]
+      }
+    },
+    {
+      "group": "edges",
+      "data": {
+        "id": "DRUG_11H__UNKNOWN_LPS_INDUCED_IL_6__reduces",
+        "source": "DRUG_11H",
+        "target": "UNKNOWN_LPS_INDUCED_IL_6",
+        "relationship": "reduces",
+        "relationship_direction": "inhibition",
+        "category": "pathway_biology",
+        "evidence_type": "directly_measured",
+        "glp": false,
+        "quantitative_values": [],
+        "experimental_conditions": [
+          {
+            "species": "mouse",
+            "in_vivo_vitro": "in_vitro",
+            "cell_line": "IMG",
+            "assay_or_model": "LPS-stimulated microglia cytokine production",
+            "dose": "increasing concentrations",
+            "result_direction": "decreased",
+            "glp": false
+          }
+        ],
+        "sources": [
+          {
+            "section": "figure_caption",
+            "figure": "FIGURE 2",
+            "direct_quote": "In IMG cells, 11h likewise reduced...(E) IL-6"
+          }
+        ]
+      }
+    },
+    {
+      "group": "edges",
+      "data": {
+        "id": "DRUG_11H__UNKNOWN_IMG_CELL_VIABILITY__does not affect",
+        "source": "DRUG_11H",
+        "target": "UNKNOWN_IMG_CELL_VIABILITY",
+        "relationship": "does not affect",
+        "relationship_direction": "neutral",
+        "category": "safety_tolerability",
+        "evidence_type": "directly_measured",
+        "glp": false,
+        "quantitative_values": [],
+        "experimental_conditions": [
+          {
+            "species": "mouse",
+            "in_vivo_vitro": "in_vitro",
+            "cell_line": "IMG",
+            "assay_or_model": "cell viability assay",
+            "dose": "increasing concentrations",
+            "result_direction": "no_change",
+            "glp": false
+          }
+        ],
+        "sources": [
+          {
+            "section": "figure_caption",
+            "figure": "FIGURE 2",
+            "direct_quote": "with no effect on (F) viability"
+          }
+        ]
+      }
+    },
+    {
+      "group": "edges",
+      "data": {
+        "id": "DRUG_11H__UNKNOWN_LPS_INDUCED_TNF\u0391_RELEASE__decreases",
+        "source": "DRUG_11H",
+        "target": "UNKNOWN_LPS_INDUCED_TNF\u0391_RELEASE",
+        "relationship": "decreases",
+        "relationship_direction": "inhibition",
+        "category": "pathway_biology",
+        "evidence_type": "directly_measured",
+        "glp": false,
+        "quantitative_values": [],
+        "experimental_conditions": [
+          {
+            "species": "human",
+            "in_vivo_vitro": "in_vitro",
+            "cell_line": "PBMCs",
+            "assay_or_model": "LPS-stimulated PBMC cytokine release",
+            "dose": "increasing concentrations",
+            "result_direction": "decreased",
+            "glp": false
+          }
+        ],
+        "sources": [
+          {
+            "section": "figure_caption",
+            "figure": "FIGURE 2",
+            "direct_quote": "In human PBMCs, 11h decreased LPS-induced TNF\u03b1 release"
+          }
+        ]
+      }
+    },
+    {
+      "group": "edges",
+      "data": {
+        "id": "DRUG_11H__UNKNOWN_PRO_INFLAMMATORY_CYTOKINE_PRODUCTION__reduces",
+        "source": "DRUG_11H",
+        "target": "UNKNOWN_PRO_INFLAMMATORY_CYTOKINE_PRODUCTION",
+        "relationship": "reduces",
+        "relationship_direction": "inhibition",
+        "category": "pathway_biology",
+        "evidence_type": "directly_measured",
+        "glp": false,
+        "quantitative_values": [],
+        "experimental_conditions": [
+          {
+            "species": "mouse",
+            "in_vivo_vitro": "in_vitro",
+            "glp": false,
+            "result_direction": "decreased"
+          },
+          {
+            "species": "human",
+            "in_vivo_vitro": "in_vitro",
+            "cell_line": "PBMCs",
+            "glp": false,
+            "result_direction": "decreased"
+          }
+        ],
+        "sources": [
+          {
+            "section": "figure_caption",
+            "figure": "FIGURE 2",
+            "direct_quote": "11h reduces LPS-induced pro-inflammatory cytokine production in mouse and human immune cells"
+          },
+          {
+            "section": "figure_caption",
+            "figure": "FIGURE 2",
+            "direct_quote": "11h reduces LPS-induced pro-inflammatory cytokine production in mouse and human immune cells"
+          }
+        ]
+      }
+    },
+    {
+      "group": "edges",
+      "data": {
+        "id": "DRUG_11H__UNKNOWN_CELL_VIABILITY__does not affect",
+        "source": "DRUG_11H",
+        "target": "UNKNOWN_CELL_VIABILITY",
+        "relationship": "does not affect",
+        "relationship_direction": "neutral",
+        "category": "safety_tolerability",
+        "evidence_type": "directly_measured",
+        "glp": false,
+        "quantitative_values": [],
+        "experimental_conditions": [
+          {
+            "species": "mouse",
+            "in_vivo_vitro": "in_vitro",
+            "cell_line": "RAW 264.7, IMG",
+            "result_direction": "no_change",
+            "glp": false
+          }
+        ],
+        "sources": [
+          {
+            "section": "figure_caption",
+            "figure": "FIGURE 2",
+            "direct_quote": "without affecting viability"
+          }
+        ]
+      }
+    },
+    {
+      "group": "edges",
+      "data": {
+        "id": "DRUG_11H__UNKNOWN_CXCL10_MRNA_EXPRESSION__reduces",
+        "source": "DRUG_11H",
+        "target": "UNKNOWN_CXCL10_MRNA_EXPRESSION",
+        "relationship": "reduces",
+        "relationship_direction": "inhibition",
+        "category": "pathway_biology",
+        "evidence_type": "directly_measured",
+        "glp": false,
+        "quantitative_values": [],
+        "experimental_conditions": [
+          {
+            "assay_or_model": "RT-qPCR",
+            "species": "not_specified",
+            "in_vivo_vitro": "in_vivo",
+            "n_per_group": "6",
+            "result_direction": "decreased",
+            "statistical_significance": "p < 0.01",
+            "glp": false
+          }
+        ],
+        "sources": [
+          {
+            "section": "figure_caption",
+            "figure": "FIGURE 4",
+            "direct_quote": "11h significantly reduced the mRNA expression levels of key inflammatory genes"
+          }
+        ]
+      }
+    },
+    {
+      "group": "edges",
+      "data": {
+        "id": "DRUG_11H__UNKNOWN_TNF\u0391_MRNA_EXPRESSION__reduces",
+        "source": "DRUG_11H",
+        "target": "UNKNOWN_TNF\u0391_MRNA_EXPRESSION",
+        "relationship": "reduces",
+        "relationship_direction": "inhibition",
+        "category": "pathway_biology",
+        "evidence_type": "directly_measured",
+        "glp": false,
+        "quantitative_values": [],
+        "experimental_conditions": [
+          {
+            "assay_or_model": "RT-qPCR",
+            "species": "not_specified",
+            "in_vivo_vitro": "in_vivo",
+            "n_per_group": "6",
+            "result_direction": "decreased",
+            "statistical_significance": "p < 0.01",
+            "glp": false
+          }
+        ],
+        "sources": [
+          {
+            "section": "figure_caption",
+            "figure": "FIGURE 4",
+            "direct_quote": "11h significantly reduced the mRNA expression levels of key inflammatory genes"
+          }
+        ]
+      }
+    },
+    {
+      "group": "edges",
+      "data": {
+        "id": "DRUG_11H__UNKNOWN_NFKB_MRNA_EXPRESSION__reduces",
+        "source": "DRUG_11H",
+        "target": "UNKNOWN_NFKB_MRNA_EXPRESSION",
+        "relationship": "reduces",
+        "relationship_direction": "inhibition",
+        "category": "pathway_biology",
+        "evidence_type": "directly_measured",
+        "glp": false,
+        "quantitative_values": [],
+        "experimental_conditions": [
+          {
+            "assay_or_model": "RT-qPCR",
+            "species": "not_specified",
+            "in_vivo_vitro": "in_vivo",
+            "n_per_group": "6",
+            "result_direction": "decreased",
+            "statistical_significance": "p < 0.01",
+            "glp": false
+          }
+        ],
+        "sources": [
+          {
+            "section": "figure_caption",
+            "figure": "FIGURE 4",
+            "direct_quote": "11h significantly reduced the mRNA expression levels of key inflammatory genes"
+          }
+        ]
+      }
+    },
+    {
+      "group": "edges",
+      "data": {
+        "id": "DRUG_11H__UNKNOWN_MYD88_MRNA_EXPRESSION__reduces",
+        "source": "DRUG_11H",
+        "target": "UNKNOWN_MYD88_MRNA_EXPRESSION",
+        "relationship": "reduces",
+        "relationship_direction": "inhibition",
+        "category": "pathway_biology",
+        "evidence_type": "directly_measured",
+        "glp": false,
+        "quantitative_values": [],
+        "experimental_conditions": [
+          {
+            "assay_or_model": "RT-qPCR",
+            "species": "not_specified",
+            "in_vivo_vitro": "in_vivo",
+            "n_per_group": "6",
+            "result_direction": "decreased",
+            "statistical_significance": "p < 0.01",
+            "glp": false
+          }
+        ],
+        "sources": [
+          {
+            "section": "figure_caption",
+            "figure": "FIGURE 4",
+            "direct_quote": "11h significantly reduced the mRNA expression levels of key inflammatory genes"
+          }
+        ]
+      }
+    },
+    {
+      "group": "edges",
+      "data": {
+        "id": "DRUG_11H__UNKNOWN_IL1R1_MRNA_EXPRESSION__reduces",
+        "source": "DRUG_11H",
+        "target": "UNKNOWN_IL1R1_MRNA_EXPRESSION",
+        "relationship": "reduces",
+        "relationship_direction": "inhibition",
+        "category": "pathway_biology",
+        "evidence_type": "directly_measured",
+        "glp": false,
+        "quantitative_values": [],
+        "experimental_conditions": [
+          {
+            "assay_or_model": "RT-qPCR",
+            "species": "not_specified",
+            "in_vivo_vitro": "in_vivo",
+            "n_per_group": "6",
+            "result_direction": "decreased",
+            "statistical_significance": "p < 0.01",
+            "glp": false
+          }
+        ],
+        "sources": [
+          {
+            "section": "figure_caption",
+            "figure": "FIGURE 4",
+            "direct_quote": "11h significantly reduced the mRNA expression levels of key inflammatory genes"
+          }
+        ]
+      }
+    },
+    {
+      "group": "edges",
+      "data": {
+        "id": "DRUG_11H__UNKNOWN_FBL_MRNA_EXPRESSION__reduces",
+        "source": "DRUG_11H",
+        "target": "UNKNOWN_FBL_MRNA_EXPRESSION",
+        "relationship": "reduces",
+        "relationship_direction": "inhibition",
+        "category": "pathway_biology",
+        "evidence_type": "directly_measured",
+        "glp": false,
+        "quantitative_values": [],
+        "experimental_conditions": [
+          {
+            "assay_or_model": "RT-qPCR",
+            "species": "not_specified",
+            "in_vivo_vitro": "in_vivo",
+            "n_per_group": "6",
+            "result_direction": "decreased",
+            "statistical_significance": "p < 0.01",
+            "glp": false
+          }
+        ],
+        "sources": [
+          {
+            "section": "figure_caption",
+            "figure": "FIGURE 4",
+            "direct_quote": "11h significantly reduced the mRNA expression levels of key inflammatory genes"
+          }
+        ]
+      }
+    },
+    {
+      "group": "edges",
+      "data": {
+        "id": "DRUG_11H__UNKNOWN_TRAAD_MRNA_EXPRESSION__reduces",
+        "source": "DRUG_11H",
+        "target": "UNKNOWN_TRAAD_MRNA_EXPRESSION",
+        "relationship": "reduces",
+        "relationship_direction": "inhibition",
+        "category": "pathway_biology",
+        "evidence_type": "directly_measured",
+        "glp": false,
+        "quantitative_values": [],
+        "experimental_conditions": [
+          {
+            "assay_or_model": "RT-qPCR",
+            "species": "not_specified",
+            "in_vivo_vitro": "in_vivo",
+            "n_per_group": "6",
+            "result_direction": "decreased",
+            "statistical_significance": "p < 0.01",
+            "glp": false
+          }
+        ],
+        "sources": [
+          {
+            "section": "figure_caption",
+            "figure": "FIGURE 4",
+            "direct_quote": "11h significantly reduced the mRNA expression levels of key inflammatory genes"
+          }
+        ]
+      }
+    },
+    {
+      "group": "edges",
+      "data": {
+        "id": "DRUG_11H__UNKNOWN_PRO_INFLAMMATORY_GENE_EXPRESSION_IN_MYD88_PATHWAY__downregulates",
+        "source": "DRUG_11H",
+        "target": "UNKNOWN_PRO_INFLAMMATORY_GENE_EXPRESSION_IN_MYD88_PATHWAY",
+        "relationship": "downregulates",
+        "relationship_direction": "inhibition",
+        "category": "pathway_biology",
+        "evidence_type": "directly_measured",
+        "glp": false,
+        "quantitative_values": [
+          "all p < 0.01"
+        ],
+        "experimental_conditions": [
+          {
+            "assay_or_model": "RT-qPCR",
+            "species": "not_specified",
+            "in_vivo_vitro": "in_vivo",
+            "n_per_group": "6",
+            "result_direction": "decreased",
+            "statistical_significance": "all p < 0.01",
+            "glp": false
+          }
+        ],
+        "sources": [
+          {
+            "section": "figure_caption",
+            "figure": "FIGURE 4",
+            "direct_quote": "11h strongly downregulates pro-inflammatory gene expression in the MYD88 pathway (all p < 0.01)"
+          }
+        ]
+      }
+    },
+    {
+      "group": "edges",
+      "data": {
+        "id": "DRUG_11H__UNKNOWN_BRAIN_MRNA_LEVELS__demonstrates CNS penetration via",
+        "source": "DRUG_11H",
+        "target": "UNKNOWN_BRAIN_MRNA_LEVELS",
+        "relationship": "demonstrates CNS penetration via",
+        "relationship_direction": "measurement",
+        "category": "pharmacokinetics",
+        "evidence_type": "directly_measured",
+        "glp": false,
+        "quantitative_values": [],
+        "experimental_conditions": [
+          {
+            "assay_or_model": "RT-qPCR of brain tissue",
+            "species": "not_specified",
+            "in_vivo_vitro": "in_vivo",
+            "n_per_group": "6",
+            "result_direction": "decreased",
+            "glp": false
+          }
+        ],
+        "sources": [
+          {
+            "section": "figure_caption",
+            "figure": "FIGURE 4",
+            "direct_quote": "RT-qPCR analysis of brain samples from the same study as in Figure 3"
+          }
+        ]
+      }
+    },
+    {
+      "group": "edges",
+      "data": {
+        "id": "DRUG_11H__UNKNOWN_SIX_MAJOR_HUMAN_CYP450_ISOENZYMES__shows no meaningful inhibition",
+        "source": "DRUG_11H",
+        "target": "UNKNOWN_SIX_MAJOR_HUMAN_CYP450_ISOENZYMES",
+        "relationship": "shows no meaningful inhibition",
+        "relationship_direction": "neutral",
+        "category": "safety_tolerability",
+        "evidence_type": "directly_measured",
+        "glp": false,
+        "quantitative_values": [
+          "no meaningful inhibition at 100 nM"
+        ],
+        "experimental_conditions": [
+          {
+            "assay_or_model": "CYP450 inhibition assay",
+            "dose": "100 nM",
+            "in_vivo_vitro": "in_vitro",
+            "species": "human",
+            "result_direction": "no_change",
+            "glp": false
+          }
+        ],
+        "sources": [
+          {
+            "section": "figure_caption",
+            "figure": "FIGURE 5",
+            "direct_quote": "11h showed no meaningful inhibition of six major human CYP450 isoenzymes at 100 nM"
+          }
+        ]
+      }
+    },
+    {
+      "group": "edges",
+      "data": {
+        "id": "DRUG_11H__ENZYME_CYP1A2__moderately inhibits",
+        "source": "DRUG_11H",
+        "target": "ENZYME_CYP1A2",
+        "relationship": "moderately inhibits",
+        "relationship_direction": "inhibition",
+        "category": "safety_tolerability",
+        "evidence_type": "directly_measured",
+        "glp": false,
+        "quantitative_values": [
+          "moderate inhibition at 10 \u03bcM; IC50 > 50 \u03bcM"
+        ],
+        "experimental_conditions": [
+          {
+            "assay_or_model": "CYP450 inhibition assay",
+            "dose": "10 \u03bcM",
+            "in_vivo_vitro": "in_vitro",
+            "species": "human",
+            "result_direction": "increased",
+            "glp": false
+          }
+        ],
+        "sources": [
+          {
+            "section": "figure_caption",
+            "figure": "FIGURE 5",
+            "direct_quote": "Moderate inhibition of CYP1A2 and CYP2C19 was observed at 10 \u03bcM, but IC 50 values for both exceeded 50 \u03bcM"
+          }
+        ]
+      }
+    },
+    {
+      "group": "edges",
+      "data": {
+        "id": "DRUG_11H__ENZYME_CYP2C19__moderately inhibits",
+        "source": "DRUG_11H",
+        "target": "ENZYME_CYP2C19",
+        "relationship": "moderately inhibits",
+        "relationship_direction": "inhibition",
+        "category": "safety_tolerability",
+        "evidence_type": "directly_measured",
+        "glp": false,
+        "quantitative_values": [
+          "moderate inhibition at 10 \u03bcM; IC50 > 50 \u03bcM"
+        ],
+        "experimental_conditions": [
+          {
+            "assay_or_model": "CYP450 inhibition assay",
+            "dose": "10 \u03bcM",
+            "in_vivo_vitro": "in_vitro",
+            "species": "human",
+            "result_direction": "increased",
+            "glp": false
+          }
+        ],
+        "sources": [
+          {
+            "section": "figure_caption",
+            "figure": "FIGURE 5",
+            "direct_quote": "Moderate inhibition of CYP1A2 and CYP2C19 was observed at 10 \u03bcM, but IC 50 values for both exceeded 50 \u03bcM"
+          }
+        ]
+      }
+    },
+    {
+      "group": "edges",
+      "data": {
+        "id": "DRUG_11H__UNKNOWN_CYP_MEDIATED_DRUG_DRUG_INTERACTIONS__demonstrates low potential for",
+        "source": "DRUG_11H",
+        "target": "UNKNOWN_CYP_MEDIATED_DRUG_DRUG_INTERACTIONS",
+        "relationship": "demonstrates low potential for",
+        "relationship_direction": "neutral",
+        "category": "safety_tolerability",
+        "evidence_type": "paper_claims",
+        "glp": false,
+        "quantitative_values": [],
+        "experimental_conditions": [],
+        "sources": [
+          {
+            "section": "figure_caption",
+            "figure": "FIGURE 5",
+            "direct_quote": "indicating a low potential for clinically relevant CYP-mediated drug-drug interactions"
+          }
+        ]
+      }
+    },
+    {
+      "group": "edges",
+      "data": {
+        "id": "DRUG_11H__TARGET_HERG__does not inhibit",
+        "source": "DRUG_11H",
+        "target": "TARGET_HERG",
+        "relationship": "does not inhibit",
+        "relationship_direction": "neutral",
+        "category": "safety_tolerability",
+        "evidence_type": "directly_measured",
+        "glp": false,
+        "quantitative_values": [
+          "no inhibition at 10 nM or 10 \u03bcM"
+        ],
+        "experimental_conditions": [
+          {
+            "assay_or_model": "ion channel inhibition assay",
+            "dose": "10 nM and 10 \u03bcM",
+            "in_vivo_vitro": "in_vitro",
+            "species": "human",
+            "result_direction": "no_change",
+            "glp": false
+          }
+        ],
+        "sources": [
+          {
+            "section": "figure_caption",
+            "figure": "FIGURE 5",
+            "direct_quote": "11h did not inhibit hERG, Cav1.2, or Nav1.5 ion channels at either 10 nM or 10 \u03bcM"
+          }
+        ]
+      }
+    },
+    {
+      "group": "edges",
+      "data": {
+        "id": "DRUG_11H__TARGET_CAV12__does not inhibit",
+        "source": "DRUG_11H",
+        "target": "TARGET_CAV12",
+        "relationship": "does not inhibit",
+        "relationship_direction": "neutral",
+        "category": "safety_tolerability",
+        "evidence_type": "directly_measured",
+        "glp": false,
+        "quantitative_values": [
+          "no inhibition at 10 nM or 10 \u03bcM"
+        ],
+        "experimental_conditions": [
+          {
+            "assay_or_model": "ion channel inhibition assay",
+            "dose": "10 nM and 10 \u03bcM",
+            "in_vivo_vitro": "in_vitro",
+            "species": "human",
+            "result_direction": "no_change",
+            "glp": false
+          }
+        ],
+        "sources": [
+          {
+            "section": "figure_caption",
+            "figure": "FIGURE 5",
+            "direct_quote": "11h did not inhibit hERG, Cav1.2, or Nav1.5 ion channels at either 10 nM or 10 \u03bcM"
+          }
+        ]
+      }
+    },
+    {
+      "group": "edges",
+      "data": {
+        "id": "DRUG_11H__TARGET_NAV15__does not inhibit",
+        "source": "DRUG_11H",
+        "target": "TARGET_NAV15",
+        "relationship": "does not inhibit",
+        "relationship_direction": "neutral",
+        "category": "safety_tolerability",
+        "evidence_type": "directly_measured",
+        "glp": false,
+        "quantitative_values": [
+          "no inhibition at 10 nM or 10 \u03bcM"
+        ],
+        "experimental_conditions": [
+          {
+            "assay_or_model": "ion channel inhibition assay",
+            "dose": "10 nM and 10 \u03bcM",
+            "in_vivo_vitro": "in_vitro",
+            "species": "human",
+            "result_direction": "no_change",
+            "glp": false
+          }
+        ],
+        "sources": [
+          {
+            "section": "figure_caption",
+            "figure": "FIGURE 5",
+            "direct_quote": "11h did not inhibit hERG, Cav1.2, or Nav1.5 ion channels at either 10 nM or 10 \u03bcM"
+          }
+        ]
+      }
+    },
+    {
+      "group": "edges",
+      "data": {
+        "id": "DRUG_11H__UNKNOWN_PROARRHYTHMIC_LIABILITY__demonstrates minimal",
+        "source": "DRUG_11H",
+        "target": "UNKNOWN_PROARRHYTHMIC_LIABILITY",
+        "relationship": "demonstrates minimal",
+        "relationship_direction": "neutral",
+        "category": "safety_tolerability",
+        "evidence_type": "paper_claims",
+        "glp": false,
+        "quantitative_values": [],
+        "experimental_conditions": [],
+        "sources": [
+          {
+            "section": "figure_caption",
+            "figure": "FIGURE 5",
+            "direct_quote": "suggesting minimal proarrhythmic liability"
+          }
+        ]
+      }
+    },
+    {
+      "group": "edges",
+      "data": {
+        "id": "DRUG_11H__UNKNOWN_IN_VITRO_SAFETY_PHARMACOLOGY_PROFILE__characterized in",
+        "source": "DRUG_11H",
+        "target": "UNKNOWN_IN_VITRO_SAFETY_PHARMACOLOGY_PROFILE",
+        "relationship": "characterized in",
+        "relationship_direction": "measurement",
+        "category": "study_design",
+        "evidence_type": "directly_measured",
+        "glp": false,
+        "quantitative_values": [],
+        "experimental_conditions": [
+          {
+            "assay_or_model": "in vitro safety pharmacology panel (CYP450 and ion channel assays)",
+            "in_vivo_vitro": "in_vitro",
+            "species": "human",
+            "glp": false
+          }
+        ],
+        "sources": [
+          {
+            "section": "figure_caption",
+            "figure": "FIGURE 5",
+            "direct_quote": "In vitro safety pharmacology profile of 11h"
+          }
+        ]
+      }
+    },
+    {
+      "group": "edges",
+      "data": {
+        "id": "DRUG_11H__UNKNOWN_ADVERSE_EFFECTS__did not produce",
+        "source": "DRUG_11H",
+        "target": "UNKNOWN_ADVERSE_EFFECTS",
+        "relationship": "did not produce",
+        "relationship_direction": "neutral",
+        "category": "safety_tolerability",
+        "evidence_type": "directly_measured",
+        "glp": false,
+        "quantitative_values": [
+          "no significant adverse effects at any dose (2.5-40 mg/kg)"
+        ],
+        "experimental_conditions": [
+          {
+            "species": "mouse",
+            "in_vivo_vitro": "in_vivo",
+            "route": "oral",
+            "dose": "2.5-40 mg/kg single dose",
+            "duration": "7 days monitoring",
+            "n_per_group": "5",
+            "assay_or_model": "maximum tolerated dose (MTD) study",
+            "result_direction": "no_change",
+            "glp": false
+          }
+        ],
+        "sources": [
+          {
+            "section": "figure_caption",
+            "figure": "FIGURE 7",
+            "direct_quote": "No significant adverse effects were observed at any dose."
+          }
+        ]
+      }
+    },
+    {
+      "group": "edges",
+      "data": {
+        "id": "DRUG_11H__MEASUREMENT_BODY_WEIGHT__causes transient decrease",
+        "source": "DRUG_11H",
+        "target": "MEASUREMENT_BODY_WEIGHT",
+        "relationship": "causes transient decrease",
+        "relationship_direction": "other",
+        "category": "safety_tolerability",
+        "evidence_type": "directly_measured",
+        "glp": false,
+        "quantitative_values": [
+          "~5% weight loss at 40 mg/kg, resolved by day 7",
+          "~5% weight loss at week 6, recovered by week 10"
+        ],
+        "experimental_conditions": [
+          {
+            "species": "mouse",
+            "in_vivo_vitro": "in_vivo",
+            "route": "oral",
+            "dose": "40 mg/kg single dose",
+            "duration": "7 days monitoring",
+            "n_per_group": "5",
+            "assay_or_model": "maximum tolerated dose (MTD) study",
+            "result_direction": "decreased",
+            "glp": false
+          },
+          {
+            "species": "rat",
+            "in_vivo_vitro": "in_vivo",
+            "route": "ip",
+            "dose": "1.25 mg/kg once daily",
+            "duration": "28 days dosing, 10 weeks monitoring",
+            "n_per_group": "5",
+            "assay_or_model": "repeat-dose study",
+            "result_direction": "decreased",
+            "glp": false
+          }
+        ],
+        "sources": [
+          {
+            "section": "figure_caption",
+            "figure": "FIGURE 7",
+            "direct_quote": "A transient \u223c5% weight loss at 40 mg/kg resolved by day 7"
+          },
+          {
+            "section": "figure_caption",
+            "figure": "FIGURE 7",
+            "direct_quote": "Animals exhibited a transient \u223c5% weight loss at week 6 that recovered by week 10"
+          }
+        ]
+      }
+    },
+    {
+      "group": "edges",
+      "data": {
+        "id": "DRUG_11H__MEASUREMENT_MTD__did not reach",
+        "source": "DRUG_11H",
+        "target": "MEASUREMENT_MTD",
+        "relationship": "did not reach",
+        "relationship_direction": "neutral",
+        "category": "safety_tolerability",
+        "evidence_type": "directly_measured",
+        "glp": false,
+        "quantitative_values": [
+          "MTD not reached up to 40 mg/kg"
+        ],
+        "experimental_conditions": [
+          {
+            "species": "mouse",
+            "in_vivo_vitro": "in_vivo",
+            "route": "oral",
+            "dose": "2.5-40 mg/kg single dose",
+            "duration": "7 days monitoring",
+            "n_per_group": "5",
+            "assay_or_model": "maximum tolerated dose (MTD) study",
+            "result_direction": "not_reached",
+            "glp": false
+          }
+        ],
+        "sources": [
+          {
+            "section": "figure_caption",
+            "figure": "FIGURE 7",
+            "direct_quote": "an MTD was not reached"
+          }
+        ]
+      }
+    },
+    {
+      "group": "edges",
+      "data": {
+        "id": "DRUG_11H__UNKNOWN_TOXICITY_THRESHOLD__did not meet",
+        "source": "DRUG_11H",
+        "target": "UNKNOWN_TOXICITY_THRESHOLD",
+        "relationship": "did not meet",
+        "relationship_direction": "neutral",
+        "category": "safety_tolerability",
+        "evidence_type": "directly_measured",
+        "glp": false,
+        "quantitative_values": [
+          "predefined toxicity threshold \u226510% weight loss not met; observed ~5%"
+        ],
+        "experimental_conditions": [
+          {
+            "species": "mouse",
+            "in_vivo_vitro": "in_vivo",
+            "route": "oral",
+            "dose": "40 mg/kg single dose",
+            "duration": "7 days monitoring",
+            "n_per_group": "5",
+            "assay_or_model": "maximum tolerated dose (MTD) study",
+            "result_direction": "no_change",
+            "glp": false
+          }
+        ],
+        "sources": [
+          {
+            "section": "figure_caption",
+            "figure": "FIGURE 7",
+            "direct_quote": "did not meet the predefined toxicity threshold (\u226510% loss)"
+          }
+        ]
+      }
+    },
+    {
+      "group": "edges",
+      "data": {
+        "id": "DRUG_11H__UNKNOWN_TOLERABILITY__demonstrates",
+        "source": "DRUG_11H",
+        "target": "UNKNOWN_TOLERABILITY",
+        "relationship": "demonstrates",
+        "relationship_direction": "measurement",
+        "category": "safety_tolerability",
+        "evidence_type": "directly_measured",
+        "glp": false,
+        "quantitative_values": [
+          "well tolerated up to 40 mg/kg single oral dose"
+        ],
+        "experimental_conditions": [
+          {
+            "species": "mouse",
+            "in_vivo_vitro": "in_vivo",
+            "route": "oral",
+            "dose": "2.5-40 mg/kg single dose",
+            "duration": "7 days monitoring",
+            "n_per_group": "5",
+            "assay_or_model": "maximum tolerated dose (MTD) study",
+            "result_direction": "not_specified",
+            "glp": false
+          }
+        ],
+        "sources": [
+          {
+            "section": "figure_caption",
+            "figure": "FIGURE 7",
+            "direct_quote": "indicating 11h was well tolerated and an MTD was not reached"
+          }
+        ]
+      }
+    },
+    {
+      "group": "edges",
+      "data": {
+        "id": "DRUG_11H__UNKNOWN_BEHAVIORAL_CHANGES__did not produce",
+        "source": "DRUG_11H",
+        "target": "UNKNOWN_BEHAVIORAL_CHANGES",
+        "relationship": "did not produce",
+        "relationship_direction": "neutral",
+        "category": "safety_tolerability",
+        "evidence_type": "directly_measured",
+        "glp": false,
+        "quantitative_values": [
+          "no behavioral changes noted"
+        ],
+        "experimental_conditions": [
+          {
+            "species": "rat",
+            "in_vivo_vitro": "in_vivo",
+            "route": "ip",
+            "dose": "1.25 mg/kg once daily",
+            "duration": "28 days dosing, 10 weeks monitoring",
+            "n_per_group": "5",
+            "assay_or_model": "repeat-dose study",
+            "result_direction": "no_change",
+            "glp": false
+          }
+        ],
+        "sources": [
+          {
+            "section": "figure_caption",
+            "figure": "FIGURE 7",
+            "direct_quote": "with no behavioral changes noted"
+          }
+        ]
+      }
+    },
+    {
+      "group": "edges",
+      "data": {
+        "id": "DRUG_11H__UNKNOWN_TNF\u0391__suppresses",
+        "source": "DRUG_11H",
+        "target": "UNKNOWN_TNF\u0391",
+        "relationship": "suppresses",
+        "relationship_direction": "inhibition",
+        "category": "pathway_biology",
+        "evidence_type": "directly_measured",
+        "glp": false,
+        "quantitative_values": [],
+        "experimental_conditions": [
+          {
+            "species": "ferret",
+            "in_vivo_vitro": "in_vivo",
+            "route": "oral",
+            "dose": "0.5\u201319.2 mg/kg",
+            "n_per_group": "5",
+            "assay_or_model": "TNF\u03b1 ELISA from blood samples",
+            "result_direction": "decreased",
+            "glp": false
+          }
+        ],
+        "sources": [
+          {
+            "section": "figure_caption",
+            "figure": "FIGURE 8",
+            "direct_quote": "11h also produced a non-linear, dose-dependent suppression of TNF\u03b1"
+          }
+        ]
+      }
+    },
+    {
+      "group": "edges",
+      "data": {
+        "id": "DRUG_11H__UNKNOWN_TNF\u0391_SUPPRESSION_DOSE_RESPONSE__demonstrates",
+        "source": "DRUG_11H",
+        "target": "UNKNOWN_TNF\u0391_SUPPRESSION_DOSE_RESPONSE",
+        "relationship": "demonstrates",
+        "relationship_direction": "measurement",
+        "category": "pharmacokinetics",
+        "evidence_type": "directly_measured",
+        "glp": false,
+        "quantitative_values": [],
+        "experimental_conditions": [
+          {
+            "species": "ferret",
+            "in_vivo_vitro": "in_vivo",
+            "route": "oral",
+            "dose": "0.5\u201319.2 mg/kg",
+            "n_per_group": "5",
+            "result_direction": "decreased",
+            "glp": false
+          }
+        ],
+        "sources": [
+          {
+            "section": "figure_caption",
+            "figure": "FIGURE 8",
+            "direct_quote": "11h also produced a non-linear, dose-dependent suppression of TNF\u03b1"
+          }
+        ]
+      }
+    },
+    {
+      "group": "edges",
+      "data": {
+        "id": "DRUG_11H__UNKNOWN_OTHER_ADVERSE_EFFECTS__monitored for",
+        "source": "DRUG_11H",
+        "target": "UNKNOWN_OTHER_ADVERSE_EFFECTS",
+        "relationship": "monitored for",
+        "relationship_direction": "measurement",
+        "category": "safety_tolerability",
+        "evidence_type": "directly_measured",
+        "glp": false,
+        "quantitative_values": [],
+        "experimental_conditions": [
+          {
+            "species": "ferret",
+            "in_vivo_vitro": "in_vivo",
+            "route": "oral",
+            "dose": "0.5\u201319.2 mg/kg",
+            "n_per_group": "5",
+            "glp": false
+          }
+        ],
+        "sources": [
+          {
+            "section": "figure_caption",
+            "figure": "FIGURE 8",
+            "direct_quote": "were monitored for signs of emesis (retching, salivation, vomiting), and other adverse effects"
+          }
+        ]
+      }
+    },
+    {
+      "group": "edges",
+      "data": {
+        "id": "DRUG_11H__UNKNOWN_TIME_SPENT_IN_OPEN_ARMS_(ELEVATED_PLUS_MAZE)__produces no difference from vehicle",
+        "source": "DRUG_11H",
+        "target": "UNKNOWN_TIME_SPENT_IN_OPEN_ARMS_(ELEVATED_PLUS_MAZE)",
+        "relationship": "produces no difference from vehicle",
+        "relationship_direction": "neutral",
+        "category": "safety_tolerability",
+        "evidence_type": "directly_measured",
+        "glp": false,
+        "quantitative_values": [],
+        "experimental_conditions": [
+          {
+            "species": "rat",
+            "in_vivo_vitro": "in_vivo",
+            "dose": "0.375 mg/kg",
+            "route": "ip",
+            "duration": "7 days daily prior to testing",
+            "assay_or_model": "elevated plus maze",
+            "n_per_group": "8",
+            "result_direction": "no_change",
+            "glp": false,
+            "statistical_significance": "not significant vs vehicle"
+          }
+        ],
+        "sources": [
+          {
+            "section": "figure_caption",
+            "figure": "FIGURE 9",
+            "direct_quote": "11h produced no differences from vehicle in (A) time spent in...the open arms"
+          }
+        ]
+      }
+    },
+    {
+      "group": "edges",
+      "data": {
+        "id": "DRUG_11H__UNKNOWN_ENTRIES_INTO_OPEN_ARMS_(ELEVATED_PLUS_MAZE)__produces no difference from vehicle",
+        "source": "DRUG_11H",
+        "target": "UNKNOWN_ENTRIES_INTO_OPEN_ARMS_(ELEVATED_PLUS_MAZE)",
+        "relationship": "produces no difference from vehicle",
+        "relationship_direction": "neutral",
+        "category": "safety_tolerability",
+        "evidence_type": "directly_measured",
+        "glp": false,
+        "quantitative_values": [],
+        "experimental_conditions": [
+          {
+            "species": "rat",
+            "in_vivo_vitro": "in_vivo",
+            "dose": "0.375 mg/kg",
+            "route": "ip",
+            "duration": "7 days daily prior to testing",
+            "assay_or_model": "elevated plus maze",
+            "n_per_group": "8",
+            "result_direction": "no_change",
+            "glp": false,
+            "statistical_significance": "not significant vs vehicle"
+          }
+        ],
+        "sources": [
+          {
+            "section": "figure_caption",
+            "figure": "FIGURE 9",
+            "direct_quote": "11h produced no differences from vehicle in...(B) entries into the open arms"
+          }
+        ]
+      }
+    },
+    {
+      "group": "edges",
+      "data": {
+        "id": "DRUG_11H__UNKNOWN_TIME_SPENT_IN_OPEN_ARMS_(ZERO_MAZE)__significantly greater than rimonabant, no difference from vehicle",
+        "source": "DRUG_11H",
+        "target": "UNKNOWN_TIME_SPENT_IN_OPEN_ARMS_(ZERO_MAZE)",
+        "relationship": "significantly greater than rimonabant, no difference from vehicle",
+        "relationship_direction": "neutral",
+        "category": "safety_tolerability",
+        "evidence_type": "directly_measured",
+        "glp": false,
+        "quantitative_values": [],
+        "experimental_conditions": [
+          {
+            "species": "rat",
+            "in_vivo_vitro": "in_vivo",
+            "dose": "0.375 mg/kg",
+            "route": "ip",
+            "duration": "7 days daily prior to testing",
+            "assay_or_model": "zero maze",
+            "n_per_group": "8",
+            "result_direction": "no_change",
+            "glp": false,
+            "statistical_significance": "significant vs rimonabant, not significant vs vehicle"
+          }
+        ],
+        "sources": [
+          {
+            "section": "figure_caption",
+            "figure": "FIGURE 9",
+            "direct_quote": "11h-treated animals showed significantly greater (C) time spent...compared to rimonabant-treated mice"
+          }
+        ]
+      }
+    },
+    {
+      "group": "edges",
+      "data": {
+        "id": "DRUG_11H__UNKNOWN_ENTRIES_INTO_OPEN_ARMS_(ZERO_MAZE)__significantly greater than rimonabant, no difference from vehicle",
+        "source": "DRUG_11H",
+        "target": "UNKNOWN_ENTRIES_INTO_OPEN_ARMS_(ZERO_MAZE)",
+        "relationship": "significantly greater than rimonabant, no difference from vehicle",
+        "relationship_direction": "neutral",
+        "category": "safety_tolerability",
+        "evidence_type": "directly_measured",
+        "glp": false,
+        "quantitative_values": [],
+        "experimental_conditions": [
+          {
+            "species": "rat",
+            "in_vivo_vitro": "in_vivo",
+            "dose": "0.375 mg/kg",
+            "route": "ip",
+            "duration": "7 days daily prior to testing",
+            "assay_or_model": "zero maze",
+            "n_per_group": "8",
+            "result_direction": "no_change",
+            "glp": false,
+            "statistical_significance": "significant vs rimonabant, not significant vs vehicle"
+          }
+        ],
+        "sources": [
+          {
+            "section": "figure_caption",
+            "figure": "FIGURE 9",
+            "direct_quote": "11h-treated animals showed significantly greater...(D) entries into the open arms compared to rimonabant"
+          }
+        ]
+      }
+    },
+    {
+      "group": "edges",
+      "data": {
+        "id": "DRUG_11H__UNKNOWN_IMMOBILITY_DURATION_(FORCED_SWIM_TEST)__significantly decreased",
+        "source": "DRUG_11H",
+        "target": "UNKNOWN_IMMOBILITY_DURATION_(FORCED_SWIM_TEST)",
+        "relationship": "significantly decreased",
+        "relationship_direction": "inhibition",
+        "category": "safety_tolerability",
+        "evidence_type": "directly_measured",
+        "glp": false,
+        "quantitative_values": [],
+        "experimental_conditions": [
+          {
+            "species": "rat",
+            "in_vivo_vitro": "in_vivo",
+            "dose": "0.375 mg/kg",
+            "route": "ip",
+            "duration": "21 days daily",
+            "assay_or_model": "forced swim test (FST)",
+            "n_per_group": "8",
+            "result_direction": "decreased",
+            "glp": false
+          }
+        ],
+        "sources": [
+          {
+            "section": "figure_caption",
+            "figure": "FIGURE 9",
+            "direct_quote": "11h treatment significantly decreased immobility duration"
+          }
+        ]
+      }
+    },
+    {
+      "group": "edges",
+      "data": {
+        "id": "DRUG_11H__UNKNOWN_LETHARGY__absence of adverse effect",
+        "source": "DRUG_11H",
+        "target": "UNKNOWN_LETHARGY",
+        "relationship": "absence of adverse effect",
+        "relationship_direction": "neutral",
+        "category": "safety_tolerability",
+        "evidence_type": "directly_measured",
+        "glp": false,
+        "quantitative_values": [],
+        "experimental_conditions": [
+          {
+            "species": "rat",
+            "in_vivo_vitro": "in_vivo",
+            "dose": "0.375 mg/kg",
+            "route": "ip",
+            "result_direction": "no_change",
+            "glp": false
+          }
+        ],
+        "sources": [
+          {
+            "section": "figure_caption",
+            "figure": "FIGURE 9",
+            "direct_quote": "No lethargy, agitation, or abnormal behaviors were observed in any assay"
+          }
+        ]
+      }
+    },
+    {
+      "group": "edges",
+      "data": {
+        "id": "DRUG_11H__UNKNOWN_AGITATION__absence of adverse effect",
+        "source": "DRUG_11H",
+        "target": "UNKNOWN_AGITATION",
+        "relationship": "absence of adverse effect",
+        "relationship_direction": "neutral",
+        "category": "safety_tolerability",
+        "evidence_type": "directly_measured",
+        "glp": false,
+        "quantitative_values": [],
+        "experimental_conditions": [
+          {
+            "species": "rat",
+            "in_vivo_vitro": "in_vivo",
+            "dose": "0.375 mg/kg",
+            "route": "ip",
+            "result_direction": "no_change",
+            "glp": false
+          }
+        ],
+        "sources": [
+          {
+            "section": "figure_caption",
+            "figure": "FIGURE 9",
+            "direct_quote": "No lethargy, agitation, or abnormal behaviors were observed in any assay"
+          }
+        ]
+      }
+    },
+    {
+      "group": "edges",
+      "data": {
+        "id": "DRUG_11H__UNKNOWN_ABNORMAL_BEHAVIORS__absence of adverse effect",
+        "source": "DRUG_11H",
+        "target": "UNKNOWN_ABNORMAL_BEHAVIORS",
+        "relationship": "absence of adverse effect",
+        "relationship_direction": "neutral",
+        "category": "safety_tolerability",
+        "evidence_type": "directly_measured",
+        "glp": false,
+        "quantitative_values": [],
+        "experimental_conditions": [
+          {
+            "species": "rat",
+            "in_vivo_vitro": "in_vivo",
+            "dose": "0.375 mg/kg",
+            "route": "ip",
+            "result_direction": "no_change",
+            "glp": false
+          }
+        ],
+        "sources": [
+          {
+            "section": "figure_caption",
+            "figure": "FIGURE 9",
+            "direct_quote": "No lethargy, agitation, or abnormal behaviors were observed in any assay"
+          }
+        ]
+      }
+    },
+    {
+      "group": "edges",
+      "data": {
+        "id": "DRUG_11H__UNKNOWN_ANXIETY_LIKE_BEHAVIOR__does not increase",
+        "source": "DRUG_11H",
+        "target": "UNKNOWN_ANXIETY_LIKE_BEHAVIOR",
+        "relationship": "does not increase",
+        "relationship_direction": "neutral",
+        "category": "safety_tolerability",
+        "evidence_type": "directly_measured",
+        "glp": false,
+        "quantitative_values": [],
+        "experimental_conditions": [
+          {
+            "species": "rat",
+            "in_vivo_vitro": "in_vivo",
+            "dose": "0.375 mg/kg",
+            "route": "ip",
+            "duration": "7 days daily prior to testing",
+            "assay_or_model": "elevated plus maze and zero maze",
+            "n_per_group": "8",
+            "result_direction": "no_change",
+            "glp": false
+          }
+        ],
+        "sources": [
+          {
+            "section": "figure_caption",
+            "figure": "FIGURE 9",
+            "direct_quote": "11h produced no differences from vehicle in (A) time spent in or (B) entries into the open arms"
+          }
+        ]
+      }
+    },
+    {
+      "group": "edges",
+      "data": {
+        "id": "DRUG_11H__UNKNOWN_DEPRESSIVE_LIKE_BEHAVIOR_(FST_IMMOBILITY)__decreases",
+        "source": "DRUG_11H",
+        "target": "UNKNOWN_DEPRESSIVE_LIKE_BEHAVIOR_(FST_IMMOBILITY)",
+        "relationship": "decreases",
+        "relationship_direction": "inhibition",
+        "category": "pathway_biology",
+        "evidence_type": "directly_measured",
+        "glp": false,
+        "quantitative_values": [],
+        "experimental_conditions": [
+          {
+            "species": "rat",
+            "in_vivo_vitro": "in_vivo",
+            "dose": "0.375 mg/kg",
+            "route": "ip",
+            "duration": "21 days daily",
+            "assay_or_model": "forced swim test (FST)",
+            "n_per_group": "8",
+            "result_direction": "decreased",
+            "glp": false
+          }
+        ],
+        "sources": [
+          {
+            "section": "figure_caption",
+            "figure": "FIGURE 9",
+            "direct_quote": "11h treatment significantly decreased immobility duration"
+          }
+        ]
+      }
+    },
+    {
+      "group": "edges",
+      "data": {
+        "id": "DRUG_11H__UNKNOWN_PDE4A10_BINDING_SITES__docked across",
+        "source": "DRUG_11H",
+        "target": "UNKNOWN_PDE4A10_BINDING_SITES",
+        "relationship": "docked across",
+        "relationship_direction": "binding",
+        "category": "molecular_properties",
+        "evidence_type": "directly_measured",
+        "glp": false,
+        "quantitative_values": [],
+        "experimental_conditions": [
+          {
+            "assay_or_model": "Glide docking",
+            "in_vivo_vitro": "in_silico",
+            "species": "in_silico",
+            "glp": false
+          }
+        ],
+        "sources": [
+          {
+            "section": "figure_caption",
+            "figure": "FIGURE 10",
+            "direct_quote": "comparative summary of docking metrics across four predicted PDE4A10 binding sites"
+          }
+        ]
+      }
+    },
+    {
+      "group": "edges",
+      "data": {
+        "id": "DRUG_11H__UNKNOWN_PDE4A10_SITE_2__docked and interaction mapped",
+        "source": "DRUG_11H",
+        "target": "UNKNOWN_PDE4A10_SITE_2",
+        "relationship": "docked and interaction mapped",
+        "relationship_direction": "binding",
+        "category": "molecular_properties",
+        "evidence_type": "directly_measured",
+        "glp": false,
+        "quantitative_values": [],
+        "experimental_conditions": [
+          {
+            "assay_or_model": "Glide docking / 2D interaction diagram",
+            "in_vivo_vitro": "in_silico",
+            "species": "in_silico",
+            "glp": false
+          }
+        ],
+        "sources": [
+          {
+            "section": "figure_caption",
+            "figure": "FIGURE 10",
+            "direct_quote": "Two-dimensional interaction diagrams depicting the key molecular interactions of 11h within Site 2 (C)"
+          }
+        ]
+      }
+    },
+    {
+      "group": "edges",
+      "data": {
+        "id": "DRUG_11H__UNKNOWN_PDE4A10_SITE_3__demonstrates deeper hydrophobic embedding and enhanced binding stability",
+        "source": "DRUG_11H",
+        "target": "UNKNOWN_PDE4A10_SITE_3",
+        "relationship": "demonstrates deeper hydrophobic embedding and enhanced binding stability",
+        "relationship_direction": "binding",
+        "category": "molecular_properties",
+        "evidence_type": "directly_measured",
+        "glp": false,
+        "quantitative_values": [],
+        "experimental_conditions": [
+          {
+            "assay_or_model": "Glide docking / 3D docking view",
+            "in_vivo_vitro": "in_silico",
+            "species": "in_silico",
+            "glp": false
+          }
+        ],
+        "sources": [
+          {
+            "section": "figure_caption",
+            "figure": "FIGURE 10",
+            "direct_quote": "Site 3 shows deeper hydrophobic embedding and enhanced binding stability"
+          }
+        ]
+      }
+    },
+    {
+      "group": "edges",
+      "data": {
+        "id": "DRUG_11H__UNKNOWN_FOUR_PREDICTED_PDE4A10_BINDING_SITES__docked across",
+        "source": "DRUG_11H",
+        "target": "UNKNOWN_FOUR_PREDICTED_PDE4A10_BINDING_SITES",
+        "relationship": "docked across",
+        "relationship_direction": "binding",
+        "category": "study_design",
+        "evidence_type": "directly_measured",
+        "glp": false,
+        "quantitative_values": [],
+        "experimental_conditions": [
+          {
+            "assay_or_model": "Glide docking with Emodel, Lipo, Ecoul, Confnum metrics",
+            "in_vivo_vitro": "in_silico",
+            "species": "in_silico",
+            "glp": false
+          }
+        ],
+        "sources": [
+          {
+            "section": "figure_caption",
+            "figure": "FIGURE 10",
+            "direct_quote": "comparative summary of docking metrics across four predicted PDE4A10 binding sites"
+          }
+        ]
+      }
+    },
+    {
+      "group": "edges",
+      "data": {
+        "id": "DRUG_11H__UNKNOWN_PDE4_BINDING_SITES__in silico interaction mapping",
+        "source": "DRUG_11H",
+        "target": "UNKNOWN_PDE4_BINDING_SITES",
+        "relationship": "in silico interaction mapping",
+        "relationship_direction": "binding",
+        "category": "study_design",
+        "evidence_type": "directly_measured",
+        "glp": false,
+        "quantitative_values": [],
+        "experimental_conditions": [
+          {
+            "assay_or_model": "Glide docking, 2D interaction diagrams, 3D docking views",
+            "in_vivo_vitro": "in_silico",
+            "species": "in_silico",
+            "glp": false
+          }
+        ],
+        "sources": [
+          {
+            "section": "figure_caption",
+            "figure": "FIGURE 10",
+            "direct_quote": "In silico interaction mapping of 11h across PDE4 binding sites"
+          }
+        ]
+      }
+    },
+    {
+      "group": "edges",
+      "data": {
+        "id": "UNKNOWN_CAMP_INHIBITION_ASSAY__UNKNOWN_PDE4_ISOFORM_SELECTIVITY__measures",
+        "source": "UNKNOWN_CAMP_INHIBITION_ASSAY",
+        "target": "UNKNOWN_PDE4_ISOFORM_SELECTIVITY",
+        "relationship": "measures",
+        "relationship_direction": "measurement",
+        "category": "study_design",
+        "evidence_type": "directly_measured",
+        "glp": false,
+        "quantitative_values": [],
+        "experimental_conditions": [
+          {
+            "assay_or_model": "high-throughput cAMP inhibition assay",
+            "in_vivo_vitro": "in_vitro",
+            "species": "in_vitro",
+            "n_per_group": "duplicate measurements",
+            "glp": false
+          }
+        ],
+        "sources": [
+          {
+            "section": "figure_caption",
+            "figure": "FIGURE 1",
+            "direct_quote": "Isoform-specific activity of 11h was assessed in a high-throughput cAMP inhibition assay"
+          }
+        ]
+      }
+    },
+    {
+      "group": "edges",
+      "data": {
+        "id": "UNKNOWN_DOSE_RESPONSE_DATA__UNKNOWN_FOUR_PARAMETER_LOGISTIC_REGRESSION_MODEL__fitted with",
+        "source": "UNKNOWN_DOSE_RESPONSE_DATA",
+        "target": "UNKNOWN_FOUR_PARAMETER_LOGISTIC_REGRESSION_MODEL",
+        "relationship": "fitted with",
+        "relationship_direction": "measurement",
+        "category": "study_design",
+        "evidence_type": "directly_measured",
+        "glp": false,
+        "quantitative_values": [],
+        "experimental_conditions": [
+          {
+            "assay_or_model": "four-parameter logistic regression",
+            "in_vivo_vitro": "in_vitro",
+            "species": "in_vitro",
+            "glp": false
+          }
+        ],
+        "sources": [
+          {
+            "section": "figure_caption",
+            "figure": "FIGURE 1",
+            "direct_quote": "fitted with a four-parameter logistic regression model"
+          }
+        ]
+      }
+    },
+    {
+      "group": "edges",
+      "data": {
+        "id": "CONDITION_LPS__UNKNOWN_PRO_INFLAMMATORY_CYTOKINE_PRODUCTION__induces",
+        "source": "CONDITION_LPS",
+        "target": "UNKNOWN_PRO_INFLAMMATORY_CYTOKINE_PRODUCTION",
+        "relationship": "induces",
+        "relationship_direction": "activation",
+        "category": "pathway_biology",
+        "evidence_type": "directly_measured",
+        "glp": false,
+        "quantitative_values": [],
+        "experimental_conditions": [
+          {
+            "species": "mouse",
+            "in_vivo_vitro": "in_vitro",
+            "cell_line": "RAW 264.7, IMG",
+            "dose": "10 ng/mL",
+            "glp": false
+          }
+        ],
+        "sources": [
+          {
+            "section": "figure_caption",
+            "figure": "FIGURE 2",
+            "direct_quote": "stimulated with LPS (10 ng/mL)"
+          }
+        ]
+      }
+    },
+    {
+      "group": "edges",
+      "data": {
+        "id": "UNKNOWN_LPS_STIMULATION_PROTOCOL__UNKNOWN_RAW_264.7_AND_IMG_CYTOKINE_ASSAY__requires",
+        "source": "UNKNOWN_LPS_STIMULATION_PROTOCOL",
+        "target": "UNKNOWN_RAW_264.7_AND_IMG_CYTOKINE_ASSAY",
+        "relationship": "requires",
+        "relationship_direction": "other",
+        "category": "study_design",
+        "evidence_type": "directly_measured",
+        "glp": false,
+        "quantitative_values": [
+          "LPS 10 ng/mL, n=4 biological replicates"
+        ],
+        "experimental_conditions": [
+          {
+            "species": "mouse",
+            "in_vivo_vitro": "in_vitro",
+            "cell_line": "RAW 264.7, IMG",
+            "assay_or_model": "LPS-stimulated cytokine production assay",
+            "dose": "10 ng/mL LPS; increasing concentrations of 11h",
+            "n_per_group": "4",
+            "glp": false,
+            "statistical_significance": "* p \u2264 0.05, ** p \u2264 0.01 vs. control"
+          }
+        ],
+        "sources": [
+          {
+            "section": "figure_caption",
+            "figure": "FIGURE 2",
+            "direct_quote": "n = 4 biological replicates unless otherwise indicated"
+          }
+        ]
+      }
+    },
+    {
+      "group": "edges",
+      "data": {
+        "id": "UNKNOWN_HUMAN_PBMC_ASSAY__UNKNOWN_TNF\u0391_RELEASE_MEASUREMENT__measures",
+        "source": "UNKNOWN_HUMAN_PBMC_ASSAY",
+        "target": "UNKNOWN_TNF\u0391_RELEASE_MEASUREMENT",
+        "relationship": "measures",
+        "relationship_direction": "measurement",
+        "category": "study_design",
+        "evidence_type": "directly_measured",
+        "glp": false,
+        "quantitative_values": [],
+        "experimental_conditions": [
+          {
+            "species": "human",
+            "in_vivo_vitro": "in_vitro",
+            "cell_line": "PBMCs",
+            "assay_or_model": "LPS-stimulated PBMC TNF\u03b1 release assay",
+            "n_per_group": "4",
+            "glp": false,
+            "statistical_significance": "* p \u2264 0.05, ** p \u2264 0.01 vs. control"
+          }
+        ],
+        "sources": [
+          {
+            "section": "figure_caption",
+            "figure": "FIGURE 2",
+            "direct_quote": "In human PBMCs, 11h decreased LPS-induced TNF\u03b1 release"
+          }
+        ]
+      }
+    },
+    {
+      "group": "edges",
+      "data": {
+        "id": "CYTOKINE_CXCL10__UNKNOWN_MYD88_DEPENDENT_SIGNALING__involved in",
+        "source": "CYTOKINE_CXCL10",
+        "target": "UNKNOWN_MYD88_DEPENDENT_SIGNALING",
+        "relationship": "involved in",
+        "relationship_direction": "activation",
+        "category": "pathway_biology",
+        "evidence_type": "paper_claims",
+        "glp": false,
+        "quantitative_values": [],
+        "experimental_conditions": [],
+        "sources": [
+          {
+            "section": "figure_caption",
+            "figure": "FIGURE 4",
+            "direct_quote": "key inflammatory genes involved in MyD88-dependent signaling, including (A) CXCL10"
+          }
+        ]
+      }
+    },
+    {
+      "group": "edges",
+      "data": {
+        "id": "UNKNOWN_TNF\u0391__UNKNOWN_MYD88_DEPENDENT_SIGNALING__involved in",
+        "source": "UNKNOWN_TNF\u0391",
+        "target": "UNKNOWN_MYD88_DEPENDENT_SIGNALING",
+        "relationship": "involved in",
+        "relationship_direction": "activation",
+        "category": "pathway_biology",
+        "evidence_type": "paper_claims",
+        "glp": false,
+        "quantitative_values": [],
+        "experimental_conditions": [],
+        "sources": [
+          {
+            "section": "figure_caption",
+            "figure": "FIGURE 4",
+            "direct_quote": "key inflammatory genes involved in MyD88-dependent signaling, including...TNF\u03b1"
+          }
+        ]
+      }
+    },
+    {
+      "group": "edges",
+      "data": {
+        "id": "TRANSCRIPTION_FACTOR_NFKB__UNKNOWN_MYD88_DEPENDENT_SIGNALING__involved in",
+        "source": "TRANSCRIPTION_FACTOR_NFKB",
+        "target": "UNKNOWN_MYD88_DEPENDENT_SIGNALING",
+        "relationship": "involved in",
+        "relationship_direction": "activation",
+        "category": "pathway_biology",
+        "evidence_type": "paper_claims",
+        "glp": false,
+        "quantitative_values": [],
+        "experimental_conditions": [],
+        "sources": [
+          {
+            "section": "figure_caption",
+            "figure": "FIGURE 4",
+            "direct_quote": "key inflammatory genes involved in MyD88-dependent signaling, including...NFkB"
+          }
+        ]
+      }
+    },
+    {
+      "group": "edges",
+      "data": {
+        "id": "PROTEIN_MYD88__UNKNOWN_MYD88_DEPENDENT_SIGNALING__involved in",
+        "source": "PROTEIN_MYD88",
+        "target": "UNKNOWN_MYD88_DEPENDENT_SIGNALING",
+        "relationship": "involved in",
+        "relationship_direction": "activation",
+        "category": "pathway_biology",
+        "evidence_type": "paper_claims",
+        "glp": false,
+        "quantitative_values": [],
+        "experimental_conditions": [],
+        "sources": [
+          {
+            "section": "figure_caption",
+            "figure": "FIGURE 4",
+            "direct_quote": "key inflammatory genes involved in MyD88-dependent signaling, including...MYD88"
+          }
+        ]
+      }
+    },
+    {
+      "group": "edges",
+      "data": {
+        "id": "RECEPTOR_IL1R1__UNKNOWN_MYD88_DEPENDENT_SIGNALING__involved in",
+        "source": "RECEPTOR_IL1R1",
+        "target": "UNKNOWN_MYD88_DEPENDENT_SIGNALING",
+        "relationship": "involved in",
+        "relationship_direction": "activation",
+        "category": "pathway_biology",
+        "evidence_type": "paper_claims",
+        "glp": false,
+        "quantitative_values": [],
+        "experimental_conditions": [],
+        "sources": [
+          {
+            "section": "figure_caption",
+            "figure": "FIGURE 4",
+            "direct_quote": "key inflammatory genes involved in MyD88-dependent signaling, including...IL1R1"
+          }
+        ]
+      }
+    },
+    {
+      "group": "edges",
+      "data": {
+        "id": "GENE_FBL__UNKNOWN_MYD88_DEPENDENT_SIGNALING__involved in",
+        "source": "GENE_FBL",
+        "target": "UNKNOWN_MYD88_DEPENDENT_SIGNALING",
+        "relationship": "involved in",
+        "relationship_direction": "activation",
+        "category": "pathway_biology",
+        "evidence_type": "paper_claims",
+        "glp": false,
+        "quantitative_values": [],
+        "experimental_conditions": [],
+        "sources": [
+          {
+            "section": "figure_caption",
+            "figure": "FIGURE 4",
+            "direct_quote": "key inflammatory genes involved in MyD88-dependent signaling, including...FBL"
+          }
+        ]
+      }
+    },
+    {
+      "group": "edges",
+      "data": {
+        "id": "UNKNOWN_TRAAD__UNKNOWN_MYD88_DEPENDENT_SIGNALING__involved in",
+        "source": "UNKNOWN_TRAAD",
+        "target": "UNKNOWN_MYD88_DEPENDENT_SIGNALING",
+        "relationship": "involved in",
+        "relationship_direction": "activation",
+        "category": "pathway_biology",
+        "evidence_type": "paper_claims",
+        "glp": false,
+        "quantitative_values": [],
+        "experimental_conditions": [],
+        "sources": [
+          {
+            "section": "figure_caption",
+            "figure": "FIGURE 4",
+            "direct_quote": "key inflammatory genes involved in MyD88-dependent signaling, including...TRAAD"
+          }
+        ]
+      }
+    },
+    {
+      "group": "edges",
+      "data": {
+        "id": "UNKNOWN_RT_QPCR__UNKNOWN_BRAIN_SAMPLES__measures",
+        "source": "UNKNOWN_RT_QPCR",
+        "target": "UNKNOWN_BRAIN_SAMPLES",
+        "relationship": "measures",
+        "relationship_direction": "measurement",
+        "category": "study_design",
+        "evidence_type": "directly_measured",
+        "glp": false,
+        "quantitative_values": [],
+        "experimental_conditions": [
+          {
+            "assay_or_model": "RT-qPCR",
+            "species": "not_specified",
+            "in_vivo_vitro": "in_vivo",
+            "n_per_group": "6",
+            "glp": false
+          }
+        ],
+        "sources": [
+          {
+            "section": "figure_caption",
+            "figure": "FIGURE 4",
+            "direct_quote": "RT-qPCR analysis of brain samples from the same study as in Figure 3"
+          }
+        ]
+      }
+    },
+    {
+      "group": "edges",
+      "data": {
+        "id": "UNKNOWN_MTD_STUDY_IN_MICE__UNKNOWN_BEHAVIOR,_BODY_WEIGHT,_FOOD_WATER_INTAKE,_GENERAL_HEALTH__monitors",
+        "source": "UNKNOWN_MTD_STUDY_IN_MICE",
+        "target": "UNKNOWN_BEHAVIOR,_BODY_WEIGHT,_FOOD_WATER_INTAKE,_GENERAL_HEALTH",
+        "relationship": "monitors",
+        "relationship_direction": "measurement",
+        "category": "study_design",
+        "evidence_type": "directly_measured",
+        "glp": false,
+        "quantitative_values": [],
+        "experimental_conditions": [
+          {
+            "species": "mouse",
+            "in_vivo_vitro": "in_vivo",
+            "route": "oral",
+            "dose": "2.5-40 mg/kg single dose",
+            "duration": "7 days monitoring",
+            "n_per_group": "5",
+            "assay_or_model": "maximum tolerated dose (MTD) study",
+            "result_direction": "not_specified",
+            "glp": false
+          }
+        ],
+        "sources": [
+          {
+            "section": "figure_caption",
+            "figure": "FIGURE 7",
+            "direct_quote": "Mice were monitored for 7 days for behavior, body weight, food/water intake, and general health"
+          }
+        ]
+      }
+    },
+    {
+      "group": "edges",
+      "data": {
+        "id": "UNKNOWN_REPEAT_DOSE_STUDY_IN_RATS__UNKNOWN_BODY_WEIGHT_AND_GENERAL_HEALTH__monitors",
+        "source": "UNKNOWN_REPEAT_DOSE_STUDY_IN_RATS",
+        "target": "UNKNOWN_BODY_WEIGHT_AND_GENERAL_HEALTH",
+        "relationship": "monitors",
+        "relationship_direction": "measurement",
+        "category": "study_design",
+        "evidence_type": "directly_measured",
+        "glp": false,
+        "quantitative_values": [],
+        "experimental_conditions": [
+          {
+            "species": "rat",
+            "in_vivo_vitro": "in_vivo",
+            "route": "ip",
+            "dose": "1.25 mg/kg once daily",
+            "duration": "28 days dosing, 10 weeks monitoring",
+            "n_per_group": "5",
+            "assay_or_model": "repeat-dose study",
+            "result_direction": "not_specified",
+            "glp": false
+          }
+        ],
+        "sources": [
+          {
+            "section": "figure_caption",
+            "figure": "FIGURE 7",
+            "direct_quote": "Body weight and general health were monitored for 10 weeks"
+          }
+        ]
+      }
+    },
+    {
+      "group": "edges",
+      "data": {
+        "id": "UNKNOWN_DATA_PRESENTATION__UNKNOWN_MEAN_\u00b1_SEM__presented as",
+        "source": "UNKNOWN_DATA_PRESENTATION",
+        "target": "UNKNOWN_MEAN_\u00b1_SEM",
+        "relationship": "presented as",
+        "relationship_direction": "measurement",
+        "category": "study_design",
+        "evidence_type": "directly_measured",
+        "glp": false,
+        "quantitative_values": [],
+        "experimental_conditions": [
+          {
+            "species": "not_specified",
+            "in_vivo_vitro": "not_specified",
+            "result_direction": "not_specified",
+            "glp": false
+          }
+        ],
+        "sources": [
+          {
+            "section": "figure_caption",
+            "figure": "FIGURE 7",
+            "direct_quote": "Data are presented as mean \u00b1 SEM."
+          }
+        ]
+      }
+    },
+    {
+      "group": "edges",
+      "data": {
+        "id": "DRUG_IBUDILAST__OUTCOME_EMESIS__induces",
+        "source": "DRUG_IBUDILAST",
+        "target": "OUTCOME_EMESIS",
+        "relationship": "induces",
+        "relationship_direction": "activation",
+        "category": "safety_tolerability",
+        "evidence_type": "directly_measured",
+        "glp": false,
+        "quantitative_values": [
+          "1 of 5 animals vomited"
+        ],
+        "experimental_conditions": [
+          {
+            "species": "ferret",
+            "in_vivo_vitro": "in_vivo",
+            "route": "oral",
+            "dose": "10 mg/kg",
+            "n_per_group": "5",
+            "assay_or_model": "emetic liability assessment (retching, salivation, vomiting)",
+            "result_direction": "increased",
+            "glp": false
+          }
+        ],
+        "sources": [
+          {
+            "section": "figure_caption",
+            "figure": "FIGURE 8",
+            "direct_quote": "Ibudilast induced emesis in one of five animals"
+          }
+        ]
+      }
+    },
+    {
+      "group": "edges",
+      "data": {
+        "id": "UNKNOWN_11H_(0.5_MG_KG)__UNKNOWN_TNF\u0391_REDUCTION__achieves comparable reduction to",
+        "source": "UNKNOWN_11H_(0.5_MG_KG)",
+        "target": "UNKNOWN_TNF\u0391_REDUCTION",
+        "relationship": "achieves comparable reduction to",
+        "relationship_direction": "inhibition",
+        "category": "pathway_biology",
+        "evidence_type": "directly_measured",
+        "glp": false,
+        "quantitative_values": [],
+        "experimental_conditions": [
+          {
+            "species": "ferret",
+            "in_vivo_vitro": "in_vivo",
+            "route": "oral",
+            "dose": "0.5 mg/kg",
+            "n_per_group": "5",
+            "assay_or_model": "TNF\u03b1 ELISA from blood samples",
+            "result_direction": "decreased",
+            "glp": false
+          }
+        ],
+        "sources": [
+          {
+            "section": "figure_caption",
+            "figure": "FIGURE 8",
+            "direct_quote": "the 0.5 mg/kg dose achieving a reduction comparable to 10 mg/kg ibudilast"
+          }
+        ]
+      }
+    },
+    {
+      "group": "edges",
+      "data": {
+        "id": "UNKNOWN_IBUDILAST_(10_MG_KG)__UNKNOWN_TNF\u0391__reduces",
+        "source": "UNKNOWN_IBUDILAST_(10_MG_KG)",
+        "target": "UNKNOWN_TNF\u0391",
+        "relationship": "reduces",
+        "relationship_direction": "inhibition",
+        "category": "pathway_biology",
+        "evidence_type": "directly_measured",
+        "glp": false,
+        "quantitative_values": [],
+        "experimental_conditions": [
+          {
+            "species": "ferret",
+            "in_vivo_vitro": "in_vivo",
+            "route": "oral",
+            "dose": "10 mg/kg",
+            "n_per_group": "5",
+            "assay_or_model": "TNF\u03b1 ELISA from blood samples",
+            "result_direction": "decreased",
+            "glp": false
+          }
+        ],
+        "sources": [
+          {
+            "section": "figure_caption",
+            "figure": "FIGURE 8",
+            "direct_quote": "the 0.5 mg/kg dose achieving a reduction comparable to 10 mg/kg ibudilast"
+          }
+        ]
+      }
+    },
+    {
+      "group": "edges",
+      "data": {
+        "id": "UNKNOWN_FERRET_EMETIC_LIABILITY_AND_ANTI_INFLAMMATORY_STUDY__UNKNOWN_STUDY_DESIGN_PARAMETERS__requires",
+        "source": "UNKNOWN_FERRET_EMETIC_LIABILITY_AND_ANTI_INFLAMMATORY_STUDY",
+        "target": "UNKNOWN_STUDY_DESIGN_PARAMETERS",
+        "relationship": "requires",
+        "relationship_direction": "neutral",
+        "category": "study_design",
+        "evidence_type": "directly_measured",
+        "glp": false,
+        "quantitative_values": [],
+        "experimental_conditions": [
+          {
+            "species": "ferret",
+            "in_vivo_vitro": "in_vivo",
+            "route": "oral",
+            "dose": "11h: 0.5\u201319.2 mg/kg; ibudilast: 10 mg/kg",
+            "n_per_group": "5",
+            "assay_or_model": "emetic liability monitoring followed by blood collection for TNF\u03b1 ELISA",
+            "glp": false
+          }
+        ],
+        "sources": [
+          {
+            "section": "figure_caption",
+            "figure": "FIGURE 8",
+            "direct_quote": "Ferrets received single oral doses of 11h (0.5\u201319.2 mg/kg) or ibudilast (10 mg/kg) ( n = 5 per group)"
+          }
+        ]
+      }
+    },
+    {
+      "group": "edges",
+      "data": {
+        "id": "DRUG_RIMONABANT__UNKNOWN_OPEN_ARM_ENTRIES_(ELEVATED_PLUS_MAZE)__significantly reduced",
+        "source": "DRUG_RIMONABANT",
+        "target": "UNKNOWN_OPEN_ARM_ENTRIES_(ELEVATED_PLUS_MAZE)",
+        "relationship": "significantly reduced",
+        "relationship_direction": "inhibition",
+        "category": "safety_tolerability",
+        "evidence_type": "directly_measured",
+        "glp": false,
+        "quantitative_values": [],
+        "experimental_conditions": [
+          {
+            "species": "rat",
+            "in_vivo_vitro": "in_vivo",
+            "dose": "3 mg/kg",
+            "route": "ip",
+            "duration": "7 days daily prior to testing",
+            "assay_or_model": "elevated plus maze",
+            "n_per_group": "8",
+            "result_direction": "decreased",
+            "glp": false
+          }
+        ],
+        "sources": [
+          {
+            "section": "figure_caption",
+            "figure": "FIGURE 9",
+            "direct_quote": "rimonabant significantly reduced open-arm entries"
+          }
+        ]
+      }
+    },
+    {
+      "group": "edges",
+      "data": {
+        "id": "DRUG_RIMONABANT__UNKNOWN_ANXIETY_LIKE_BEHAVIOR_(ELEVATED_PLUS_MAZE)__increases",
+        "source": "DRUG_RIMONABANT",
+        "target": "UNKNOWN_ANXIETY_LIKE_BEHAVIOR_(ELEVATED_PLUS_MAZE)",
+        "relationship": "increases",
+        "relationship_direction": "activation",
+        "category": "safety_tolerability",
+        "evidence_type": "directly_measured",
+        "glp": false,
+        "quantitative_values": [],
+        "experimental_conditions": [
+          {
+            "species": "rat",
+            "in_vivo_vitro": "in_vivo",
+            "dose": "3 mg/kg",
+            "route": "ip",
+            "duration": "7 days daily prior to testing",
+            "assay_or_model": "elevated plus maze",
+            "n_per_group": "8",
+            "result_direction": "increased",
+            "glp": false
+          }
+        ],
+        "sources": [
+          {
+            "section": "figure_caption",
+            "figure": "FIGURE 9",
+            "direct_quote": "rimonabant significantly reduced open-arm entries"
+          }
+        ]
+      }
+    },
+    {
+      "group": "edges",
+      "data": {
+        "id": "UNKNOWN_ELEVATED_PLUS_MAZE_STUDY__UNKNOWN_NEUROBEHAVIORAL_SAFETY_ASSESSMENT__measures",
+        "source": "UNKNOWN_ELEVATED_PLUS_MAZE_STUDY",
+        "target": "UNKNOWN_NEUROBEHAVIORAL_SAFETY_ASSESSMENT",
+        "relationship": "measures",
+        "relationship_direction": "measurement",
+        "category": "study_design",
+        "evidence_type": "directly_measured",
+        "glp": false,
+        "quantitative_values": [],
+        "experimental_conditions": [
+          {
+            "species": "rat",
+            "in_vivo_vitro": "in_vivo",
+            "dose": "11h: 0.375 mg/kg; rimonabant: 3 mg/kg; vehicle",
+            "route": "ip",
+            "duration": "7 days daily prior to testing",
+            "assay_or_model": "elevated plus maze",
+            "n_per_group": "8",
+            "glp": false,
+            "statistical_significance": "* p \u2264 0.05, ** p \u2264 0.01, *** p \u2264 0.001"
+          }
+        ],
+        "sources": [
+          {
+            "section": "figure_caption",
+            "figure": "FIGURE 9",
+            "direct_quote": "Rats received daily intraperitoneal injections of 11h (0.375 mg/kg), rimonabant (3 mg/kg), or vehicle"
+          }
+        ]
+      }
+    },
+    {
+      "group": "edges",
+      "data": {
+        "id": "UNKNOWN_ZERO_MAZE_STUDY__UNKNOWN_NEUROBEHAVIORAL_SAFETY_ASSESSMENT__measures",
+        "source": "UNKNOWN_ZERO_MAZE_STUDY",
+        "target": "UNKNOWN_NEUROBEHAVIORAL_SAFETY_ASSESSMENT",
+        "relationship": "measures",
+        "relationship_direction": "measurement",
+        "category": "study_design",
+        "evidence_type": "directly_measured",
+        "glp": false,
+        "quantitative_values": [],
+        "experimental_conditions": [
+          {
+            "species": "rat",
+            "in_vivo_vitro": "in_vivo",
+            "dose": "11h: 0.375 mg/kg; rimonabant: 3 mg/kg; vehicle",
+            "route": "ip",
+            "duration": "7 days daily prior to testing",
+            "assay_or_model": "zero maze",
+            "n_per_group": "8",
+            "glp": false,
+            "statistical_significance": "* p \u2264 0.05, ** p \u2264 0.01, *** p \u2264 0.001"
+          }
+        ],
+        "sources": [
+          {
+            "section": "figure_caption",
+            "figure": "FIGURE 9",
+            "direct_quote": "In the zero maze, 11h-treated animals showed significantly greater (C) time spent and (D) entries"
+          }
+        ]
+      }
+    },
+    {
+      "group": "edges",
+      "data": {
+        "id": "UNKNOWN_FORCED_SWIM_TEST_STUDY__UNKNOWN_NEUROBEHAVIORAL_SAFETY_ASSESSMENT__measures",
+        "source": "UNKNOWN_FORCED_SWIM_TEST_STUDY",
+        "target": "UNKNOWN_NEUROBEHAVIORAL_SAFETY_ASSESSMENT",
+        "relationship": "measures",
+        "relationship_direction": "measurement",
+        "category": "study_design",
+        "evidence_type": "directly_measured",
+        "glp": false,
+        "quantitative_values": [],
+        "experimental_conditions": [
+          {
+            "species": "rat",
+            "in_vivo_vitro": "in_vivo",
+            "dose": "0.375 mg/kg",
+            "route": "ip",
+            "duration": "21 days daily",
+            "assay_or_model": "forced swim test (FST)",
+            "n_per_group": "8",
+            "glp": false,
+            "statistical_significance": "* p \u2264 0.05, ** p \u2264 0.01, *** p \u2264 0.001"
+          }
+        ],
+        "sources": [
+          {
+            "section": "figure_caption",
+            "figure": "FIGURE 9",
+            "direct_quote": "rats were treated with 11h (0.375 mg/kg, IP) or vehicle once daily for 21 days and evaluated in the FST"
+          }
+        ]
+      }
+    },
+    {
+      "group": "edges",
+      "data": {
+        "id": "UNKNOWN_PDE4A10_SITES_2_AND_3__UNKNOWN_MOST_FAVORABLE_BINDING_SITES__emerged as",
+        "source": "UNKNOWN_PDE4A10_SITES_2_AND_3",
+        "target": "UNKNOWN_MOST_FAVORABLE_BINDING_SITES",
+        "relationship": "emerged as",
+        "relationship_direction": "measurement",
+        "category": "molecular_properties",
+        "evidence_type": "directly_measured",
+        "glp": false,
+        "quantitative_values": [],
+        "experimental_conditions": [
+          {
+            "assay_or_model": "Glide docking",
+            "in_vivo_vitro": "in_silico",
+            "species": "in_silico",
+            "glp": false
+          }
+        ],
+        "sources": [
+          {
+            "section": "figure_caption",
+            "figure": "FIGURE 10",
+            "direct_quote": "Sites 2 and 3 emerged as the most favorable"
+          }
+        ]
+      }
+    },
+    {
+      "group": "edges",
+      "data": {
+        "id": "UNKNOWN_GLIDE_DOCKING_SCORE__UNKNOWN_PDE4A10_BINDING_SITE_EVALUATION__measures binding favorability",
+        "source": "UNKNOWN_GLIDE_DOCKING_SCORE",
+        "target": "UNKNOWN_PDE4A10_BINDING_SITE_EVALUATION",
+        "relationship": "measures binding favorability",
+        "relationship_direction": "measurement",
+        "category": "molecular_properties",
+        "evidence_type": "directly_measured",
+        "glp": false,
+        "quantitative_values": [],
+        "experimental_conditions": [
+          {
+            "assay_or_model": "Glide docking",
+            "in_vivo_vitro": "in_silico",
+            "species": "in_silico",
+            "glp": false
+          }
+        ],
+        "sources": [
+          {
+            "section": "figure_caption",
+            "figure": "FIGURE 10",
+            "direct_quote": "Metrics include Glide docking score, Emodel energy, lipophilic contribution (Lipo), electrostatic energy"
+          }
+        ]
+      }
+    },
+    {
+      "group": "edges",
+      "data": {
+        "id": "UNKNOWN_EMODEL_ENERGY__UNKNOWN_PDE4A10_BINDING_SITE_EVALUATION__measures binding energy",
+        "source": "UNKNOWN_EMODEL_ENERGY",
+        "target": "UNKNOWN_PDE4A10_BINDING_SITE_EVALUATION",
+        "relationship": "measures binding energy",
+        "relationship_direction": "measurement",
+        "category": "molecular_properties",
+        "evidence_type": "directly_measured",
+        "glp": false,
+        "quantitative_values": [],
+        "experimental_conditions": [
+          {
+            "assay_or_model": "Glide docking",
+            "in_vivo_vitro": "in_silico",
+            "species": "in_silico",
+            "glp": false
+          }
+        ],
+        "sources": [
+          {
+            "section": "figure_caption",
+            "figure": "FIGURE 10",
+            "direct_quote": "Emodel energy"
+          }
+        ]
+      }
+    },
+    {
+      "group": "edges",
+      "data": {
+        "id": "UNKNOWN_LIPO_(LIPOPHILIC_CONTRIBUTION)__UNKNOWN_PDE4A10_BINDING_SITE_EVALUATION__measures lipophilic interaction contribution",
+        "source": "UNKNOWN_LIPO_(LIPOPHILIC_CONTRIBUTION)",
+        "target": "UNKNOWN_PDE4A10_BINDING_SITE_EVALUATION",
+        "relationship": "measures lipophilic interaction contribution",
+        "relationship_direction": "measurement",
+        "category": "molecular_properties",
+        "evidence_type": "directly_measured",
+        "glp": false,
+        "quantitative_values": [],
+        "experimental_conditions": [
+          {
+            "assay_or_model": "Glide docking",
+            "in_vivo_vitro": "in_silico",
+            "species": "in_silico",
+            "glp": false
+          }
+        ],
+        "sources": [
+          {
+            "section": "figure_caption",
+            "figure": "FIGURE 10",
+            "direct_quote": "lipophilic contribution (Lipo)"
+          }
+        ]
+      }
+    },
+    {
+      "group": "edges",
+      "data": {
+        "id": "UNKNOWN_ECOUL_(ELECTROSTATIC_ENERGY)__UNKNOWN_PDE4A10_BINDING_SITE_EVALUATION__measures electrostatic interaction energy",
+        "source": "UNKNOWN_ECOUL_(ELECTROSTATIC_ENERGY)",
+        "target": "UNKNOWN_PDE4A10_BINDING_SITE_EVALUATION",
+        "relationship": "measures electrostatic interaction energy",
+        "relationship_direction": "measurement",
+        "category": "molecular_properties",
+        "evidence_type": "directly_measured",
+        "glp": false,
+        "quantitative_values": [],
+        "experimental_conditions": [
+          {
+            "assay_or_model": "Glide docking",
+            "in_vivo_vitro": "in_silico",
+            "species": "in_silico",
+            "glp": false
+          }
+        ],
+        "sources": [
+          {
+            "section": "figure_caption",
+            "figure": "FIGURE 10",
+            "direct_quote": "electrostatic energy (Ecoul)"
+          }
+        ]
+      }
+    },
+    {
+      "group": "edges",
+      "data": {
+        "id": "UNKNOWN_GLIDE_CONFNUM__UNKNOWN_CONFORMATIONAL_FLEXIBILITY__measures",
+        "source": "UNKNOWN_GLIDE_CONFNUM",
+        "target": "UNKNOWN_CONFORMATIONAL_FLEXIBILITY",
+        "relationship": "measures",
+        "relationship_direction": "measurement",
+        "category": "molecular_properties",
+        "evidence_type": "directly_measured",
+        "glp": false,
+        "quantitative_values": [],
+        "experimental_conditions": [
+          {
+            "assay_or_model": "Glide docking",
+            "in_vivo_vitro": "in_silico",
+            "species": "in_silico",
+            "glp": false
+          }
+        ],
+        "sources": [
+          {
+            "section": "figure_caption",
+            "figure": "FIGURE 10",
+            "direct_quote": "Glide confnum reflects the rank of sampled conformations; higher values suggest greater conformational flexibility"
+          }
+        ]
+      }
+    },
+    {
+      "group": "edges",
+      "data": {
+        "id": "UNKNOWN_DOCKING_METRICS_ENERGY_VALUES__UNKNOWN_KCAL_MOL__reported in units of",
+        "source": "UNKNOWN_DOCKING_METRICS_ENERGY_VALUES",
+        "target": "UNKNOWN_KCAL_MOL",
+        "relationship": "reported in units of",
+        "relationship_direction": "measurement",
+        "category": "molecular_properties",
+        "evidence_type": "directly_measured",
+        "glp": false,
+        "quantitative_values": [],
+        "experimental_conditions": [
+          {
+            "assay_or_model": "Glide docking",
+            "in_vivo_vitro": "in_silico",
+            "species": "in_silico",
+            "glp": false
+          }
+        ],
+        "sources": [
+          {
+            "section": "figure_caption",
+            "figure": "FIGURE 10",
+            "direct_quote": "All energy values are in kcal/mol"
+          }
+        ]
+      }
+    }
+  ],
+  "stats": {
+    "node_count": 120,
+    "edge_count": 103,
+    "nodes_by_type": {
+      "drug": 3,
+      "enzyme": 8,
+      "other": 96,
+      "outcome": 1,
+      "molecule": 1,
+      "condition": 1,
+      "cytokine": 1,
+      "transcription_factor": 1,
+      "protein": 1,
+      "receptor": 1,
+      "gene": 1,
+      "target": 3,
+      "measurement": 2
+    },
+    "edges_by_category": {
+      "pathway_biology": 35,
+      "pharmacokinetics": 6,
+      "safety_tolerability": 34,
+      "study_design": 16,
+      "molecular_properties": 12
+    },
+    "evidence_breakdown": {
+      "paper_claims": 21,
+      "directly_measured": 82
+    },
+    "glp_edge_count": 0
+  }
+}
