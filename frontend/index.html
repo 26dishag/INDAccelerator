@@ -3,279 +3,206 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>INDAccelerator — Stage 1: Paper Ingest</title>
+  <title>INDAccelerator</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/cytoscape/3.28.1/cytoscape.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/dagre/0.8.5/dagre.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/cytoscape-dagre@2.5.0/cytoscape-dagre.js"></script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #0f1117; color: #e2e8f0; min-height: 100vh; }
 
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      background: #0f1117;
-      color: #e2e8f0;
-      min-height: 100vh;
-    }
+    /* ── Header ── */
+    header { background: #1a1d2e; border-bottom: 1px solid #2d3748; padding: 0 32px; display: flex; align-items: center; gap: 24px; height: 52px; }
+    header h1 { font-size: 18px; font-weight: 700; color: #63b3ed; letter-spacing: -0.3px; white-space: nowrap; }
 
-    header {
-      background: #1a1d2e;
-      border-bottom: 1px solid #2d3748;
-      padding: 16px 32px;
-      display: flex;
-      align-items: center;
-      gap: 16px;
-    }
-    header h1 { font-size: 20px; font-weight: 700; color: #63b3ed; letter-spacing: -0.3px; }
-    header span { font-size: 13px; color: #718096; }
+    /* ── Tabs ── */
+    .tabs { display: flex; gap: 2px; }
+    .tab { background: transparent; border: none; border-bottom: 2px solid transparent; color: #718096; font-size: 13px; font-weight: 600; padding: 0 16px; height: 52px; cursor: pointer; transition: color 0.15s, border-color 0.15s; border-radius: 0; }
+    .tab:hover { color: #a0aec0; }
+    .tab.active { color: #63b3ed; border-bottom-color: #63b3ed; }
 
+    /* ── Tab content ── */
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+    #tab-graph.active { display: flex; height: calc(100vh - 52px); }
+
+    /* ══════════════════════════════════════
+       STAGE 1 STYLES (unchanged)
+    ══════════════════════════════════════ */
     .container { max-width: 1100px; margin: 0 auto; padding: 32px 24px; }
-
-    .input-card {
-      background: #1a1d2e;
-      border: 1px solid #2d3748;
-      border-radius: 12px;
-      padding: 24px;
-      margin-bottom: 28px;
-    }
+    .input-card { background: #1a1d2e; border: 1px solid #2d3748; border-radius: 12px; padding: 24px; margin-bottom: 28px; }
     .input-row { display: flex; gap: 12px; align-items: flex-start; }
-    .input-row input {
-      flex: 1;
-      background: #0f1117;
-      border: 1px solid #4a5568;
-      border-radius: 8px;
-      color: #e2e8f0;
-      font-size: 14px;
-      padding: 10px 14px;
-      outline: none;
-      transition: border-color 0.2s;
-    }
+    .input-row input { flex: 1; background: #0f1117; border: 1px solid #4a5568; border-radius: 8px; color: #e2e8f0; font-size: 14px; padding: 10px 14px; outline: none; transition: border-color 0.2s; }
     .input-row input:focus { border-color: #63b3ed; }
     .hint { font-size: 12px; color: #718096; margin-top: 8px; }
-
-    button {
-      cursor: pointer;
-      border: none;
-      border-radius: 8px;
-      font-size: 14px;
-      font-weight: 600;
-      padding: 10px 20px;
-      transition: opacity 0.15s, background 0.15s;
-    }
+    button { cursor: pointer; border: none; border-radius: 8px; font-size: 14px; font-weight: 600; padding: 10px 20px; transition: opacity 0.15s, background 0.15s; }
     button:disabled { opacity: 0.4; cursor: not-allowed; }
     #fetchBtn { background: #3182ce; color: #fff; }
     #fetchBtn:not(:disabled):hover { background: #2b6cb0; }
-    #stage2Btn {
-      background: #276749;
-      color: #fff;
-      width: 100%;
-      padding: 14px;
-      font-size: 15px;
-      margin-top: 28px;
-    }
+    #stage2Btn { background: #276749; color: #fff; width: 100%; padding: 14px; font-size: 15px; margin-top: 28px; }
     #stage2Btn:not(:disabled):hover { background: #22543d; }
-
-    /* Status bar */
-    #statusBar {
-      display: none;
-      background: #1a1d2e;
-      border: 1px solid #2d3748;
-      border-radius: 8px;
-      padding: 14px 18px;
-      margin-bottom: 20px;
-      font-size: 13px;
-      color: #90cdf4;
-    }
+    #statusBar { display: none; background: #1a1d2e; border: 1px solid #2d3748; border-radius: 8px; padding: 14px 18px; margin-bottom: 20px; font-size: 13px; color: #90cdf4; }
     #statusBar.error { border-color: #e53e3e; color: #fc8181; }
     #statusBar.success { border-color: #38a169; color: #68d391; }
-
-    /* Results */
     #results { display: none; }
-
-    .section-card {
-      background: #1a1d2e;
-      border: 1px solid #2d3748;
-      border-radius: 12px;
-      padding: 22px 24px;
-      margin-bottom: 18px;
-    }
-    .section-card h2 {
-      font-size: 13px;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.8px;
-      color: #90cdf4;
-      margin-bottom: 14px;
-    }
-
+    .section-card { background: #1a1d2e; border: 1px solid #2d3748; border-radius: 12px; padding: 22px 24px; margin-bottom: 18px; }
+    .section-card h2 { font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; color: #90cdf4; margin-bottom: 14px; }
     .paper-title { font-size: 18px; font-weight: 700; color: #e2e8f0; line-height: 1.4; margin-bottom: 10px; }
     .meta-row { display: flex; flex-wrap: wrap; gap: 16px; font-size: 13px; color: #a0aec0; }
     .meta-row strong { color: #e2e8f0; }
-
     .chips { display: flex; flex-wrap: wrap; gap: 8px; }
-    .chip {
-      background: #2d3748;
-      border-radius: 20px;
-      padding: 4px 12px;
-      font-size: 12px;
-      color: #90cdf4;
-    }
-
+    .chip { background: #2d3748; border-radius: 20px; padding: 4px 12px; font-size: 12px; color: #90cdf4; }
     .abstract-text { font-size: 14px; line-height: 1.7; color: #cbd5e0; }
-
     .section-list { list-style: none; }
-    .section-item {
-      border-top: 1px solid #2d3748;
-      padding: 10px 0;
-    }
+    .section-item { border-top: 1px solid #2d3748; padding: 10px 0; }
     .section-item:first-child { border-top: none; }
-    .section-toggle {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      cursor: pointer;
-      font-size: 14px;
-      font-weight: 600;
-      color: #63b3ed;
-      user-select: none;
-    }
+    .section-toggle { display: flex; align-items: center; justify-content: space-between; cursor: pointer; font-size: 14px; font-weight: 600; color: #63b3ed; user-select: none; }
     .section-toggle .arrow { transition: transform 0.2s; font-size: 11px; color: #718096; }
     .section-toggle.open .arrow { transform: rotate(90deg); }
-    .section-body {
-      display: none;
-      font-size: 13px;
-      line-height: 1.7;
-      color: #a0aec0;
-      margin-top: 10px;
-      max-height: 400px;
-      overflow-y: auto;
-      padding-right: 8px;
-    }
+    .section-body { display: none; font-size: 13px; line-height: 1.7; color: #a0aec0; margin-top: 10px; max-height: 400px; overflow-y: auto; padding-right: 8px; }
     .section-body::-webkit-scrollbar { width: 4px; }
     .section-body::-webkit-scrollbar-track { background: #0f1117; }
     .section-body::-webkit-scrollbar-thumb { background: #4a5568; border-radius: 4px; }
-
     .figure-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 14px; }
-    .figure-card {
-      background: #0f1117;
-      border: 1px solid #2d3748;
-      border-radius: 8px;
-      padding: 14px;
-    }
+    .figure-card { background: #0f1117; border: 1px solid #2d3748; border-radius: 8px; padding: 14px; }
     .figure-label { font-size: 11px; font-weight: 700; color: #68d391; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }
     .figure-title { font-size: 13px; font-weight: 600; color: #e2e8f0; margin-bottom: 6px; line-height: 1.4; }
     .figure-caption { font-size: 12px; color: #718096; line-height: 1.5; }
-
     .table-grid { display: grid; gap: 18px; }
-    .table-card {
-      background: #0f1117;
-      border: 1px solid #2d3748;
-      border-radius: 8px;
-      padding: 14px;
-    }
+    .table-card { background: #0f1117; border: 1px solid #2d3748; border-radius: 8px; padding: 14px; }
     .table-label { font-size: 11px; font-weight: 700; color: #f6ad55; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }
     .table-caption { font-size: 13px; color: #a0aec0; }
     .table-scroll { overflow-x: auto; margin-top: 12px; }
     table.data-table { border-collapse: collapse; width: 100%; font-size: 12px; }
-    table.data-table th {
-      background: #2d3748; color: #90cdf4; font-weight: 700;
-      padding: 6px 10px; text-align: left; border: 1px solid #4a5568;
-      white-space: nowrap;
-    }
-    table.data-table td {
-      padding: 5px 10px; color: #cbd5e0; border: 1px solid #2d3748;
-      vertical-align: top;
-    }
+    table.data-table th { background: #2d3748; color: #90cdf4; font-weight: 700; padding: 6px 10px; text-align: left; border: 1px solid #4a5568; white-space: nowrap; }
+    table.data-table td { padding: 5px 10px; color: #cbd5e0; border: 1px solid #2d3748; vertical-align: top; }
     table.data-table tr:nth-child(even) td { background: #1a1d2e; }
-
     .ref-list { list-style: none; }
-    .ref-item {
-      border-top: 1px solid #2d3748;
-      padding: 8px 0;
-      font-size: 13px;
-      color: #a0aec0;
-      line-height: 1.5;
-    }
+    .ref-item { border-top: 1px solid #2d3748; padding: 8px 0; font-size: 13px; color: #a0aec0; line-height: 1.5; }
     .ref-item:first-child { border-top: none; }
-    .pmid-badge {
-      display: inline-block;
-      background: #2b4c7e;
-      color: #90cdf4;
-      border-radius: 4px;
-      font-size: 11px;
-      font-weight: 700;
-      padding: 1px 6px;
-      margin-right: 6px;
-    }
+    .pmid-badge { display: inline-block; background: #2b4c7e; color: #90cdf4; border-radius: 4px; font-size: 11px; font-weight: 700; padding: 1px 6px; margin-right: 6px; }
     .ref-more { margin-top: 10px; font-size: 12px; color: #718096; }
-
     .status-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 12px; }
-    .status-item {
-      background: #0f1117;
-      border: 1px solid #2d3748;
-      border-radius: 8px;
-      padding: 14px;
-      text-align: center;
-    }
+    .status-item { background: #0f1117; border: 1px solid #2d3748; border-radius: 8px; padding: 14px; text-align: center; }
     .status-item .stat-value { font-size: 28px; font-weight: 700; color: #68d391; }
     .status-item .stat-label { font-size: 12px; color: #718096; margin-top: 4px; }
     .status-item.warn .stat-value { color: #f6ad55; }
     .status-item.fail .stat-value { color: #fc8181; }
-
     .section-tags { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 14px; }
-    .section-tag {
-      background: #276749;
-      color: #68d391;
-      border-radius: 6px;
-      padding: 3px 10px;
-      font-size: 12px;
-      font-weight: 600;
-    }
+    .section-tag { background: #276749; color: #68d391; border-radius: 6px; padding: 3px 10px; font-size: 12px; font-weight: 600; }
     .section-tag.missing { background: #742a2a; color: #fc8181; }
-
-    .raw-json-toggle {
-      cursor: pointer;
-      font-size: 13px;
-      color: #718096;
-      border: 1px solid #2d3748;
-      background: transparent;
-      padding: 6px 14px;
-      border-radius: 6px;
-      font-weight: 500;
-    }
+    .raw-json-toggle { cursor: pointer; font-size: 13px; color: #718096; border: 1px solid #2d3748; background: transparent; padding: 6px 14px; border-radius: 6px; font-weight: 500; }
     .raw-json-toggle:hover { background: #2d3748; }
-    pre {
-      background: #0f1117;
-      border: 1px solid #2d3748;
-      border-radius: 8px;
-      padding: 16px;
-      font-size: 12px;
-      color: #a0aec0;
-      overflow-x: auto;
-      margin-top: 12px;
-      max-height: 500px;
-      overflow-y: auto;
-      display: none;
-    }
-
+    pre { background: #0f1117; border: 1px solid #2d3748; border-radius: 8px; padding: 16px; font-size: 12px; color: #a0aec0; overflow-x: auto; margin-top: 12px; max-height: 500px; overflow-y: auto; display: none; }
     .warning-list { list-style: none; margin-bottom: 14px; }
     .warning-item { font-size: 13px; color: #f6ad55; padding: 4px 0; }
     .warning-item::before { content: "⚠ "; }
+
+    /* ══════════════════════════════════════
+       STAGE 2 STYLES
+    ══════════════════════════════════════ */
+    /* Three-panel layout */
+    .graph-left  { width: 260px; flex-shrink: 0; background: #1a1d2e; border-right: 1px solid #2d3748; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 16px; }
+    .graph-center { flex: 1; position: relative; background: #0f1117; }
+    .graph-right { width: 320px; flex-shrink: 0; background: #1a1d2e; border-left: 1px solid #2d3748; overflow-y: auto; padding: 16px; }
+    #cy-canvas { width: 100%; height: 100%; }
+
+    .panel-title { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; color: #718096; margin-bottom: 10px; }
+
+    /* Build button */
+    #build-graph-btn { background: #3182ce; color: #fff; width: 100%; padding: 10px; font-size: 13px; }
+    #build-graph-btn:not(:disabled):hover { background: #2b6cb0; }
+
+    /* Graph status overlay */
+    #graph-status { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); text-align: center; color: #718096; font-size: 14px; pointer-events: none; }
+    #graph-status.hidden { display: none; }
+
+    /* Legend */
+    .legend-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; }
+    .legend-item { display: flex; align-items: center; gap: 6px; font-size: 11px; color: #a0aec0; }
+    .legend-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+
+    /* Filter buttons */
+    .filter-group { display: flex; flex-direction: column; gap: 4px; }
+    .filter-btn { background: #2d3748; color: #a0aec0; border: 1px solid #4a5568; border-radius: 6px; padding: 5px 10px; font-size: 11px; font-weight: 600; text-align: left; cursor: pointer; transition: background 0.15s, color 0.15s; }
+    .filter-btn.active { color: #e2e8f0; border-color: #63b3ed; }
+    .filter-btn:hover { background: #3a4658; }
+    .filter-btn.cat-pathway    { border-left: 3px solid #4f7ef0; }
+    .filter-btn.cat-pk         { border-left: 3px solid #67e8f9; }
+    .filter-btn.cat-safety     { border-left: 3px solid #f87171; }
+    .filter-btn.cat-design     { border-left: 3px solid #86efac; }
+    .filter-btn.cat-molecular  { border-left: 3px solid #fbbf24; }
+    .filter-btn.active.cat-pathway   { background: #1e2d5e; }
+    .filter-btn.active.cat-pk        { background: #0e3340; }
+    .filter-btn.active.cat-safety    { background: #3b1919; }
+    .filter-btn.active.cat-design    { background: #173322; }
+    .filter-btn.active.cat-molecular { background: #3b2a0a; }
+
+    /* Stats panel */
+    .stat-row { display: flex; justify-content: space-between; font-size: 12px; padding: 3px 0; border-bottom: 1px solid #2d3748; }
+    .stat-row:last-child { border-bottom: none; }
+    .stat-row span:first-child { color: #718096; }
+    .stat-row span:last-child { color: #e2e8f0; font-weight: 600; }
+
+    /* Detail panel */
+    #detail-panel { font-size: 13px; }
+    #detail-panel .detail-empty { color: #4a5568; font-size: 13px; text-align: center; margin-top: 40px; }
+    .detail-header { margin-bottom: 14px; }
+    .detail-header h3 { font-size: 14px; font-weight: 700; color: #e2e8f0; line-height: 1.4; margin: 6px 0; }
+    .type-badge { display: inline-block; border-radius: 4px; padding: 2px 8px; font-size: 11px; font-weight: 700; color: #0f1117; margin-bottom: 4px; }
+    .evidence-badge { display: inline-block; border-radius: 4px; padding: 2px 8px; font-size: 11px; font-weight: 700; margin-bottom: 4px; }
+    .evidence-badge.directly_measured { background: #276749; color: #68d391; }
+    .evidence-badge.paper_claims      { background: #744210; color: #f6ad55; }
+    .evidence-badge.cited_from_reference { background: #2d3748; color: #a0aec0; }
+    .category-tag { font-size: 11px; color: #718096; }
+
+    .detail-section { margin-bottom: 14px; }
+    .section-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; color: #4a5568; margin-bottom: 6px; }
+
+    .edge-row { display: flex; align-items: center; gap: 6px; padding: 4px 0; border-bottom: 1px solid #1a2030; font-size: 12px; flex-wrap: wrap; }
+    .edge-source, .edge-target { color: #63b3ed; font-weight: 600; max-width: 90px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .edge-rel { color: #a0aec0; font-style: italic; }
+    .edge-rel.inhibition { color: #fc8181; }
+    .edge-rel.activation { color: #68d391; }
+    .edge-rel.measurement { color: #67e8f9; }
+    .evidence-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+    .evidence-dot.directly_measured { background: #68d391; }
+    .evidence-dot.paper_claims      { background: #f6ad55; }
+    .evidence-dot.cited_from_reference { background: #718096; }
+    .source-fig { font-size: 10px; color: #4a5568; }
+
+    .quant-value { background: #0f1117; border: 1px solid #2d3748; border-radius: 6px; padding: 6px 10px; font-size: 12px; color: #67e8f9; margin-bottom: 4px; font-family: monospace; }
+
+    .condition-block { background: #0f1117; border: 1px solid #2d3748; border-radius: 8px; padding: 10px; margin-bottom: 8px; }
+    .condition-header { display: flex; gap: 8px; margin-bottom: 6px; }
+    .fig-ref { background: #1e3a5f; color: #63b3ed; border-radius: 4px; padding: 1px 6px; font-size: 10px; font-weight: 700; }
+    .section-ref { font-size: 10px; color: #718096; }
+    .condition-table { width: 100%; font-size: 11px; border-collapse: collapse; }
+    .condition-table td { padding: 2px 6px; color: #a0aec0; }
+    .condition-table td:first-child { color: #4a5568; width: 40%; }
+    .glp-yes { color: #68d391 !important; font-weight: 700; }
+    .quote { font-size: 11px; color: #718096; font-style: italic; margin-top: 6px; border-left: 2px solid #2d3748; padding-left: 8px; line-height: 1.5; }
+    .no-conditions { font-size: 12px; color: #4a5568; }
   </style>
 </head>
 <body>
 
 <header>
   <h1>INDAccelerator</h1>
-  <span>Stage 1 — Paper Ingest</span>
+  <div class="tabs">
+    <button class="tab active" onclick="showTab('ingest')">Paper Ingest</button>
+    <button class="tab" onclick="showTab('graph')">Knowledge Graph</button>
+  </div>
 </header>
 
+<!-- ═══════════════════════════════════════════ STAGE 1 TAB -->
+<div id="tab-ingest" class="tab-content active">
 <div class="container">
 
   <div class="input-card">
     <div class="input-row">
-      <input
-        type="text"
-        id="paperInput"
-        value="https://pubmed.ncbi.nlm.nih.gov/41585874/"
-        placeholder="PubMed URL, PMC URL, DOI URL, bare PMID, or bare PMCID"
-      />
+      <input type="text" id="paperInput" value="https://pubmed.ncbi.nlm.nih.gov/41585874/"
+        placeholder="PubMed URL, PMC URL, DOI URL, bare PMID, or bare PMCID" />
       <button id="fetchBtn" onclick="fetchPaper()">Fetch Paper</button>
     </div>
     <p class="hint">Accepts: PubMed URL · PMC URL · DOI URL (doi.org/…) · bare PMID · bare PMCID</p>
@@ -289,9 +216,84 @@
   </button>
 
 </div>
+</div>
+
+<!-- ═══════════════════════════════════════════ STAGE 2 TAB -->
+<div id="tab-graph" class="tab-content">
+
+  <!-- LEFT PANEL -->
+  <div class="graph-left">
+    <div>
+      <button id="build-graph-btn" onclick="buildGraph()" disabled title="Fetch a paper first">
+        Build Knowledge Graph
+      </button>
+    </div>
+
+    <div>
+      <div class="panel-title">Node Legend</div>
+      <div class="legend-grid" id="legend-grid"></div>
+    </div>
+
+    <div>
+      <div class="panel-title">Filter by Category</div>
+      <div class="filter-group" id="cat-filters"></div>
+    </div>
+
+    <div>
+      <div class="panel-title">Stats</div>
+      <div id="graph-stats">
+        <div class="stat-row"><span>Nodes</span><span>—</span></div>
+        <div class="stat-row"><span>Edges</span><span>—</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CENTER CANVAS -->
+  <div class="graph-center">
+    <div id="cy-canvas"></div>
+    <div id="graph-status">
+      <div style="font-size:32px;margin-bottom:12px">⬡</div>
+      Fetch a paper in Stage 1, then click<br><strong>Build Knowledge Graph</strong>
+    </div>
+  </div>
+
+  <!-- RIGHT PANEL -->
+  <div class="graph-right">
+    <div class="panel-title">Detail</div>
+    <div id="detail-panel">
+      <div class="detail-empty">Click any node or edge</div>
+    </div>
+  </div>
+
+</div>
 
 <script>
+/* ═══════════════════════════════════════════════════════════
+   SHARED STATE
+═══════════════════════════════════════════════════════════ */
 let lastData = null;
+let cy = null;
+let currentGraph = null;
+let activeCats = new Set(['pathway_biology','pharmacokinetics','safety_tolerability','study_design','molecular_properties']);
+
+/* ═══════════════════════════════════════════════════════════
+   TAB SWITCHING
+═══════════════════════════════════════════════════════════ */
+function showTab(name) {
+  document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(el => el.classList.remove('active'));
+  document.getElementById('tab-' + name).classList.add('active');
+  document.querySelectorAll('.tab')[name === 'ingest' ? 0 : 1].classList.add('active');
+  if (name === 'graph' && cy) setTimeout(() => cy.resize(), 50);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   UTILITIES
+═══════════════════════════════════════════════════════════ */
+function esc(s) {
+  if (!s) return '';
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
 
 function setStatus(msg, type = 'info') {
   const bar = document.getElementById('statusBar');
@@ -300,43 +302,28 @@ function setStatus(msg, type = 'info') {
   bar.style.display = 'block';
 }
 
-function esc(s) {
-  if (!s) return '';
-  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-}
-
+/* ═══════════════════════════════════════════════════════════
+   STAGE 1 — PAPER FETCH
+═══════════════════════════════════════════════════════════ */
 async function fetchPaper() {
   const input = document.getElementById('paperInput').value.trim();
   if (!input) { setStatus('Please enter a PubMed URL, PMC URL, DOI, PMID, or PMCID.', 'error'); return; }
 
   document.getElementById('fetchBtn').disabled = true;
   document.getElementById('stage2Btn').disabled = true;
+  document.getElementById('build-graph-btn').disabled = true;
   document.getElementById('results').style.display = 'none';
   lastData = null;
 
   setStatus('Step 1/3 — Resolving identifier…', 'info');
+  setTimeout(() => { if (document.getElementById('fetchBtn').disabled) setStatus('Step 2/3 — Fetching PMC full-text XML…', 'info'); }, 600);
+  setTimeout(() => { if (document.getElementById('fetchBtn').disabled) setStatus('Step 3/3 — Parsing sections, figures, references…', 'info'); }, 1800);
 
   try {
-    const url = `http://localhost:8000/api/fetch-paper?input=${encodeURIComponent(input)}`;
-
-    // Fake step progression for UX
-    setTimeout(() => {
-      if (document.getElementById('fetchBtn').disabled)
-        setStatus('Step 2/3 — Fetching PMC full-text XML…', 'info');
-    }, 600);
-    setTimeout(() => {
-      if (document.getElementById('fetchBtn').disabled)
-        setStatus('Step 3/3 — Parsing sections, figures, references…', 'info');
-    }, 1800);
-
-    const resp = await fetch(url);
+    const resp = await fetch(`http://localhost:8000/api/fetch-paper?input=${encodeURIComponent(input)}`);
     const data = await resp.json();
 
-    if (data.error) {
-      setStatus(`Error: ${data.error}`, 'error');
-      renderResults(data);
-      return;
-    }
+    if (data.error) { setStatus(`Error: ${data.error}`, 'error'); renderResults(data); return; }
 
     lastData = data;
     setStatus(
@@ -349,7 +336,8 @@ async function fetchPaper() {
     renderResults(data);
     document.getElementById('stage2Btn').disabled = false;
     document.getElementById('stage2Btn').title = '';
-
+    document.getElementById('build-graph-btn').disabled = false;
+    document.getElementById('build-graph-btn').title = '';
   } catch (err) {
     setStatus(`Network error: ${err.message} — is the backend running on localhost:8000?`, 'error');
   } finally {
@@ -360,179 +348,58 @@ async function fetchPaper() {
 function renderResults(data) {
   const el = document.getElementById('results');
   el.style.display = 'block';
-
-  const warnings = (data.warnings || []).map(w =>
-    `<li class="warning-item">${esc(w)}</li>`
-  ).join('');
-
-  const warnBlock = warnings
-    ? `<div class="section-card"><h2>Warnings</h2><ul class="warning-list">${warnings}</ul></div>`
-    : '';
-
-  // Paper header
+  const warnings = (data.warnings || []).map(w => `<li class="warning-item">${esc(w)}</li>`).join('');
+  const warnBlock = warnings ? `<div class="section-card"><h2>Warnings</h2><ul class="warning-list">${warnings}</ul></div>` : '';
   const authors = (data.authors || []).map(a => esc(a.name)).join(', ');
-  const header = `
-    <div class="section-card">
-      <h2>Paper</h2>
-      <div class="paper-title">${esc(data.title) || '<em>Title not found</em>'}</div>
-      <div class="meta-row">
-        <span><strong>Authors:</strong> ${authors || '—'}</span>
-        <span><strong>Journal:</strong> ${esc(data.journal) || '—'}</span>
-        <span><strong>Year:</strong> ${esc(data.year) || '—'}</span>
-        <span><strong>DOI:</strong> ${data.doi ? `<a href="https://doi.org/${esc(data.doi)}" target="_blank" style="color:#63b3ed">${esc(data.doi)}</a>` : '—'}</span>
-        <span><strong>PMID:</strong> ${esc(data.pmid) || '—'}</span>
-        <span><strong>PMCID:</strong> ${esc(data.pmcid) || '—'}</span>
-      </div>
-    </div>
-  `;
-
-  // Keywords
+  const header = `<div class="section-card"><h2>Paper</h2>
+    <div class="paper-title">${esc(data.title) || '<em>Title not found</em>'}</div>
+    <div class="meta-row">
+      <span><strong>Authors:</strong> ${authors || '—'}</span>
+      <span><strong>Journal:</strong> ${esc(data.journal) || '—'}</span>
+      <span><strong>Year:</strong> ${esc(data.year) || '—'}</span>
+      <span><strong>DOI:</strong> ${data.doi ? `<a href="https://doi.org/${esc(data.doi)}" target="_blank" style="color:#63b3ed">${esc(data.doi)}</a>` : '—'}</span>
+      <span><strong>PMID:</strong> ${esc(data.pmid) || '—'}</span>
+      <span><strong>PMCID:</strong> ${esc(data.pmcid) || '—'}</span>
+    </div></div>`;
   const kwChips = (data.keywords || []).map(k => `<span class="chip">${esc(k)}</span>`).join('');
-  const kwBlock = kwChips
-    ? `<div class="section-card"><h2>Keywords</h2><div class="chips">${kwChips}</div></div>`
-    : '';
-
-  // Abstract
-  const abstractBlock = data.abstract ? `
-    <div class="section-card">
-      <h2>Abstract</h2>
-      <p class="abstract-text">${esc(data.abstract)}</p>
-    </div>
-  ` : '';
-
-  // Body sections
+  const kwBlock = kwChips ? `<div class="section-card"><h2>Keywords</h2><div class="chips">${kwChips}</div></div>` : '';
+  const abstractBlock = data.abstract ? `<div class="section-card"><h2>Abstract</h2><p class="abstract-text">${esc(data.abstract)}</p></div>` : '';
   const KNOWN = ['introduction','methods','results','discussion'];
   const knownFound = KNOWN.filter(k => data.fetch_sources?.sections_found?.includes(k));
   const knownMissing = KNOWN.filter(k => !data.fetch_sources?.sections_found?.includes(k));
-
-  const sectionTags = [
-    ...knownFound.map(k => `<span class="section-tag">${k}</span>`),
-    ...knownMissing.map(k => `<span class="section-tag missing">${k} missing</span>`)
-  ].join('');
-
+  const sectionTags = [...knownFound.map(k => `<span class="section-tag">${k}</span>`), ...knownMissing.map(k => `<span class="section-tag missing">${k} missing</span>`)].join('');
   const sectItems = (data.full_body_sections || []).map((s, i) => `
     <li class="section-item">
-      <div class="section-toggle" id="stog-${i}" onclick="toggleSection(${i})">
-        <span>${esc(s.heading)}</span>
-        <span class="arrow">▶</span>
-      </div>
+      <div class="section-toggle" id="stog-${i}" onclick="toggleSection(${i})"><span>${esc(s.heading)}</span><span class="arrow">▶</span></div>
       <div class="section-body" id="sbod-${i}">${esc(s.text)}</div>
-    </li>
-  `).join('');
-
-  const sectionsBlock = `
-    <div class="section-card">
-      <h2>Body Sections (${(data.full_body_sections || []).length} found)</h2>
-      <div class="section-tags">${sectionTags}</div>
-      <ul class="section-list">${sectItems}</ul>
-    </div>
-  `;
-
-  // Figures
-  const figCards = (data.figure_captions || []).map(f => `
-    <div class="figure-card">
-      <div class="figure-label">${esc(f.label)}</div>
-      <div class="figure-title">${esc(f.caption_title)}</div>
-      <div class="figure-caption">${esc(f.caption_text)}</div>
-    </div>
-  `).join('');
-  const figBlock = `
-    <div class="section-card">
-      <h2>Figures (${(data.figure_captions || []).length} found)</h2>
-      <div class="figure-grid">${figCards || '<em style="color:#718096">None found</em>'}</div>
-    </div>
-  `;
-
-  // Tables
+    </li>`).join('');
+  const sectionsBlock = `<div class="section-card"><h2>Body Sections (${(data.full_body_sections || []).length} found)</h2><div class="section-tags">${sectionTags}</div><ul class="section-list">${sectItems}</ul></div>`;
+  const figCards = (data.figure_captions || []).map(f => `<div class="figure-card"><div class="figure-label">${esc(f.label)}</div><div class="figure-title">${esc(f.caption_title)}</div><div class="figure-caption">${esc(f.caption_text)}</div></div>`).join('');
+  const figBlock = `<div class="section-card"><h2>Figures (${(data.figure_captions || []).length} found)</h2><div class="figure-grid">${figCards || '<em style="color:#718096">None found</em>'}</div></div>`;
   const tableCards = (data.tables || []).map(t => {
     let tableHtml = '';
     if (t.headers?.length || t.data?.length) {
-      const headerRow = t.headers?.length
-        ? `<thead><tr>${t.headers.map(h => `<th>${esc(h)}</th>`).join('')}</tr></thead>`
-        : '';
-      const bodyRows = (t.data || []).map(row =>
-        `<tr>${row.map(cell => `<td>${esc(cell)}</td>`).join('')}</tr>`
-      ).join('');
+      const headerRow = t.headers?.length ? `<thead><tr>${t.headers.map(h => `<th>${esc(h)}</th>`).join('')}</tr></thead>` : '';
+      const bodyRows = (t.data || []).map(row => `<tr>${row.map(cell => `<td>${esc(cell)}</td>`).join('')}</tr>`).join('');
       tableHtml = `<div class="table-scroll"><table class="data-table">${headerRow}<tbody>${bodyRows}</tbody></table></div>`;
     }
-    return `
-      <div class="table-card">
-        <div class="table-label">${esc(t.label)}</div>
-        <div class="table-caption">${esc(t.caption)}</div>
-        ${tableHtml}
-        ${t.note ? `<div class="table-caption" style="margin-top:8px;color:#718096;font-size:12px">${esc(t.note)}</div>` : ''}
-      </div>
-    `;
+    return `<div class="table-card"><div class="table-label">${esc(t.label)}</div><div class="table-caption">${esc(t.caption)}</div>${tableHtml}${t.note ? `<div class="table-caption" style="margin-top:8px;color:#718096;font-size:12px">${esc(t.note)}</div>` : ''}</div>`;
   }).join('');
-  const tableBlock = `
-    <div class="section-card">
-      <h2>Tables (${(data.tables || []).length} found)</h2>
-      <div class="table-grid">${tableCards || '<em style="color:#718096">None found</em>'}</div>
-    </div>
-  `;
-
-  // References
+  const tableBlock = `<div class="section-card"><h2>Tables (${(data.tables || []).length} found)</h2><div class="table-grid">${tableCards || '<em style="color:#718096">None found</em>'}</div></div>`;
   const refs = data.references || [];
-  const refItems = refs.slice(0, 10).map(r => `
-    <li class="ref-item">
-      ${r.pmid ? `<span class="pmid-badge">PMID ${esc(r.pmid)}</span>` : ''}
-      ${esc(r.citation_text)}
-    </li>
-  `).join('');
-  const refMore = refs.length > 10
-    ? `<p class="ref-more">${refs.length - 10} more references stored in full JSON</p>`
-    : '';
-  const refsBlock = `
-    <div class="section-card">
-      <h2>References (${refs.length} total)</h2>
-      <ul class="ref-list">${refItems}</ul>
-      ${refMore}
-    </div>
-  `;
-
-  // Source status
+  const refItems = refs.slice(0, 10).map(r => `<li class="ref-item">${r.pmid ? `<span class="pmid-badge">PMID ${esc(r.pmid)}</span>` : ''}${esc(r.citation_text)}</li>`).join('');
+  const refMore = refs.length > 10 ? `<p class="ref-more">${refs.length - 10} more references stored in full JSON</p>` : '';
+  const refsBlock = `<div class="section-card"><h2>References (${refs.length} total)</h2><ul class="ref-list">${refItems}</ul>${refMore}</div>`;
   const fs = data.fetch_sources || {};
-  const statusGrid = `
-    <div class="section-card">
-      <h2>Source Status</h2>
-      <div class="status-grid">
-        <div class="status-item ${fs.pmc_full_text === 'ok' ? '' : 'fail'}">
-          <div class="stat-value">${fs.pmc_full_text === 'ok' ? '✓' : '✗'}</div>
-          <div class="stat-label">PMC Full Text</div>
-        </div>
-        <div class="status-item">
-          <div class="stat-value">${fs.sections_found?.length || 0}</div>
-          <div class="stat-label">Sections Classified</div>
-        </div>
-        <div class="status-item">
-          <div class="stat-value">${fs.figures_found || 0}</div>
-          <div class="stat-label">Figures</div>
-        </div>
-        <div class="status-item">
-          <div class="stat-value">${fs.tables_found || 0}</div>
-          <div class="stat-label">Tables</div>
-        </div>
-        <div class="status-item">
-          <div class="stat-value">${fs.references_found || 0}</div>
-          <div class="stat-label">References</div>
-        </div>
-        <div class="status-item">
-          <div class="stat-value">${(data.mesh_terms || []).length || 0}</div>
-          <div class="stat-label">MeSH Terms</div>
-        </div>
-      </div>
-    </div>
-  `;
-
-  // Raw JSON
-  const rawBlock = `
-    <div class="section-card">
-      <h2>Raw JSON</h2>
-      <button class="raw-json-toggle" onclick="toggleRaw()">Show / Hide</button>
-      <pre id="rawJson">${esc(JSON.stringify(data, null, 2))}</pre>
-    </div>
-  `;
-
+  const statusGrid = `<div class="section-card"><h2>Source Status</h2><div class="status-grid">
+    <div class="status-item ${fs.pmc_full_text === 'ok' ? '' : 'fail'}"><div class="stat-value">${fs.pmc_full_text === 'ok' ? '✓' : '✗'}</div><div class="stat-label">PMC Full Text</div></div>
+    <div class="status-item"><div class="stat-value">${fs.sections_found?.length || 0}</div><div class="stat-label">Sections Classified</div></div>
+    <div class="status-item"><div class="stat-value">${fs.figures_found || 0}</div><div class="stat-label">Figures</div></div>
+    <div class="status-item"><div class="stat-value">${fs.tables_found || 0}</div><div class="stat-label">Tables</div></div>
+    <div class="status-item"><div class="stat-value">${fs.references_found || 0}</div><div class="stat-label">References</div></div>
+    <div class="status-item"><div class="stat-value">${(data.mesh_terms || []).length || 0}</div><div class="stat-label">MeSH Terms</div></div>
+  </div></div>`;
+  const rawBlock = `<div class="section-card"><h2>Raw JSON</h2><button class="raw-json-toggle" onclick="toggleRaw()">Show / Hide</button><pre id="rawJson">${esc(JSON.stringify(data, null, 2))}</pre></div>`;
   el.innerHTML = warnBlock + header + kwBlock + abstractBlock + sectionsBlock + figBlock + tableBlock + refsBlock + statusGrid + rawBlock;
 }
 
@@ -550,7 +417,330 @@ function toggleRaw() {
 }
 
 function goStage2() {
-  alert('Stage 2 not yet implemented.');
+  showTab('graph');
+}
+
+/* ═══════════════════════════════════════════════════════════
+   STAGE 2 — KNOWLEDGE GRAPH
+═══════════════════════════════════════════════════════════ */
+const NODE_COLORS = {
+  drug:                 '#f59e0b',
+  enzyme:               '#4f7ef0',
+  receptor:             '#a78bfa',
+  cytokine:             '#f87171',
+  transcription_factor: '#fb923c',
+  protein:              '#60a5fa',
+  gene:                 '#4ade80',
+  molecule:             '#34d399',
+  lipid:                '#fbbf24',
+  cell_type:            '#9ca3af',
+  property:             '#e879f9',
+  measurement:          '#67e8f9',
+  outcome:              '#86efac',
+  process:              '#2dd4bf',
+  condition:            '#fca5a5',
+  model:                '#c4b5fd',
+  assay:                '#93c5fd',
+  target:               '#fda4af',
+  other:                '#6b7280',
+};
+
+const CAT_META = {
+  pathway_biology:     { label: 'Pathway Biology',     cls: 'cat-pathway'   },
+  pharmacokinetics:    { label: 'Pharmacokinetics',    cls: 'cat-pk'        },
+  safety_tolerability: { label: 'Safety / Tolerability', cls: 'cat-safety'  },
+  study_design:        { label: 'Study Design',        cls: 'cat-design'    },
+  molecular_properties:{ label: 'Molecular Properties', cls: 'cat-molecular'},
+};
+
+// Build legend and filter buttons on load
+(function initGraphUI() {
+  const lg = document.getElementById('legend-grid');
+  Object.entries(NODE_COLORS).forEach(([type, color]) => {
+    lg.innerHTML += `<div class="legend-item"><div class="legend-dot" style="background:${color}"></div><span>${type.replace('_',' ')}</span></div>`;
+  });
+
+  const cf = document.getElementById('cat-filters');
+  Object.entries(CAT_META).forEach(([cat, m]) => {
+    const btn = document.createElement('button');
+    btn.className = `filter-btn ${m.cls} active`;
+    btn.textContent = m.label;
+    btn.dataset.cat = cat;
+    btn.onclick = () => toggleCatFilter(cat, btn);
+    cf.appendChild(btn);
+  });
+})();
+
+function toggleCatFilter(cat, btn) {
+  if (activeCats.has(cat)) { activeCats.delete(cat); btn.classList.remove('active'); }
+  else { activeCats.add(cat); btn.classList.add('active'); }
+  applyFilters();
+}
+
+function applyFilters() {
+  if (!cy) return;
+  cy.batch(() => {
+    cy.edges().forEach(e => {
+      const visible = activeCats.has(e.data('category'));
+      e.style('display', visible ? 'element' : 'none');
+    });
+    cy.nodes().forEach(n => {
+      const hasVisible = n.connectedEdges().some(e => e.style('display') !== 'none');
+      n.style('display', hasVisible ? 'element' : 'none');
+    });
+  });
+  updateStats(currentGraph);
+}
+
+function getCurrentPmid() {
+  return lastData?.pmid || null;
+}
+
+function showGraphStatus(msg, isError) {
+  const el = document.getElementById('graph-status');
+  el.innerHTML = `<div style="font-size:32px;margin-bottom:12px">${isError ? '⚠' : '⟳'}</div>${msg}`;
+  el.classList.remove('hidden');
+}
+
+function hideGraphStatus() {
+  document.getElementById('graph-status').classList.add('hidden');
+}
+
+async function buildGraph() {
+  const pmid = getCurrentPmid();
+  if (!pmid) { showGraphStatus('Fetch a paper in Stage 1 first.', true); return; }
+
+  const btn = document.getElementById('build-graph-btn');
+  btn.disabled = true;
+  btn.textContent = 'Extracting…';
+  showGraphStatus('Running Claude extraction across all sections and figure captions…<br><small style="color:#4a5568">This takes ~60–90 seconds</small>');
+  document.getElementById('detail-panel').innerHTML = '<div class="detail-empty">Building graph…</div>';
+
+  try {
+    const resp = await fetch('http://localhost:8000/api/build-graph', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ pmid }),
+    });
+    if (!resp.ok) {
+      const err = await resp.json();
+      throw new Error(err.detail || resp.statusText);
+    }
+    currentGraph = await resp.json();
+    hideGraphStatus();
+    renderGraph(currentGraph);
+    updateStats(currentGraph);
+  } catch (e) {
+    showGraphStatus(`Extraction failed: ${e.message}`, true);
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Rebuild Graph';
+  }
+}
+
+function buildStylesheet() {
+  return [
+    {
+      selector: 'node',
+      style: {
+        'background-color': ele => NODE_COLORS[ele.data('type')] || NODE_COLORS.other,
+        'label': 'data(label)',
+        'color': '#e2e8f0',
+        'font-size': 10,
+        'text-wrap': 'wrap',
+        'text-max-width': 80,
+        'width': 28,
+        'height': 28,
+        'border-width': 0,
+        'text-valign': 'bottom',
+        'text-halign': 'center',
+        'text-margin-y': 4,
+        'overlay-padding': 4,
+      },
+    },
+    {
+      selector: 'node[id = "DRUG_11H"]',
+      style: { 'width': 48, 'height': 48, 'font-size': 12, 'font-weight': 'bold' },
+    },
+    {
+      selector: 'node[?flagged]',
+      style: { 'border-width': 2, 'border-color': '#f6ad55', 'border-style': 'dashed' },
+    },
+    {
+      selector: 'node:selected',
+      style: { 'border-width': 3, 'border-color': '#fff', 'border-style': 'solid' },
+    },
+    // Edges — base
+    {
+      selector: 'edge',
+      style: {
+        'target-arrow-shape': 'triangle',
+        'curve-style': 'bezier',
+        'width': 1.5,
+        'line-color': '#4a5568',
+        'target-arrow-color': '#4a5568',
+        'opacity': 0.8,
+        'label': 'data(relationship)',
+        'font-size': 9,
+        'color': '#718096',
+        'text-rotation': 'autorotate',
+        'text-margin-y': -8,
+        'text-background-color': '#0f1117',
+        'text-background-opacity': 0.7,
+        'text-background-padding': 2,
+      },
+    },
+    {
+      selector: 'edge[relationship_direction = "activation"]',
+      style: { 'line-color': '#48bb78', 'target-arrow-color': '#48bb78', 'line-style': 'solid' },
+    },
+    {
+      selector: 'edge[relationship_direction = "inhibition"]',
+      style: { 'line-color': '#fc8181', 'target-arrow-color': '#fc8181', 'line-style': 'dashed' },
+    },
+    {
+      selector: 'edge[relationship_direction = "measurement"]',
+      style: { 'line-color': '#718096', 'target-arrow-color': '#718096', 'line-style': 'dotted' },
+    },
+    {
+      selector: 'edge[relationship_direction = "binding"]',
+      style: { 'line-color': '#a78bfa', 'target-arrow-color': '#a78bfa' },
+    },
+    { selector: 'edge[evidence_type = "directly_measured"]',    style: { 'opacity': 1.0 } },
+    { selector: 'edge[evidence_type = "paper_claims"]',         style: { 'opacity': 0.7 } },
+    { selector: 'edge[evidence_type = "cited_from_reference"]', style: { 'opacity': 0.4 } },
+    { selector: 'edge[?glp]', style: { 'width': 3 } },
+    { selector: 'edge:selected', style: { 'width': 3, 'opacity': 1.0 } },
+  ];
+}
+
+function renderGraph(graphData) {
+  if (cy) cy.destroy();
+
+  cy = cytoscape({
+    container: document.getElementById('cy-canvas'),
+    elements: graphData.elements,
+    style: buildStylesheet(),
+    layout: {
+      name: 'dagre',
+      rankDir: 'LR',
+      padding: 60,
+      spacingFactor: 1.4,
+      nodeSep: 40,
+      rankSep: 120,
+      edgeSep: 20,
+    },
+  });
+
+  cy.on('tap', 'node', evt => showNodeDetail(evt.target));
+  cy.on('tap', 'edge', evt => showEdgeDetail(evt.target));
+  cy.on('tap', evt => { if (evt.target === cy) clearDetail(); });
+}
+
+function showNodeDetail(node) {
+  const data = node.data();
+  const inEdges  = node.incomers('edge').map(e => e.data());
+  const outEdges = node.outgoers('edge').map(e => e.data());
+  const color = NODE_COLORS[data.type] || NODE_COLORS.other;
+
+  const edgeRow = (e, isIn) => `
+    <div class="edge-row">
+      ${isIn ? `<span class="edge-source" title="${e.source}">${e.source}</span>` : ''}
+      <span class="edge-rel ${e.relationship_direction}">${e.relationship}</span>
+      ${!isIn ? `<span class="edge-target" title="${e.target}">${e.target}</span>` : ''}
+      <span class="evidence-dot ${e.evidence_type}" title="${e.evidence_type}"></span>
+      <span class="source-fig">${e.sources?.[0]?.figure || e.sources?.[0]?.section || ''}</span>
+    </div>`;
+
+  document.getElementById('detail-panel').innerHTML = `
+    <div class="detail-header">
+      <div class="type-badge" style="background:${color}">${data.type}</div>
+      <h3>${esc(data.label)}</h3>
+      <div class="category-tag">${data.category || ''}</div>
+    </div>
+    <div class="detail-section">
+      <div class="section-label">UPSTREAM (${inEdges.length})</div>
+      ${inEdges.length ? inEdges.map(e => edgeRow(e, true)).join('') : '<div class="no-conditions">None</div>'}
+    </div>
+    <div class="detail-section">
+      <div class="section-label">DOWNSTREAM (${outEdges.length})</div>
+      ${outEdges.length ? outEdges.map(e => edgeRow(e, false)).join('') : '<div class="no-conditions">None</div>'}
+    </div>`;
+}
+
+function showEdgeDetail(edge) {
+  const data = edge.data();
+  const srcLabel = edge.source().data('label');
+  const tgtLabel = edge.target().data('label');
+  const qVals = (data.quantitative_values || []).filter(Boolean);
+
+  const conditionBlocks = (data.experimental_conditions || [])
+    .filter(c => c && Object.keys(c).length > 0)
+    .map((c, i) => {
+      const src = data.sources?.[i] || {};
+      const rows = [
+        c.assay_or_model         ? `<tr><td>Assay / Model</td><td>${esc(c.assay_or_model)}</td></tr>` : '',
+        c.species && c.species !== 'not_specified'         ? `<tr><td>Species</td><td>${esc(c.species)}</td></tr>` : '',
+        c.in_vivo_vitro && c.in_vivo_vitro !== 'not_specified' ? `<tr><td>Setting</td><td>${esc(c.in_vivo_vitro)}</td></tr>` : '',
+        c.dose                   ? `<tr><td>Dose</td><td>${esc(c.dose)}</td></tr>` : '',
+        c.route && c.route !== 'not_specified' ? `<tr><td>Route</td><td>${esc(c.route)}</td></tr>` : '',
+        c.duration               ? `<tr><td>Duration</td><td>${esc(c.duration)}</td></tr>` : '',
+        c.n_per_group            ? `<tr><td>N/group</td><td>${esc(c.n_per_group)}</td></tr>` : '',
+        c.cell_line              ? `<tr><td>Cell line</td><td>${esc(c.cell_line)}</td></tr>` : '',
+        c.result_direction && c.result_direction !== 'not_specified' ? `<tr><td>Result</td><td>${esc(c.result_direction)}</td></tr>` : '',
+        c.statistical_significance ? `<tr><td>Stats</td><td>${esc(c.statistical_significance)}</td></tr>` : '',
+        c.glp                    ? `<tr><td>GLP</td><td class="glp-yes">YES</td></tr>` : '',
+      ].join('');
+      return `<div class="condition-block">
+        <div class="condition-header">
+          ${src.figure ? `<span class="fig-ref">${esc(src.figure)}</span>` : ''}
+          <span class="section-ref">${esc(src.section || '')}</span>
+        </div>
+        <table class="condition-table">${rows}</table>
+        ${src.direct_quote ? `<div class="quote">"${esc(src.direct_quote)}"</div>` : ''}
+      </div>`;
+    }).join('');
+
+  document.getElementById('detail-panel').innerHTML = `
+    <div class="detail-header">
+      <div class="evidence-badge ${data.evidence_type}">${(data.evidence_type || '').replace(/_/g,' ')}</div>
+      <h3>${esc(srcLabel)} → ${esc(data.relationship)} → ${esc(tgtLabel)}</h3>
+      <div class="category-tag">${data.category || ''}</div>
+    </div>
+    ${qVals.length ? `<div class="detail-section"><div class="section-label">QUANTITATIVE VALUES</div>${qVals.map(v => `<div class="quant-value">${esc(v)}</div>`).join('')}</div>` : ''}
+    <div class="detail-section">
+      <div class="section-label">EXPERIMENTAL EVIDENCE (${(data.experimental_conditions || []).length})</div>
+      ${conditionBlocks || '<div class="no-conditions">No experimental conditions extracted</div>'}
+    </div>`;
+}
+
+function clearDetail() {
+  document.getElementById('detail-panel').innerHTML = '<div class="detail-empty">Click any node or edge</div>';
+}
+
+function updateStats(graphData) {
+  if (!graphData) return;
+  const s = graphData.stats || {};
+  const visNodes = cy ? cy.nodes(':visible').length : s.node_count;
+  const visEdges = cy ? cy.edges(':visible').length  : s.edge_count;
+
+  let html = `
+    <div class="stat-row"><span>Nodes</span><span>${visNodes} / ${s.node_count}</span></div>
+    <div class="stat-row"><span>Edges</span><span>${visEdges} / ${s.edge_count}</span></div>
+    <div class="stat-row"><span>GLP edges</span><span>${s.glp_edge_count || 0}</span></div>`;
+
+  if (s.edges_by_category) {
+    Object.entries(s.edges_by_category).forEach(([cat, n]) => {
+      html += `<div class="stat-row"><span style="font-size:10px">${cat.replace(/_/g,' ')}</span><span>${n}</span></div>`;
+    });
+  }
+  if (s.evidence_breakdown) {
+    html += '<div class="stat-row" style="margin-top:4px"><span style="color:#4a5568">Evidence</span><span></span></div>';
+    Object.entries(s.evidence_breakdown).forEach(([et, n]) => {
+      html += `<div class="stat-row"><span style="font-size:10px">${et.replace(/_/g,' ')}</span><span>${n}</span></div>`;
+    });
+  }
+  document.getElementById('graph-stats').innerHTML = html;
 }
 </script>
 
