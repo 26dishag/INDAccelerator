@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>INDAccelerator — Stage 1: Paper Ingest</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: #0f1117;
+      color: #e2e8f0;
+      min-height: 100vh;
+    }
+
+    header {
+      background: #1a1d2e;
+      border-bottom: 1px solid #2d3748;
+      padding: 16px 32px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    header h1 { font-size: 20px; font-weight: 700; color: #63b3ed; letter-spacing: -0.3px; }
+    header span { font-size: 13px; color: #718096; }
+
+    .container { max-width: 1100px; margin: 0 auto; padding: 32px 24px; }
+
+    .input-card {
+      background: #1a1d2e;
+      border: 1px solid #2d3748;
+      border-radius: 12px;
+      padding: 24px;
+      margin-bottom: 28px;
+    }
+    .input-row { display: flex; gap: 12px; align-items: flex-start; }
+    .input-row input {
+      flex: 1;
+      background: #0f1117;
+      border: 1px solid #4a5568;
+      border-radius: 8px;
+      color: #e2e8f0;
+      font-size: 14px;
+      padding: 10px 14px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .input-row input:focus { border-color: #63b3ed; }
+    .hint { font-size: 12px; color: #718096; margin-top: 8px; }
+
+    button {
+      cursor: pointer;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      padding: 10px 20px;
+      transition: opacity 0.15s, background 0.15s;
+    }
+    button:disabled { opacity: 0.4; cursor: not-allowed; }
+    #fetchBtn { background: #3182ce; color: #fff; }
+    #fetchBtn:not(:disabled):hover { background: #2b6cb0; }
+    #stage2Btn {
+      background: #276749;
+      color: #fff;
+      width: 100%;
+      padding: 14px;
+      font-size: 15px;
+      margin-top: 28px;
+    }
+    #stage2Btn:not(:disabled):hover { background: #22543d; }
+
+    /* Status bar */
+    #statusBar {
+      display: none;
+      background: #1a1d2e;
+      border: 1px solid #2d3748;
+      border-radius: 8px;
+      padding: 14px 18px;
+      margin-bottom: 20px;
+      font-size: 13px;
+      color: #90cdf4;
+    }
+    #statusBar.error { border-color: #e53e3e; color: #fc8181; }
+    #statusBar.success { border-color: #38a169; color: #68d391; }
+
+    /* Results */
+    #results { display: none; }
+
+    .section-card {
+      background: #1a1d2e;
+      border: 1px solid #2d3748;
+      border-radius: 12px;
+      padding: 22px 24px;
+      margin-bottom: 18px;
+    }
+    .section-card h2 {
+      font-size: 13px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: #90cdf4;
+      margin-bottom: 14px;
+    }
+
+    .paper-title { font-size: 18px; font-weight: 700; color: #e2e8f0; line-height: 1.4; margin-bottom: 10px; }
+    .meta-row { display: flex; flex-wrap: wrap; gap: 16px; font-size: 13px; color: #a0aec0; }
+    .meta-row strong { color: #e2e8f0; }
+
+    .chips { display: flex; flex-wrap: wrap; gap: 8px; }
+    .chip {
+      background: #2d3748;
+      border-radius: 20px;
+      padding: 4px 12px;
+      font-size: 12px;
+      color: #90cdf4;
+    }
+
+    .abstract-text { font-size: 14px; line-height: 1.7; color: #cbd5e0; }
+
+    .section-list { list-style: none; }
+    .section-item {
+      border-top: 1px solid #2d3748;
+      padding: 10px 0;
+    }
+    .section-item:first-child { border-top: none; }
+    .section-toggle {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 600;
+      color: #63b3ed;
+      user-select: none;
+    }
+    .section-toggle .arrow { transition: transform 0.2s; font-size: 11px; color: #718096; }
+    .section-toggle.open .arrow { transform: rotate(90deg); }
+    .section-body {
+      display: none;
+      font-size: 13px;
+      line-height: 1.7;
+      color: #a0aec0;
+      margin-top: 10px;
+      max-height: 400px;
+      overflow-y: auto;
+      padding-right: 8px;
+    }
+    .section-body::-webkit-scrollbar { width: 4px; }
+    .section-body::-webkit-scrollbar-track { background: #0f1117; }
+    .section-body::-webkit-scrollbar-thumb { background: #4a5568; border-radius: 4px; }
+
+    .figure-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 14px; }
+    .figure-card {
+      background: #0f1117;
+      border: 1px solid #2d3748;
+      border-radius: 8px;
+      padding: 14px;
+    }
+    .figure-label { font-size: 11px; font-weight: 700; color: #68d391; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }
+    .figure-title { font-size: 13px; font-weight: 600; color: #e2e8f0; margin-bottom: 6px; line-height: 1.4; }
+    .figure-caption { font-size: 12px; color: #718096; line-height: 1.5; }
+
+    .table-grid { display: grid; gap: 18px; }
+    .table-card {
+      background: #0f1117;
+      border: 1px solid #2d3748;
+      border-radius: 8px;
+      padding: 14px;
+    }
+    .table-label { font-size: 11px; font-weight: 700; color: #f6ad55; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }
+    .table-caption { font-size: 13px; color: #a0aec0; }
+    .table-scroll { overflow-x: auto; margin-top: 12px; }
+    table.data-table { border-collapse: collapse; width: 100%; font-size: 12px; }
+    table.data-table th {
+      background: #2d3748; color: #90cdf4; font-weight: 700;
+      padding: 6px 10px; text-align: left; border: 1px solid #4a5568;
+      white-space: nowrap;
+    }
+    table.data-table td {
+      padding: 5px 10px; color: #cbd5e0; border: 1px solid #2d3748;
+      vertical-align: top;
+    }
+    table.data-table tr:nth-child(even) td { background: #1a1d2e; }
+
+    .ref-list { list-style: none; }
+    .ref-item {
+      border-top: 1px solid #2d3748;
+      padding: 8px 0;
+      font-size: 13px;
+      color: #a0aec0;
+      line-height: 1.5;
+    }
+    .ref-item:first-child { border-top: none; }
+    .pmid-badge {
+      display: inline-block;
+      background: #2b4c7e;
+      color: #90cdf4;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 1px 6px;
+      margin-right: 6px;
+    }
+    .ref-more { margin-top: 10px; font-size: 12px; color: #718096; }
+
+    .status-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 12px; }
+    .status-item {
+      background: #0f1117;
+      border: 1px solid #2d3748;
+      border-radius: 8px;
+      padding: 14px;
+      text-align: center;
+    }
+    .status-item .stat-value { font-size: 28px; font-weight: 700; color: #68d391; }
+    .status-item .stat-label { font-size: 12px; color: #718096; margin-top: 4px; }
+    .status-item.warn .stat-value { color: #f6ad55; }
+    .status-item.fail .stat-value { color: #fc8181; }
+
+    .section-tags { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 14px; }
+    .section-tag {
+      background: #276749;
+      color: #68d391;
+      border-radius: 6px;
+      padding: 3px 10px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+    .section-tag.missing { background: #742a2a; color: #fc8181; }
+
+    .raw-json-toggle {
+      cursor: pointer;
+      font-size: 13px;
+      color: #718096;
+      border: 1px solid #2d3748;
+      background: transparent;
+      padding: 6px 14px;
+      border-radius: 6px;
+      font-weight: 500;
+    }
+    .raw-json-toggle:hover { background: #2d3748; }
+    pre {
+      background: #0f1117;
+      border: 1px solid #2d3748;
+      border-radius: 8px;
+      padding: 16px;
+      font-size: 12px;
+      color: #a0aec0;
+      overflow-x: auto;
+      margin-top: 12px;
+      max-height: 500px;
+      overflow-y: auto;
+      display: none;
+    }
+
+    .warning-list { list-style: none; margin-bottom: 14px; }
+    .warning-item { font-size: 13px; color: #f6ad55; padding: 4px 0; }
+    .warning-item::before { content: "⚠ "; }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>INDAccelerator</h1>
+  <span>Stage 1 — Paper Ingest</span>
+</header>
+
+<div class="container">
+
+  <div class="input-card">
+    <div class="input-row">
+      <input
+        type="text"
+        id="paperInput"
+        value="https://pubmed.ncbi.nlm.nih.gov/41585874/"
+        placeholder="PubMed URL, PMC URL, DOI URL, bare PMID, or bare PMCID"
+      />
+      <button id="fetchBtn" onclick="fetchPaper()">Fetch Paper</button>
+    </div>
+    <p class="hint">Accepts: PubMed URL · PMC URL · DOI URL (doi.org/…) · bare PMID · bare PMCID</p>
+  </div>
+
+  <div id="statusBar"></div>
+  <div id="results"></div>
+
+  <button id="stage2Btn" disabled title="Fetch a paper successfully first" onclick="goStage2()">
+    Proceed to Stage 2 →
+  </button>
+
+</div>
+
+<script>
+let lastData = null;
+
+function setStatus(msg, type = 'info') {
+  const bar = document.getElementById('statusBar');
+  bar.textContent = msg;
+  bar.className = type;
+  bar.style.display = 'block';
+}
+
+function esc(s) {
+  if (!s) return '';
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+async function fetchPaper() {
+  const input = document.getElementById('paperInput').value.trim();
+  if (!input) { setStatus('Please enter a PubMed URL, PMC URL, DOI, PMID, or PMCID.', 'error'); return; }
+
+  document.getElementById('fetchBtn').disabled = true;
+  document.getElementById('stage2Btn').disabled = true;
+  document.getElementById('results').style.display = 'none';
+  lastData = null;
+
+  setStatus('Step 1/3 — Resolving identifier…', 'info');
+
+  try {
+    const url = `http://localhost:8000/api/fetch-paper?input=${encodeURIComponent(input)}`;
+
+    // Fake step progression for UX
+    setTimeout(() => {
+      if (document.getElementById('fetchBtn').disabled)
+        setStatus('Step 2/3 — Fetching PMC full-text XML…', 'info');
+    }, 600);
+    setTimeout(() => {
+      if (document.getElementById('fetchBtn').disabled)
+        setStatus('Step 3/3 — Parsing sections, figures, references…', 'info');
+    }, 1800);
+
+    const resp = await fetch(url);
+    const data = await resp.json();
+
+    if (data.error) {
+      setStatus(`Error: ${data.error}`, 'error');
+      renderResults(data);
+      return;
+    }
+
+    lastData = data;
+    setStatus(
+      `✓ Fetched "${data.title ? data.title.substring(0,80) + '…' : 'paper'}" — ` +
+      `${data.fetch_sources?.sections_found?.length || 0} sections, ` +
+      `${data.fetch_sources?.figures_found || 0} figures, ` +
+      `${data.fetch_sources?.references_found || 0} references`,
+      'success'
+    );
+    renderResults(data);
+    document.getElementById('stage2Btn').disabled = false;
+    document.getElementById('stage2Btn').title = '';
+
+  } catch (err) {
+    setStatus(`Network error: ${err.message} — is the backend running on localhost:8000?`, 'error');
+  } finally {
+    document.getElementById('fetchBtn').disabled = false;
+  }
+}
+
+function renderResults(data) {
+  const el = document.getElementById('results');
+  el.style.display = 'block';
+
+  const warnings = (data.warnings || []).map(w =>
+    `<li class="warning-item">${esc(w)}</li>`
+  ).join('');
+
+  const warnBlock = warnings
+    ? `<div class="section-card"><h2>Warnings</h2><ul class="warning-list">${warnings}</ul></div>`
+    : '';
+
+  // Paper header
+  const authors = (data.authors || []).map(a => esc(a.name)).join(', ');
+  const header = `
+    <div class="section-card">
+      <h2>Paper</h2>
+      <div class="paper-title">${esc(data.title) || '<em>Title not found</em>'}</div>
+      <div class="meta-row">
+        <span><strong>Authors:</strong> ${authors || '—'}</span>
+        <span><strong>Journal:</strong> ${esc(data.journal) || '—'}</span>
+        <span><strong>Year:</strong> ${esc(data.year) || '—'}</span>
+        <span><strong>DOI:</strong> ${data.doi ? `<a href="https://doi.org/${esc(data.doi)}" target="_blank" style="color:#63b3ed">${esc(data.doi)}</a>` : '—'}</span>
+        <span><strong>PMID:</strong> ${esc(data.pmid) || '—'}</span>
+        <span><strong>PMCID:</strong> ${esc(data.pmcid) || '—'}</span>
+      </div>
+    </div>
+  `;
+
+  // Keywords
+  const kwChips = (data.keywords || []).map(k => `<span class="chip">${esc(k)}</span>`).join('');
+  const kwBlock = kwChips
+    ? `<div class="section-card"><h2>Keywords</h2><div class="chips">${kwChips}</div></div>`
+    : '';
+
+  // Abstract
+  const abstractBlock = data.abstract ? `
+    <div class="section-card">
+      <h2>Abstract</h2>
+      <p class="abstract-text">${esc(data.abstract)}</p>
+    </div>
+  ` : '';
+
+  // Body sections
+  const KNOWN = ['introduction','methods','results','discussion'];
+  const knownFound = KNOWN.filter(k => data.fetch_sources?.sections_found?.includes(k));
+  const knownMissing = KNOWN.filter(k => !data.fetch_sources?.sections_found?.includes(k));
+
+  const sectionTags = [
+    ...knownFound.map(k => `<span class="section-tag">${k}</span>`),
+    ...knownMissing.map(k => `<span class="section-tag missing">${k} missing</span>`)
+  ].join('');
+
+  const sectItems = (data.full_body_sections || []).map((s, i) => `
+    <li class="section-item">
+      <div class="section-toggle" id="stog-${i}" onclick="toggleSection(${i})">
+        <span>${esc(s.heading)}</span>
+        <span class="arrow">▶</span>
+      </div>
+      <div class="section-body" id="sbod-${i}">${esc(s.text)}</div>
+    </li>
+  `).join('');
+
+  const sectionsBlock = `
+    <div class="section-card">
+      <h2>Body Sections (${(data.full_body_sections || []).length} found)</h2>
+      <div class="section-tags">${sectionTags}</div>
+      <ul class="section-list">${sectItems}</ul>
+    </div>
+  `;
+
+  // Figures
+  const figCards = (data.figure_captions || []).map(f => `
+    <div class="figure-card">
+      <div class="figure-label">${esc(f.label)}</div>
+      <div class="figure-title">${esc(f.caption_title)}</div>
+      <div class="figure-caption">${esc(f.caption_text)}</div>
+    </div>
+  `).join('');
+  const figBlock = `
+    <div class="section-card">
+      <h2>Figures (${(data.figure_captions || []).length} found)</h2>
+      <div class="figure-grid">${figCards || '<em style="color:#718096">None found</em>'}</div>
+    </div>
+  `;
+
+  // Tables
+  const tableCards = (data.tables || []).map(t => {
+    let tableHtml = '';
+    if (t.headers?.length || t.data?.length) {
+      const headerRow = t.headers?.length
+        ? `<thead><tr>${t.headers.map(h => `<th>${esc(h)}</th>`).join('')}</tr></thead>`
+        : '';
+      const bodyRows = (t.data || []).map(row =>
+        `<tr>${row.map(cell => `<td>${esc(cell)}</td>`).join('')}</tr>`
+      ).join('');
+      tableHtml = `<div class="table-scroll"><table class="data-table">${headerRow}<tbody>${bodyRows}</tbody></table></div>`;
+    }
+    return `
+      <div class="table-card">
+        <div class="table-label">${esc(t.label)}</div>
+        <div class="table-caption">${esc(t.caption)}</div>
+        ${tableHtml}
+        ${t.note ? `<div class="table-caption" style="margin-top:8px;color:#718096;font-size:12px">${esc(t.note)}</div>` : ''}
+      </div>
+    `;
+  }).join('');
+  const tableBlock = `
+    <div class="section-card">
+      <h2>Tables (${(data.tables || []).length} found)</h2>
+      <div class="table-grid">${tableCards || '<em style="color:#718096">None found</em>'}</div>
+    </div>
+  `;
+
+  // References
+  const refs = data.references || [];
+  const refItems = refs.slice(0, 10).map(r => `
+    <li class="ref-item">
+      ${r.pmid ? `<span class="pmid-badge">PMID ${esc(r.pmid)}</span>` : ''}
+      ${esc(r.citation_text)}
+    </li>
+  `).join('');
+  const refMore = refs.length > 10
+    ? `<p class="ref-more">${refs.length - 10} more references stored in full JSON</p>`
+    : '';
+  const refsBlock = `
+    <div class="section-card">
+      <h2>References (${refs.length} total)</h2>
+      <ul class="ref-list">${refItems}</ul>
+      ${refMore}
+    </div>
+  `;
+
+  // Source status
+  const fs = data.fetch_sources || {};
+  const statusGrid = `
+    <div class="section-card">
+      <h2>Source Status</h2>
+      <div class="status-grid">
+        <div class="status-item ${fs.pmc_full_text === 'ok' ? '' : 'fail'}">
+          <div class="stat-value">${fs.pmc_full_text === 'ok' ? '✓' : '✗'}</div>
+          <div class="stat-label">PMC Full Text</div>
+        </div>
+        <div class="status-item">
+          <div class="stat-value">${fs.sections_found?.length || 0}</div>
+          <div class="stat-label">Sections Classified</div>
+        </div>
+        <div class="status-item">
+          <div class="stat-value">${fs.figures_found || 0}</div>
+          <div class="stat-label">Figures</div>
+        </div>
+        <div class="status-item">
+          <div class="stat-value">${fs.tables_found || 0}</div>
+          <div class="stat-label">Tables</div>
+        </div>
+        <div class="status-item">
+          <div class="stat-value">${fs.references_found || 0}</div>
+          <div class="stat-label">References</div>
+        </div>
+        <div class="status-item">
+          <div class="stat-value">${(data.mesh_terms || []).length || 0}</div>
+          <div class="stat-label">MeSH Terms</div>
+        </div>
+      </div>
+    </div>
+  `;
+
+  // Raw JSON
+  const rawBlock = `
+    <div class="section-card">
+      <h2>Raw JSON</h2>
+      <button class="raw-json-toggle" onclick="toggleRaw()">Show / Hide</button>
+      <pre id="rawJson">${esc(JSON.stringify(data, null, 2))}</pre>
+    </div>
+  `;
+
+  el.innerHTML = warnBlock + header + kwBlock + abstractBlock + sectionsBlock + figBlock + tableBlock + refsBlock + statusGrid + rawBlock;
+}
+
+function toggleSection(i) {
+  const tog = document.getElementById(`stog-${i}`);
+  const bod = document.getElementById(`sbod-${i}`);
+  const open = bod.style.display === 'block';
+  bod.style.display = open ? 'none' : 'block';
+  tog.classList.toggle('open', !open);
+}
+
+function toggleRaw() {
+  const el = document.getElementById('rawJson');
+  el.style.display = el.style.display === 'block' ? 'none' : 'block';
+}
+
+function goStage2() {
+  alert('Stage 2 not yet implemented.');
+}
+</script>
+
+</body>
+</html>
