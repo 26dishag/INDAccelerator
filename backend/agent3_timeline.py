@@ -172,7 +172,7 @@ async def stream_timeline(gaps: list[dict], compound: str, drug_class: str,
 
     async with client.messages.stream(
         model=MODEL,
-        max_tokens=8192,
+        max_tokens=16000,
         system=SYSTEM_PROMPT,
         messages=[{"role": "user", "content": prompt}],
     ) as stream:
@@ -203,6 +203,27 @@ async def stream_timeline(gaps: list[dict], compound: str, drug_class: str,
                         in_obj = False
                 elif in_obj:
                     obj += char
+
+    # Compute fallback summary from studies if Claude didn't emit one
+    if not summary and all_studies:
+        phase1 = [s for s in all_studies if s.get("phase1_required")]
+        phase2_ids = [s["id"] for s in all_studies if not s.get("phase1_required")]
+        total_weeks = max((s.get("week_end", 0) for s in phase1), default=28)
+        cost_low = sum(s.get("cost_low", 0) for s in phase1)
+        cost_high = sum(s.get("cost_high", 0) for s in phase1)
+        critical = [s["id"] for s in phase1 if s.get("fda_tier") == "phase1_blocking"]
+        summary = {
+            "type": "summary",
+            "total_weeks_to_phase1": total_weeks,
+            "phase1_gate_week": total_weeks,
+            "cost_low": cost_low,
+            "cost_high": cost_high,
+            "critical_path": critical,
+            "phase2_studies": phase2_ids,
+            "compound_assessment": f"{len(phase1)} studies required for Phase 1 IND submission.",
+            "highlights": [],
+        }
+        yield summary
 
     result = {"studies": all_studies, "summary": summary}
     PIPELINE_STATE_DIR.mkdir(parents=True, exist_ok=True)

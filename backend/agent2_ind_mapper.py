@@ -107,7 +107,7 @@ Rules for Section 8 subsections:
 - Map each experiment ID (from extracted experiments) to the correct subsection(s) based on what it measured
 - status: "complete" = sufficient for Phase 1 IND submission per ICH M3(R2) — does NOT mean every possible experiment is done, only that the data package justifies human exposure; "partial" = some data exists but a Phase 1-blocking gap remains; "missing" = no relevant study exists
 - Write specific status_rationale (1-2 sentences citing the gap or why it's complete)
-- missing_experiments: structured objects with EXACT schema: {"study": "<what is needed>", "priority": "<phase1_blocking|recommended|phase2_required>"}
+- missing_experiments: structured objects with EXACT schema: {{"study": "<what is needed>", "priority": "<phase1_blocking|recommended|phase2_required>"}}
   - "phase1_blocking" = FDA will not accept the IND without this; blocks human exposure
   - "recommended" = best practice or strengthens the package but NOT required for Phase 1 IND submission; the section CAN be complete even if this is listed
   - "phase2_required" = not needed before Phase 1; defer until Phase 2
