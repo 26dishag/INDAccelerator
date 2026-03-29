@@ -283,8 +283,11 @@
       padding: 20px 24px;
       font-size: 13px; line-height: 1.7;
       color: var(--fg); font-family: 'Georgia', serif;
-      white-space: pre-wrap;
     }
+    .draft-panel-body p { margin: 0 0 8px; }
+    .draft-panel-body ul { margin: 4px 0 10px 18px; padding: 0; }
+    .draft-panel-body li { margin-bottom: 4px; }
+    .draft-panel-body br { display: block; content: ''; margin: 4px 0; }
     .draft-panel-body h2 {
       font-size: var(--t-base); font-weight: 700; margin: 20px 0 8px;
       padding-bottom: 4px; border-bottom: 1px solid #e8e8e8;
@@ -891,28 +894,62 @@ function openDraftPanel(sectionNum, sectionTitle, evt) {
 }
 
 function renderDraftMarkdown(text) {
-  // Minimal markdown renderer: ## headers, ### subheaders, **bold**, tables, plain text
-  let html = text
-    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
-    .replace(/^## (.+)$/gm, '<h2>$1</h2>')
-    .replace(/^### (.+)$/gm, '<h3>$1</h3>')
-    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+  // Split into blocks on blank lines, process each block type
+  const escaped = text
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
 
-  // Render markdown tables
-  html = html.replace(/(\|.+\|\n)+/g, (tableBlock) => {
+  // Process tables first (they span multiple lines with |)
+  let processed = escaped.replace(/((?:\|.+\|\n?)+)/g, tableBlock => {
     const rows = tableBlock.trim().split('\n').filter(r => !/^\|[-|:\s]+\|$/.test(r));
     if (rows.length < 1) return tableBlock;
-    const tableRows = rows.map((row, i) => {
+    return '<table>' + rows.map((row, i) => {
       const cells = row.split('|').slice(1, -1).map(c => c.trim());
       const tag = i === 0 ? 'th' : 'td';
       return '<tr>' + cells.map(c => `<${tag}>${c}</${tag}>`).join('') + '</tr>';
-    }).join('');
-    return '<table>' + tableRows + '</table>';
+    }).join('') + '</table>';
   });
 
+  // Convert line by line
+  const lines = processed.split('\n');
+  const out = [];
+  let inList = false;
+
+  for (const line of lines) {
+    if (/^## (.+)/.test(line)) {
+      if (inList) { out.push('</ul>'); inList = false; }
+      out.push(line.replace(/^## (.+)/, '<h2>$1</h2>'));
+    } else if (/^### (.+)/.test(line)) {
+      if (inList) { out.push('</ul>'); inList = false; }
+      out.push(line.replace(/^### (.+)/, '<h3>$1</h3>'));
+    } else if (/^[-*] (.+)/.test(line)) {
+      if (!inList) { out.push('<ul>'); inList = true; }
+      out.push(line.replace(/^[-*] (.+)/, '<li>$1</li>'));
+    } else if (/^\d+\. (.+)/.test(line)) {
+      if (inList) { out.push('</ul>'); inList = false; }
+      out.push(line.replace(/^\d+\. (.+)/, '<li>$1</li>'));
+    } else if (line.startsWith('<table>')) {
+      if (inList) { out.push('</ul>'); inList = false; }
+      out.push(line);
+    } else if (line.trim() === '') {
+      if (inList) { out.push('</ul>'); inList = false; }
+      out.push('<br>');
+    } else {
+      if (inList) { out.push('</ul>'); inList = false; }
+      out.push(`<p>${line}</p>`);
+    }
+  }
+  if (inList) out.push('</ul>');
+
+  // Inline: **bold**, `code`, [PLACEHOLDER] highlight
+  let html = out.join('\n')
+    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+    .replace(/`([^`]+)`/g, '<code style="background:#f0f0f0;padding:1px 4px;font-size:11px">$1</code>')
+    .replace(/\[([A-Z][A-Z\s]+TO[A-Z\s]+)\]/g, '<span style="background:#fef9c3;padding:1px 4px;font-size:11px;font-weight:600">[$1]</span>');
+
   document.getElementById('draftBody').innerHTML = html;
-  const body = document.getElementById('draftBody');
-  body.scrollTop = body.scrollHeight;
+  document.getElementById('draftBody').scrollTop = document.getElementById('draftBody').scrollHeight;
 }
 
 function closeDraftPanel() {
