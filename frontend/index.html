@@ -476,7 +476,7 @@
 </div>
 
 <!-- Selection tooltip -->
-<div id="sel-tooltip" onclick="buildFlowchart()">→ Flowchart</div>
+<div id="sel-tooltip" onmousedown="buildFlowchart()">→ Flowchart</div>
 
 <!-- Flowchart modal -->
 <div id="fc-modal">
@@ -695,12 +695,14 @@ document.addEventListener('mouseup', () => {
   _selText = text;
   const range = sel.getRangeAt(0).getBoundingClientRect();
   tooltip.style.display = 'block';
-  tooltip.style.left = `${range.left + range.width / 2 - tooltip.offsetWidth / 2}px`;
-  tooltip.style.top  = `${range.bottom + window.scrollY + 6}px`;
+  // position: fixed — viewport coords only, no scrollY
+  const tw = tooltip.offsetWidth || 90;
+  tooltip.style.left = `${Math.max(4, range.left + range.width / 2 - tw / 2)}px`;
+  tooltip.style.top  = `${range.bottom + 6}px`;
 });
 
 document.addEventListener('mousedown', e => {
-  if (e.target !== tooltip) tooltip.style.display = 'none';
+  if (!tooltip.contains(e.target)) tooltip.style.display = 'none';
 });
 
 async function buildFlowchart() {

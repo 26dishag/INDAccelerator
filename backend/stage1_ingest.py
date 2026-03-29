@@ -268,7 +268,7 @@ def parse_pmc_xml(xml_text: str) -> dict:
                     seen.add(p)
                     unique_paras.append(p)
 
-            text = " ".join(unique_paras)
+            text = "\n\n".join(unique_paras)
             sections.append(BodySection(heading=heading, text=text))
 
             # classify
