@@ -21,8 +21,15 @@ DRUG CLASS: {drug_class}
 TARGET: {target}
 INDICATION: {indication}
 
-MISSING/PARTIAL STUDIES (from IND gap assessment):
+GAPS FROM IND READINESS ASSESSMENT (agent2 priority labels — use these as authoritative starting point):
 {gaps}
+
+Each gap includes a "priority" field set by the IND gap assessment:
+- priority "phase1_blocking" → FDA will not accept IND without this → set phase1_required: true, fda_tier: "phase1_blocking"
+- priority "recommended" → best practice, strengthens package, not strictly required → set phase1_required: true, fda_tier: "conditional"
+- priority "phase2_required" → explicitly deferred → set phase1_required: false, fda_tier: "phase2_defer"
+You may upgrade a priority (recommended → phase1_blocking) if ICH M3(R2) mandates it, but always state why in context.
+You must NOT downgrade a phase1_blocking gap to conditional or deferred.
 
 OUTPUT FORMAT — each study on its own line, then a summary line.
 
@@ -135,19 +142,23 @@ def extract_gaps(ind_map: dict) -> list[dict]:
     for section in ind_map.get("sections", []):
         if section.get("number") == 8:
             for sub in section.get("subsections", []):
-                if sub.get("status") in ["missing", "partial"]:
-                    for req in sub.get("missing_experiments", []):
-                        # req may be a string or an object {study, rationale, priority}
-                        if isinstance(req, dict):
-                            req_text = req.get("study") or req.get("description") or req.get("requirement") or str(req)
-                        else:
-                            req_text = str(req)
-                        gaps.append({
-                            "subsection": sub["name"],
-                            "status": sub["status"],
-                            "regulatory_ref": sub.get("regulatory_ref", ""),
-                            "requirement": req_text,
-                        })
+                sub_status = sub.get("status", "missing")
+                for req in sub.get("missing_experiments", []):
+                    if isinstance(req, dict):
+                        req_text = req.get("study") or req.get("description") or req.get("requirement") or str(req)
+                        priority = req.get("priority", "phase1_blocking" if sub_status != "complete" else "recommended")
+                    else:
+                        req_text = str(req)
+                        priority = "phase1_blocking" if sub_status != "complete" else "recommended"
+                    # Include all priorities — phase2_required deferred, recommended conditional,
+                    # phase1_blocking required. Skip nothing so agent3 has full picture.
+                    gaps.append({
+                        "subsection": sub["name"],
+                        "status": sub_status,
+                        "regulatory_ref": sub.get("regulatory_ref", ""),
+                        "requirement": req_text,
+                        "priority": priority,
+                    })
     return gaps
 
 
