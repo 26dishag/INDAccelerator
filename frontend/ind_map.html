@@ -583,7 +583,7 @@ function updateStats() {
 
   const counts = { complete: 0, partial: 0, missing: 0 };
   for (const s of sections) {
-    const st = resolveStatus(s);
+    const st = s.number === 8 ? resolveStatus(s) : computeSectionColor(s);
     if (st === 'complete') counts.complete++;
     else if (st === 'partial') counts.partial++;
     else counts.missing++;

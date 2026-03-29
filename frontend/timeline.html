@@ -351,29 +351,6 @@
     .cd-impact-meta { opacity: 0.7; white-space: nowrap; margin-left: 8px; }
 
     /* ── Dose calculator ────────────────────────────────────────────── */
-    .dose-calc {
-      margin: 12px 0; padding: 12px 16px;
-      border: 1px solid #e8e8e8; background: var(--bg);
-      font-size: var(--t-xs);
-    }
-    .dc-header { display: flex; align-items: baseline; gap: 10px; margin-bottom: 8px; }
-    .dc-title { font-weight: 700; font-size: var(--t-sm); }
-    .dc-source { opacity: 0.55; font-size: 10px; }
-    .dc-body { display: flex; gap: 16px; align-items: flex-end; flex-wrap: wrap; }
-    .dc-field { display: flex; flex-direction: column; gap: 3px; }
-    .dc-field label { font-weight: 600; opacity: 0.6; text-transform: uppercase; font-size: 9px; letter-spacing: 0.4px; }
-    .dc-field input, .dc-field select {
-      font-family: inherit; font-size: var(--t-xs); border: 1px solid #ddd;
-      padding: 4px 6px; background: var(--bg); color: var(--fg); width: 110px;
-    }
-    .dc-result {
-      margin-left: auto; text-align: right; min-width: 160px;
-    }
-    .dc-result-main { font-size: 20px; font-weight: 700; }
-    .dc-result-sub  { font-size: var(--t-xs); opacity: 0.55; margin-top: 2px; }
-    .dc-steps { margin-top: 6px; color: var(--fg); opacity: 0.5; font-size: 10px; border-top: 1px solid #eee; padding-top: 6px; }
-    .dc-warn { color: #b45309; font-size: 10px; margin-top: 4px; }
-
     /* ── Study briefs panel ─────────────────────────────────────────── */
     .briefs-panel {
       position: fixed; top: 0; right: -680px; width: 660px; height: 100vh;
@@ -480,19 +457,6 @@
       <div class="sum-label">Phase 1 Studies</div>
       <div class="sum-value" id="sumCount"></div>
     </div>
-  </div>
-
-  <!-- Starting dose estimate (provisional) -->
-  <div class="dose-calc" id="doseCalc" style="display:none">
-    <div class="dc-header">
-      <span class="dc-title">Provisional Human Starting Dose</span>
-      <span class="dc-source" id="dcSource"></span>
-    </div>
-    <div class="dc-body">
-      <div class="dc-result" id="dcResult"></div>
-    </div>
-    <div class="dc-steps" id="dcSteps"></div>
-    <div class="dc-warn">⚠ Provisional estimate only — based on non-GLP data from the source paper. Formal NOAEL will be established by the GLP repeat-dose toxicology study. This number is used now only to set dose levels in the GLP studies (they must cover multiples of the expected human dose).</div>
   </div>
 
   <!-- Spend optimizer -->
@@ -972,40 +936,6 @@ function injectFailureImpact(studyId) {
   el.style.display = 'block';
 }
 
-// ── Starting dose calculator ────────────────────────────────────────────────────
-const KM_HUMAN = 37;
-const KM_LABELS = { '3': 'mouse', '6': 'rat', '12': 'monkey', '20': 'dog' };
-
-function loadDoseCalc() {
-  fetch(`${API}/api/paper-data`).then(r => r.ok ? r.json() : null).then(pd => {
-    if (!pd) return;
-    const exps = pd.experiments || [];
-    const tox = exps.find(e => e.type === 'in vivo' &&
-      /mtd|tolerat|maximum tolerat/i.test(JSON.stringify(e)));
-    if (!tox) return;
-    const doseMatch = JSON.stringify(tox).match(/(\d+(?:\.\d+)?)\s*mg\/kg/g);
-    const doses = doseMatch ? doseMatch.map(d => parseFloat(d)) : [];
-    const maxDose = doses.length ? Math.max(...doses) : null;
-    if (!maxDose) return;
-    const km      = /mouse/i.test(JSON.stringify(tox)) ? 3 : 6;
-    const species = KM_LABELS[String(km)] || 'animal';
-    const sf      = 10;
-    const hed     = maxDose * (km / KM_HUMAN);
-    const start   = hed / sf;
-    const mg70kg  = start * 70;
-
-    document.getElementById('dcSource').textContent =
-      `Source: ${tox.id} (${tox.model || 'MTD study'}, non-GLP)`;
-    document.getElementById('dcResult').innerHTML = `
-      <div class="dc-result-main">${mg70kg.toFixed(0)} mg</div>
-      <div class="dc-result-sub">provisional human starting dose · 70 kg adult</div>
-      <div class="dc-result-sub">(${start.toFixed(2)} mg/kg)</div>`;
-    document.getElementById('dcSteps').innerHTML =
-      `${species} NOAEL ${maxDose} mg/kg × (Km ${km} ÷ Km ${KM_HUMAN}) = HED ${hed.toFixed(2)} mg/kg ÷ ${sf}× safety factor = <strong>${start.toFixed(2)} mg/kg → ${mg70kg.toFixed(0)} mg (70 kg human)</strong>`;
-    document.getElementById('doseCalc').style.display = 'block';
-  }).catch(() => {});
-}
-
 // ── Study briefs panel ──────────────────────────────────────────────────────────
 let _briefsLoaded = false;
 
@@ -1126,8 +1056,6 @@ async function load() {
       document.getElementById('sumCompound').textContent = pd.compound || 'Unknown';
     }
   } catch (_) {}
-
-  loadDoseCalc();
 
   // Restore from cache if available
   const cached = sessionStorage.getItem('cache_timeline');
