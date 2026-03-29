@@ -186,9 +186,9 @@ async def stream_ind_map(experiments: list[dict]):
                                         else:
                                             parsed["status"] = "partial"
                                     # Ensure all missing_experiments have stable gap_ids
-                                    _gap_counter = 1
                                     for sub in parsed.get("subsections", []):
                                         sub_prefix = _SUB_ABBREV.get(sub.get("name", ""), "G")
+                                        _gap_counter = 1
                                         for m in sub.get("missing_experiments", []):
                                             if isinstance(m, dict) and not m.get("gap_id"):
                                                 m["gap_id"] = f"{sub_prefix}{_gap_counter:02d}"

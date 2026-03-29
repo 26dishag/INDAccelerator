@@ -125,6 +125,15 @@ async def get_ind_map():
         return json.load(f)
 
 
+@app.get("/api/profile")
+async def get_profile_data():
+    path = PIPELINE_STATE_DIR / "profile.json"
+    if not path.exists():
+        raise HTTPException(status_code=404, detail="No profile found. Run extraction first.")
+    with open(path) as f:
+        return json.load(f)
+
+
 @app.get("/api/paper-data")
 async def get_paper_data():
     path = PIPELINE_STATE_DIR / "paper_data.json"
@@ -175,6 +184,15 @@ async def build_timeline_endpoint():
         media_type="text/event-stream",
         headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"},
     )
+
+
+@app.get("/api/study-briefs")
+async def get_study_briefs_cached():
+    path = PIPELINE_STATE_DIR / "study_briefs.json"
+    if not path.exists():
+        raise HTTPException(status_code=404, detail="No cached briefs found.")
+    with open(path) as f:
+        return json.load(f)
 
 
 @app.post("/api/study-briefs")

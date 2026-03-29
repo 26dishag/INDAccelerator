@@ -149,11 +149,13 @@
     }
     .study-card:hover { box-shadow: 3px 3px 0 var(--fg); z-index: 20; }
     .study-card.expanded { z-index: 20; overflow: visible; }
-    .study-card.phase2 { opacity: 0.4; }
-    .study-card.recommended { opacity: 0.7; border-style: dashed; border-color: #7c9cbf; }
-    /* When popup is open, restore full opacity so it's readable */
-    .study-card.phase2.expanded { opacity: 1; }
-    .study-card.recommended.expanded { opacity: 1; }
+    /* Tier-based card colors */
+    .study-card.tier-required    { background: #f0fdf4; border-color: #86efac; }
+    .study-card.tier-recommended { background: #fff7ed; border-color: #fdba74; }
+    .study-card.tier-conditional { background: #f9fafb; border-color: #d1d5db; }
+    .study-card.tier-deferred    { opacity: 0.35; }
+    /* When popup is open, restore full opacity */
+    .study-card.tier-deferred.expanded { opacity: 1; }
 
     /* Left bar — failure risk color */
     .card-bar { width: 5px; position: absolute; left: 0; top: 0; bottom: 0; }
@@ -166,6 +168,11 @@
       height: 74px; padding: 7px 8px 6px 14px;
       display: flex; flex-direction: column; justify-content: space-between;
       overflow: hidden;
+    }
+    .card-id-label {
+      font-size: 9px; font-weight: 700; color: var(--fg); opacity: 0.4;
+      text-transform: uppercase; letter-spacing: 0.4px; line-height: 1;
+      margin-bottom: 1px;
     }
     .card-name {
       font-size: 12px; font-weight: 700; color: var(--fg);
@@ -194,115 +201,89 @@
     .cbadge.rec  { border-color: #7c9cbf; color: #7c9cbf; border-style: dashed; }
     .cbadge.wk   { border-color: #ccc; color: var(--fg); opacity: 0.6; }
 
-    /* ── Expanded popup — full width of the card ───────────────────── */
+    /* ── Expanded popup ─────────────────────────────────────────────── */
     .card-detail {
       display: none;
       position: absolute; top: 74px; left: -1px; right: -1px;
       background: var(--bg);
-      border: 1px solid #000; border-top: none;
-      box-shadow: 4px 4px 0 #000;
-      z-index: 30;
-      min-width: 260px;
-      font-size: 11px;
+      border: 1px solid #d0d0d0; border-top: none;
+      box-shadow: 2px 4px 12px rgba(0,0,0,0.12);
+      z-index: 30; min-width: 280px;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      font-size: 12px; color: var(--fg);
     }
     .card-detail.open { display: block; }
 
-    /* Close strip */
-    .cd-close-strip {
-      background: #111; display: flex;
-      justify-content: space-between; align-items: center;
-      padding: 4px 8px 4px 10px;
+    /* Row shared style */
+    .cd-row {
+      padding: 9px 12px;
+      border-bottom: 1px solid #f0f0f0;
     }
-    .cd-close-strip-meta { font-size: 9px; color: #fff; font-weight: 600; letter-spacing: 0.3px; }
+    .cd-row:last-child { border-bottom: none; }
+    .cd-row-head {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 4px;
+    }
+    .cd-label {
+      font-size: 9px; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.5px; color: var(--fg); opacity: 0.4;
+    }
     .cd-close {
-      background: none; border: none; color: #fff;
-      font-size: 14px; cursor: pointer; line-height: 1; padding: 0;
+      background: none; border: none; color: var(--fg); opacity: 0.35;
+      font-size: 15px; cursor: pointer; line-height: 1; padding: 0;
     }
-    .cd-close:hover { color: #ccc; }
+    .cd-close:hover { opacity: 0.9; }
 
-    /* Why needed */
-    .cd-why {
-      padding: 6px 10px;
-      border-bottom: 1px solid #f0f0f0;
-      line-height: 1.45;
+    /* Regulatory tag */
+    .cd-reg {
+      display: inline-block;
+      font-size: 9px; font-weight: 700; color: #2563eb;
+      background: #eff6ff; padding: 1px 6px;
+      margin-bottom: 5px;
     }
-    .cd-why-reg {
-      font-size: 9px; font-weight: 800; letter-spacing: 0.5px;
-      color: #2563eb; font-family: monospace;
-      display: block; margin-bottom: 2px;
-    }
-    .cd-why-gap { font-size: 11px; color: var(--fg); font-weight: 500; }
+    /* Main text */
+    .cd-text { font-size: 11px; line-height: 1.5; color: var(--fg); }
 
-    /* Dependency chain */
-    .cd-chain {
-      padding: 5px 10px;
-      border-bottom: 1px solid #f0f0f0;
-      font-size: 10px; color: var(--fg);
-      display: flex; align-items: center; flex-wrap: wrap; gap: 3px;
-      line-height: 1.5;
+    /* Stats grid */
+    .cd-stats {
+      display: grid; grid-template-columns: 1fr 1fr 1fr;
     }
-    .ch-label { font-size: 8px; font-weight: 800; text-transform: uppercase;
-                letter-spacing: 0.5px; color: var(--fg); opacity: 0.3;
-                margin-right: 2px; }
-    .ch-node {
-      padding: 1px 6px; border: 1px solid #ddd;
-      background: #f5f5f5; white-space: nowrap;
-      max-width: 140px; overflow: hidden; text-overflow: ellipsis;
+    .cd-stat {
+      padding: 8px 12px; border-right: 1px solid #f0f0f0;
+      display: flex; flex-direction: column; gap: 3px;
     }
-    .ch-node.ch-this {
-      background: var(--fg); color: var(--bg);
-      border-color: var(--fg); font-weight: 700; max-width: none;
+    .cd-stat:last-child { border-right: none; }
+    .cd-stat-val {
+      font-size: 14px; font-weight: 800; line-height: 1; color: var(--fg);
     }
-    .ch-arrow { color: var(--fg); opacity: 0.3; font-size: 9px; }
+    .cd-stat-val.low    { color: #16a34a; }
+    .cd-stat-val.medium { color: #b45309; }
+    .cd-stat-val.high   { color: #dc2626; }
+    .cd-stat-sub { font-size: 9px; opacity: 0.4; }
 
-    /* Risk + Cost row */
-    .cd-metrics { display: flex; border-bottom: 1px solid #f0f0f0; }
-    .cd-m-risk {
-      flex: 1; padding: 6px 10px;
-      border-right: 1px solid #f0f0f0;
-      display: flex; align-items: flex-start; gap: 5px;
+    /* Sequence nodes */
+    .cd-seq-row { display: flex; align-items: center; flex-wrap: wrap; gap: 5px; }
+    .cd-seq-node {
+      font-size: 10px; padding: 2px 8px;
+      border: 1px solid #ddd; background: #f5f5f5; color: var(--fg);
+      white-space: nowrap; max-width: 150px;
+      overflow: hidden; text-overflow: ellipsis;
     }
-    .cd-risk-pct {
-      font-size: 17px; font-weight: 800; line-height: 1; flex-shrink: 0; margin-top: 1px;
+    .cd-seq-node.cd-seq-this {
+      background: var(--fg); color: var(--bg); border-color: var(--fg); font-weight: 700;
     }
-    .cd-risk-pct.low    { color: #16a34a; }
-    .cd-risk-pct.medium { color: #b45309; }
-    .cd-risk-pct.high   { color: #dc2626; }
-    .cd-risk-why { font-size: 10px; color: var(--fg); opacity: 0.65; line-height: 1.4; }
-    .cd-m-cost {
-      padding: 6px 10px; min-width: 100px;
-      display: flex; flex-direction: column; gap: 4px; justify-content: center;
+    .cd-seq-arrow { font-size: 11px; opacity: 0.25; flex-shrink: 0; }
+    .cd-seq-none { font-size: 10px; opacity: 0.35; font-style: italic; }
+
+    /* Warning banner */
+    .cd-warn {
+      padding: 7px 12px; background: #fffbeb; font-size: 10px;
+      color: #78350f; line-height: 1.5; border-bottom: 1px solid #fde68a;
     }
-    .cd-cost-val { font-size: 12px; font-weight: 800; color: var(--fg); white-space: nowrap; }
-    .cd-tier-pill {
-      font-size: 8px; font-weight: 800; letter-spacing: 0.4px; text-transform: uppercase;
-      padding: 1px 5px; white-space: nowrap; align-self: flex-start;
-    }
+
     .tier-p1   { background: #000; color: #fff; }
     .tier-cond { border: 1px dashed #b45309; color: #b45309; }
     .tier-p2   { border: 1px dashed #9ca3af; color: #6b7280; }
-
-    /* Class liability / design warning */
-    .cd-warn {
-      padding: 5px 10px; border-bottom: 1px solid #fde68a;
-      background: #fffbeb; font-size: 10px; color: #78350f; line-height: 1.4;
-    }
-    .cd-warn::before { content: '⚠ '; font-weight: 700; }
-
-    /* Cost saving */
-    .cd-saving {
-      padding: 5px 10px; border-bottom: 1px solid #dcfce7;
-      background: #f0fdf4; font-size: 10px; color: #166534; line-height: 1.4;
-    }
-    .cd-saving::before { content: '💰 '; }
-
-    /* Footer */
-    .cd-foot { padding: 5px 10px; display: flex; gap: 8px; align-items: center; }
-    .cd-foot a {
-      font-size: 10px; font-weight: 700; color: #2563eb;
-      text-decoration: none; border-bottom: 1px solid #bfdbfe;
-    }
-    .cd-foot a:hover { border-bottom-color: #2563eb; }
 
     /* ── Spend optimizer ───────────────────────────────────────────── */
     .spend-bar {
@@ -463,9 +444,8 @@
   <div class="spend-bar" id="spendBar">
     <span class="spend-label">Scenario</span>
     <div class="spend-scenarios">
-      <button class="spend-btn active" id="btnFastest" onclick="applyScenario('fastest',this)">Fastest</button>
-      <button class="spend-btn" id="btnCheapest" onclick="applyScenario('cheapest',this)">Cheapest</button>
-      <button class="spend-btn" id="btnBalanced" onclick="applyScenario('balanced',this)">Balanced</button>
+      <button class="spend-btn active" id="btnCritical" onclick="applyScenario('critical',this)">Critical</button>
+      <button class="spend-btn" id="btnThorough" onclick="applyScenario('thorough',this)">Thorough</button>
     </div>
     <div class="spend-budget-wrap">
       <span class="spend-label">Budget</span>
@@ -481,17 +461,16 @@
   <!-- Legend -->
   <div class="legend-bar">
     <div class="legend-group">
-      <div class="leg"><div class="leg-bar low"></div>Low risk</div>
-      <div class="leg"><div class="leg-bar medium"></div>Medium risk</div>
-      <div class="leg"><div class="leg-bar high"></div>High risk</div>
+      <div class="leg"><div style="width:12px;height:12px;background:#f0fdf4;border:1px solid #86efac;flex-shrink:0"></div>&nbsp;Required for Phase 1</div>
+      <div class="leg"><div style="width:12px;height:12px;background:#fff7ed;border:1px solid #fdba74;flex-shrink:0"></div>&nbsp;Recommended</div>
+      <div class="leg"><div style="width:12px;height:12px;background:#f9fafb;border:1px solid #d1d5db;flex-shrink:0"></div>&nbsp;Conditional</div>
+      <div class="leg"><div style="width:12px;height:12px;background:#fff;border:1px solid #e8e8e8;opacity:0.4;flex-shrink:0"></div>&nbsp;Deferred to Phase 2</div>
     </div>
     <div class="legend-divider"></div>
     <div class="legend-group">
-      <div class="leg"><span class="cbadge p1">P1</span>&nbsp;Phase 1 required</div>
-      <div class="leg"><span class="cbadge cond">Cond</span>&nbsp;Conditional</div>
-      <div class="leg"><span class="cbadge rec">Rec</span>&nbsp;Recommended</div>
-      <div class="leg"><span class="cbadge p2">P2</span>&nbsp;Defer to Phase 2</div>
-      <div class="leg"><span class="cbadge cp">CP</span>&nbsp;Critical path</div>
+      <div class="leg"><div class="leg-bar low"></div>&nbsp;Low failure risk</div>
+      <div class="leg"><div class="leg-bar medium"></div>&nbsp;Medium failure risk</div>
+      <div class="leg"><div class="leg-bar high"></div>&nbsp;High failure risk</div>
     </div>
   </div>
 
@@ -543,6 +522,10 @@ const TRACK_PAD = 12;   // top/bottom padding within each track row
 
 function esc(s) {
   return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+function trunc(s, n) {
+  s = String(s || '');
+  return s.length > n ? s.slice(0, n) + '\u2026' : s;
 }
 function fmt$k(n) {
   if (n >= 1000000) return '$' + (n/1000000).toFixed(1) + 'M';
@@ -702,35 +685,41 @@ function renderCard(s) {
   const pubmedUrl = `https://pubmed.ncbi.nlm.nih.gov/?term=${encodeURIComponent(pubmedQuery)}&sort=relevance`;
   const tierPill = `tier-${tier === 'phase1_blocking' ? 'p1' : tier === 'conditional' ? 'cond' : tier === 'recommended' ? 'rec' : 'p2'}`;
 
-  // Dependency chain: what runs before and after this study
-  const depNames  = (s.depends_on || []).map(id => studies[id]?.name || id);
+  // Sequence: what runs before and after this study
+  const depStudies  = (s.depends_on || []).map(id => studies[id]).filter(Boolean);
   const nextStudies = Object.values(studies).filter(x => (x.depends_on || []).includes(s.id));
-  const nextNames = nextStudies.map(x => x.name);
-  let chainHTML = '';
-  if (depNames.length || nextNames.length) {
-    const parts = [];
-    if (depNames.length) {
-      parts.push(depNames.map(n =>
-        `<span class="ch-node" title="${esc(n)}">${esc(n)}</span>`).join('<span class="ch-arrow">+</span>'));
-      parts.push('<span class="ch-arrow">→</span>');
-    }
-    parts.push(`<span class="ch-node ch-this">${esc(s.id)}</span>`);
-    if (nextNames.length) {
-      parts.push('<span class="ch-arrow">→</span>');
-      parts.push(nextNames.map(n =>
-        `<span class="ch-node" title="${esc(n)}">${esc(n)}</span>`).join('<span class="ch-arrow">+</span>'));
-    }
-    chainHTML = `<div class="cd-chain">${parts.join('')}</div>`;
+
+  const seqParts = [];
+  if (depStudies.length) {
+    depStudies.forEach((d, i) => {
+      if (i > 0) seqParts.push(`<span class="cd-seq-arrow">+</span>`);
+      seqParts.push(`<span class="cd-seq-node" title="${esc(d.name)}">${esc(d.id)}: ${esc(trunc(d.name,28))}</span>`);
+    });
+    seqParts.push(`<span class="cd-seq-arrow">→</span>`);
   }
+  seqParts.push(`<span class="cd-seq-node cd-seq-this">${esc(s.id)}</span>`);
+  if (nextStudies.length) {
+    seqParts.push(`<span class="cd-seq-arrow">→</span>`);
+    nextStudies.forEach((n, i) => {
+      if (i > 0) seqParts.push(`<span class="cd-seq-arrow">+</span>`);
+      seqParts.push(`<span class="cd-seq-node" title="${esc(n.name)}">${esc(n.id)}: ${esc(trunc(n.name,28))}</span>`);
+    });
+  }
+  const seqHTML = (depStudies.length || nextStudies.length)
+    ? seqParts.join('')
+    : `<span class="cd-seq-none">No dependencies</span>`;
 
   const card = document.createElement('div');
-  const cardClass = s.fda_tier === 'recommended' ? ' recommended'
-    : !s.phase1_required ? ' phase2' : '';
-  card.className = `study-card${cardClass}`;
+  const tierClass = s.fda_tier === 'phase1_blocking' ? ' tier-required'
+    : s.fda_tier === 'recommended'   ? ' tier-recommended'
+    : s.fda_tier === 'conditional'   ? ' tier-conditional'
+    : ' tier-deferred';
+  card.className = `study-card${tierClass}`;
   card.id = `card-${s.id}`;
   card.innerHTML = `
     <div class="card-bar ${risk}"></div>
     <div class="card-collapsed">
+      <div class="card-id-label">${esc(s.id)}</div>
       <div class="card-name" title="${esc(s.name)}">${esc(s.name)}</div>
       <div class="card-row1">
         <span class="card-cost">${fmt$k(s.cost_low)}–${fmt$k(s.cost_high)}</span>
@@ -738,42 +727,69 @@ function renderCard(s) {
       </div>
       <div class="card-row2">
         ${tierBadge}
-        <span class="cbadge wk">W${s.week_start}–${s.week_end}</span>
       </div>
     </div>
     <div class="card-detail">
-      <div class="cd-close-strip">
-        <span class="cd-close-strip-meta">${esc(s.id)} · ${esc(s.track_name || s.track)} · Wk ${s.week_start}–${s.week_end}</span>
-        <button class="cd-close" onclick="closeCard(event,'card-${s.id}')">×</button>
-      </div>
 
-      <div class="cd-why">
-        ${s.regulatory_ref ? `<span class="cd-why-reg">${esc(s.regulatory_ref)}</span>` : ''}
-        <span class="cd-why-gap">${esc(s.context || s.recommendation || s.name)}</span>
-        ${(s.covers_gaps && s.covers_gaps.length) ? `<div style="margin-top:4px;display:flex;flex-wrap:wrap;gap:3px">${s.covers_gaps.map(g=>`<span style="font-size:9px;font-weight:700;padding:1px 5px;border:1px solid #9ca3af;color:#6b7280">Gap ${esc(g)}</span>`).join('')}</div>` : ''}
-      </div>
-
-      ${chainHTML}
-
-      <div class="cd-metrics">
-        <div class="cd-m-risk">
-          <span class="cd-risk-pct ${risk}">${s.failure_pct}%</span>
-          <span class="cd-risk-why">${esc(firstSentence(s.failure_rationale || ''))}</span>
+      <!-- 1. Title + close -->
+      <div class="cd-row" style="padding-bottom:7px">
+        <div class="cd-row-head">
+          <span class="cd-label">${esc(s.id)} · ${esc(s.track_name || 'Track ' + s.track)}</span>
+          <button class="cd-close" onclick="closeCard(event,'card-${s.id}')">×</button>
         </div>
-        <div class="cd-m-cost">
-          <span class="cd-cost-val">${fmt$k(s.cost_low)}–${fmt$k(s.cost_high)}</span>
-          <span class="cd-tier-pill ${tierPill}">${tierLabel}</span>
+        <div style="font-size:12px;font-weight:700;line-height:1.3">${esc(s.name)}</div>
+      </div>
+
+      <!-- 2. Cost / Timeline / Risk at a glance -->
+      <div class="cd-stats cd-row" style="padding:0">
+        <div class="cd-stat">
+          <div class="cd-label">Cost</div>
+          <div class="cd-stat-val">${fmt$k(s.cost_low)}–${fmt$k(s.cost_high)}</div>
+        </div>
+        <div class="cd-stat">
+          <div class="cd-label">Duration</div>
+          <div class="cd-stat-val">Wk ${s.week_start}–${s.week_end}</div>
+          <div class="cd-stat-sub">${s.week_end - s.week_start} weeks</div>
+        </div>
+        <div class="cd-stat">
+          <div class="cd-label">Failure risk</div>
+          <div class="cd-stat-val ${risk}">${s.failure_pct}%</div>
+          <div class="cd-stat-sub">${risk} likelihood</div>
         </div>
       </div>
 
-      ${s.compound_flag ? `<div class="cd-warn">${esc(s.compound_flag)}</div>` : ''}
-      ${tip            ? `<div class="cd-saving">${esc(tip)}</div>` : ''}
-
-      <div class="cd-impact" id="impact-${s.id}" style="display:none"></div>
-
-      <div class="cd-foot">
-        <a href="${pubmedUrl}" target="_blank" rel="noopener">→ PubMed precedents</a>
+      <!-- 3. Why this study is required/recommended/conditional -->
+      <div class="cd-row">
+        <div class="cd-label" style="margin-bottom:5px">${
+          tier === 'phase1_blocking' ? 'Why required'
+          : tier === 'recommended'  ? 'Why recommended'
+          : tier === 'conditional'  ? 'When triggered'
+          : 'Why deferred'
+        }</div>
+        ${s.regulatory_ref ? `<div class="cd-reg">${esc(s.regulatory_ref)}</div>` : ''}
+        <div class="cd-text">${esc(s.context || s.recommendation || '')}</div>
       </div>
+
+      <!-- 3b. Covers gaps -->
+      ${(s.covers_gaps && s.covers_gaps.length) ? `<div class="cd-row" style="padding-top:6px;padding-bottom:6px">
+        <span class="cd-label">Covers gaps</span>&ensp;${s.covers_gaps.map(g => `<span style="display:inline-block;font-size:10px;font-weight:800;background:#1e293b;color:#fff;padding:1px 6px;margin:2px 2px 0 0">${esc(g)}</span>`).join('')}
+      </div>` : ''}
+
+      <!-- 4. Dependencies -->
+      <div class="cd-row">
+        <div class="cd-label" style="margin-bottom:6px">Dependencies</div>
+        ${depStudies.length
+          ? `<div style="margin-bottom:4px"><span style="font-size:9px;font-weight:700;opacity:0.4;text-transform:uppercase;letter-spacing:0.4px">Requires</span><div style="margin-top:3px;display:flex;flex-wrap:wrap;gap:4px">${depStudies.map(d => `<span class="cd-seq-node" title="${esc(d.name)}">${esc(d.id)}: ${esc(trunc(d.name, 32))}</span>`).join('')}</div></div>`
+          : `<div style="font-size:10px;opacity:0.35;font-style:italic;margin-bottom:4px">No prerequisites — can start immediately</div>`}
+        ${nextStudies.length
+          ? `<div style="margin-top:2px"><span style="font-size:9px;font-weight:700;opacity:0.4;text-transform:uppercase;letter-spacing:0.4px">Unlocks</span><div style="margin-top:3px;display:flex;flex-wrap:wrap;gap:4px">${nextStudies.map(n => `<span class="cd-seq-node" title="${esc(n.name)}">${esc(n.id)}: ${esc(trunc(n.name, 32))}</span>`).join('')}</div></div>`
+          : ''}
+      </div>
+
+      <!-- 5. Design note / compound flag -->
+      ${s.compound_flag ? `<div class="cd-warn">⚠ ${esc(s.compound_flag)}</div>` : ''}
+      ${s.recommendation ? `<div class="cd-row"><div class="cd-label" style="margin-bottom:3px">Design note</div><div class="cd-text">${esc(s.recommendation)}</div></div>` : ''}
+
     </div>
   `;
 
@@ -788,7 +804,6 @@ function renderCard(s) {
     const detail = card.querySelector('.card-detail');
     const isOpen = detail.classList.toggle('open');
     card.classList.toggle('expanded', isOpen);
-    if (isOpen) injectFailureImpact(s.id);
   });
 
   document.getElementById(`track-${s.track}`).appendChild(card);
@@ -802,7 +817,7 @@ function closeCard(e, cardId) {
 }
 
 // ── Spend Optimizer ────────────────────────────────────────────────────────────
-let _activeScenario = 'fastest';
+let _activeScenario = 'critical';
 let _budgetCap = Infinity;
 
 function parseBudget(val) {
@@ -823,34 +838,25 @@ function applyScenario(scenario, btn) {
   document.querySelectorAll('.spend-btn').forEach(b => b.classList.remove('active'));
   if (btn) btn.classList.add('active');
   else {
-    const map = { fastest: 'btnFastest', cheapest: 'btnCheapest', balanced: 'btnBalanced' };
+    const map = { critical: 'btnCritical', thorough: 'btnThorough' };
     document.getElementById(map[scenario])?.classList.add('active');
   }
 
   const allStudies = Object.values(studies);
   if (!allStudies.length) return;
 
-  // Scenario definitions — studies included and which cost field to use
-  // Fastest:  required only, high-end CRO pricing (conservative planning)
-  // Cheapest: required only, NO conditionals (bet nothing triggers), low-end pricing
-  // Balanced: required + all conditionals run upfront as insurance, midpoint pricing
   let included = [];
   let costField, costNote;
 
-  if (scenario === 'fastest') {
-    included  = allStudies.filter(s => s.phase1_required);
-    costField = 'cost_high';
-    costNote  = 'high-end CRO estimate · recommended studies excluded';
-  } else if (scenario === 'cheapest') {
-    // Only phase1_required AND not conditional — skip studies that may never be needed
-    included  = allStudies.filter(s => s.phase1_required && s.fda_tier !== 'conditional');
-    costField = 'cost_low';
-    costNote  = 'low-end CRO estimate · conditionals & recommended deferred';
+  if (scenario === 'critical') {
+    included  = allStudies.filter(s => s.fda_tier === 'phase1_blocking');
+    costField = null; // midpoint
+    costNote  = 'Phase 1 required studies only';
   } else {
-    // Balanced: required + conditionals + recommended (most effective package)
-    included  = allStudies.filter(s => s.phase1_required || s.fda_tier === 'conditional' || s.fda_tier === 'recommended');
-    costField = null; // use midpoint
-    costNote  = 'mid-range estimate · conditionals + recommended included';
+    // Thorough: required + recommended + conditional
+    included  = allStudies.filter(s => s.fda_tier === 'phase1_blocking' || s.fda_tier === 'conditional' || s.fda_tier === 'recommended');
+    costField = null; // midpoint
+    costNote  = 'required + recommended + conditional studies';
   }
 
   // Apply budget cap — always protect phase1_blocking studies first
@@ -883,7 +889,7 @@ function applyScenario(scenario, btn) {
     return sum + c;
   }, 0);
   const maxWeek = included.reduce((max, s) => Math.max(max, s.week_end || 0), 0);
-  const p1Count   = included.filter(s => s.phase1_required).length;
+  const p1Count   = included.filter(s => s.fda_tier === 'phase1_blocking').length;
   const condCount = included.filter(s => s.fda_tier === 'conditional').length;
   const recCount  = included.filter(s => s.fda_tier === 'recommended').length;
 
@@ -904,10 +910,13 @@ function updateSummary() {
   totalWeeks = (summaryData.total_weeks_to_phase1 || 28) + 4;
 
   document.getElementById('sumWeeks').textContent = summaryData.total_weeks_to_phase1 + ' wks';
-  document.getElementById('sumCost').textContent =
-    fmt$k(summaryData.cost_low) + ' – ' + fmt$k(summaryData.cost_high);
+  const all = Object.values(studies);
+  const midCost = s => Math.round(((s.cost_low || 0) + (s.cost_high || 0)) / 2);
+  const criticalCost  = all.filter(s => s.fda_tier === 'phase1_blocking').reduce((sum, s) => sum + midCost(s), 0);
+  const thoroughCost  = all.filter(s => s.fda_tier === 'phase1_blocking' || s.fda_tier === 'conditional' || s.fda_tier === 'recommended').reduce((sum, s) => sum + midCost(s), 0);
+  document.getElementById('sumCost').textContent = fmt$k(criticalCost) + ' – ' + fmt$k(thoroughCost);
   document.getElementById('sumCount').textContent =
-    Object.values(studies).filter(s => s.phase1_required).length + ' required';
+    Object.values(studies).filter(s => s.fda_tier === 'phase1_blocking').length + ' required';
 
   // Highlight critical path studies
   const cp = new Set(summaryData.critical_path || []);
@@ -916,26 +925,6 @@ function updateSummary() {
   }
 }
 
-// ── Failure impact ──────────────────────────────────────────────────────────────
-function injectFailureImpact(studyId) {
-  const el = document.getElementById(`impact-${studyId}`);
-  if (!el) return;
-  // Find conditional studies that depend on this study
-  const triggered = Object.values(studies).filter(s =>
-    s.fda_tier === 'conditional' && (s.depends_on || []).includes(studyId)
-  );
-  if (!triggered.length) { el.style.display = 'none'; return; }
-  const rows = triggered.map(t => {
-    const extraWeeks = Math.max(0, (t.week_end || 0) - (studies[studyId]?.week_end || 0));
-    const cost = Math.round(((t.cost_low || 0) + (t.cost_high || 0)) / 2);
-    return `<div class="cd-impact-item">
-      <span class="cd-impact-name">${esc(t.name)}</span>
-      <span class="cd-impact-meta">+${extraWeeks} wks · ${fmt$k(cost)}</span>
-    </div>`;
-  }).join('');
-  el.innerHTML = `<div class="cd-impact-title">⚡ If positive / fail — triggers:</div>${rows}`;
-  el.style.display = 'block';
-}
 
 // ── Study briefs panel ──────────────────────────────────────────────────────────
 let _briefsLoaded = false;
@@ -955,6 +944,16 @@ async function streamBriefs() {
   loading.style.display = 'flex';
   list.innerHTML = '';
 
+  // Try cached briefs first
+  const cached = await fetch(`${API}/api/study-briefs`);
+  if (cached.ok) {
+    const data = await cached.json();
+    loading.style.display = 'none';
+    for (const b of (data.briefs || [])) list.appendChild(renderBriefCard(b));
+    return;
+  }
+
+  // No cache — stream fresh
   const resp = await fetch(`${API}/api/study-briefs`, { method: 'POST' });
   if (!resp.ok) {
     loading.style.display = 'none';
@@ -1068,7 +1067,7 @@ async function load() {
       for (const s of studiesList) { studies[s.id] = s; renderCard(s); }
       summaryData = summary;
       updateSummary();
-      applyScenario('fastest', null);
+      applyScenario('critical', null);
       positionAllCards();
       return;
     } catch (_) {}
@@ -1107,7 +1106,7 @@ async function load() {
       } else if (event.type === 'summary') {
         summaryData = event.data;
         updateSummary();
-        applyScenario('fastest', null);
+        applyScenario('critical', null);
         positionAllCards();
         try {
           sessionStorage.setItem('cache_timeline', JSON.stringify({

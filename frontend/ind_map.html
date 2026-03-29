@@ -152,6 +152,11 @@
     .missing-item.p-recommend .missing-icon { color: #b45309; }
     .missing-item.p-phase2    .missing-icon { color: #9ca3af; }
     .missing-text { flex: 1; font-weight: 500; }
+    .gap-id-badge {
+      font-size: 10px; font-weight: 800; letter-spacing: 0.3px;
+      padding: 1px 6px; flex-shrink: 0; align-self: center;
+      background: #1e293b; color: #fff;
+    }
     .missing-item.p-blocking  .missing-text { color: #991b1b; }
     .missing-item.p-recommend .missing-text { color: #78350f; }
     .missing-item.p-phase2    .missing-text { color: #6b7280; }
@@ -326,6 +331,46 @@
       background: rgba(0,0,0,0.15); z-index: 199;
     }
     .draft-panel-overlay.open { display: block; }
+
+    /* ── FDA 1571 form styles ─────────────────────────────────────── */
+    .f1571 { border: 2px solid #000; font-size: 11px; font-family: Arial, sans-serif; color: #000; }
+    .f1571-header { background: #000; color: #fff; text-align: center; padding: 8px 12px; }
+    .f1571-header-title { font-size: 14px; font-weight: 700; letter-spacing: 0.5px; }
+    .f1571-header-sub { font-size: 9px; margin-top: 2px; opacity: 0.75; }
+    .f1571-omb { display: flex; justify-content: space-between; padding: 3px 8px; background: #f5f5f5; border-bottom: 1px solid #ccc; font-size: 9px; }
+    .f1571-box { border-bottom: 1px solid #000; padding: 6px 8px; }
+    .f1571-box:last-child { border-bottom: none; }
+    .f1571-box-row { display: flex; gap: 0; }
+    .f1571-box-row > .f1571-box { flex: 1; border-bottom: none; border-right: 1px solid #000; }
+    .f1571-box-row > .f1571-box:last-child { border-right: none; }
+    .f1571-label { font-size: 8px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.3px; color: #444; margin-bottom: 3px; }
+    .f1571-box-num { font-size: 9px; font-weight: 700; color: #000; margin-bottom: 2px; }
+    .f1571-input {
+      width: 100%; border: none; border-bottom: 1px solid #aaa; background: #fffef0;
+      font-size: 11px; font-family: Arial, sans-serif; padding: 2px 2px 1px;
+      outline: none; color: #000; box-sizing: border-box;
+    }
+    .f1571-input:focus { border-bottom-color: #0055cc; background: #f0f6ff; }
+    .f1571-input.prefilled { background: #f0fff4; border-bottom-color: #16a34a; }
+    .f1571-textarea {
+      width: 100%; border: 1px solid #aaa; background: #fffef0;
+      font-size: 11px; font-family: Arial, sans-serif; padding: 3px 4px;
+      resize: vertical; min-height: 40px; outline: none; color: #000; box-sizing: border-box;
+    }
+    .f1571-textarea:focus { border-color: #0055cc; background: #f0f6ff; }
+    .f1571-textarea.prefilled { background: #f0fff4; border-color: #16a34a; }
+    .f1571-checkbox-group { display: flex; flex-direction: column; gap: 3px; margin-top: 3px; }
+    .f1571-checkbox-row { display: flex; align-items: center; gap: 5px; font-size: 10px; cursor: pointer; }
+    .f1571-checkbox-row input[type=checkbox] { margin: 0; cursor: pointer; }
+    .f1571-sig-box { min-height: 50px; border: 1px solid #aaa; background: #fafafa; margin-top: 4px; display: flex; align-items: flex-end; padding: 4px 6px; }
+    .f1571-sig-line { flex: 1; border-bottom: 1px solid #000; font-size: 9px; color: #888; padding-bottom: 2px; }
+    .f1571-note { font-size: 9px; color: #666; margin-top: 4px; line-height: 1.4; }
+    .f1571-prefill-note { font-size: 9px; color: #16a34a; font-weight: 600; margin-bottom: 6px; padding: 4px 6px; background: #f0fff4; border-left: 2px solid #16a34a; }
+    @media print {
+      .draft-panel-actions, .app-header, #draftOverlay, #form1571Overlay { display: none !important; }
+      .draft-panel { position: static !important; right: 0 !important; width: 100% !important; box-shadow: none !important; border: none !important; }
+      .f1571-input, .f1571-textarea { background: #fff !important; }
+    }
   </style>
 </head>
 <body>
@@ -434,6 +479,25 @@
 
   </div>
   </div>
+</div>
+
+<!-- FDA 1571 Form panel overlay -->
+<div class="draft-panel-overlay" id="form1571Overlay" onclick="closeForm1571()"></div>
+
+<!-- FDA Form 1571 panel -->
+<div class="draft-panel" id="form1571Panel" style="width:700px">
+  <div class="draft-panel-header">
+    <div>
+      <div class="draft-panel-title">Form FDA 1571 — IND Cover Sheet</div>
+      <div class="draft-panel-meta">21 CFR §312.23(a)(1) · OMB No. 0910-0014</div>
+    </div>
+    <button class="draft-panel-close" onclick="closeForm1571()">Close</button>
+  </div>
+  <div class="draft-panel-actions" style="gap:8px">
+    <button class="btn btn-sm" onclick="window.print()">Print / Save PDF</button>
+    <span style="font-size:var(--t-xs);opacity:0.4">Pre-filled fields are editable — complete sponsor details before submitting</span>
+  </div>
+  <div class="draft-panel-body" style="font-family:var(--font);padding:16px 20px" id="form1571Body"></div>
 </div>
 
 <!-- Draft slide panel overlay -->
@@ -751,7 +815,7 @@ function renderSubsection(sub) {
     const tagCls   = { phase1_blocking: 'tag-blocking', recommended: 'tag-recommend', phase2_required: 'tag-phase2' }[priority] || 'tag-blocking';
     return `<div class="missing-item ${cls}">
       <div class="missing-icon">${icon}</div>
-      ${gapId ? `<span style="font-size:9px;font-weight:700;opacity:0.5;flex-shrink:0;margin-right:4px">${esc(gapId)}</span>` : ''}
+      ${gapId ? `<span class="gap-id-badge">${esc(gapId)}</span>` : ''}
       <div class="missing-text">${esc(text)}</div>
       <span class="missing-tag ${tagCls}">${tagLabel}</span>
     </div>`;
@@ -858,11 +922,181 @@ function showTooltip(evt, eid) {
 }
 function hideTooltip() { document.getElementById('tooltip').style.display = 'none'; }
 
+// ── FDA Form 1571 ─────────────────────────────────────────────────────────────
+function openForm1571(evt) {
+  if (evt) evt.stopPropagation();
+  document.getElementById('form1571Panel').classList.add('open');
+  document.getElementById('form1571Overlay').classList.add('open');
+
+  fetch(`${API}/api/paper-data`)
+    .then(r => r.ok ? r.json() : {})
+    .catch(() => ({}))
+    .then(pd => {
+      fetch(`${API}/api/profile`).then(r => r.ok ? r.json() : {}).catch(() => ({})).then(profile => {
+        renderForm1571(profile, pd);
+      });
+    });
+}
+
+function closeForm1571() {
+  document.getElementById('form1571Panel').classList.remove('open');
+  document.getElementById('form1571Overlay').classList.remove('open');
+}
+
+function renderForm1571(profile, pd) {
+  const compound   = profile.compound   || pd.compound || '';
+  const indication = profile.indication || '';
+  const drugClass  = profile.drug_class || '';
+  const target     = profile.target     || '';
+  const today      = new Date().toLocaleDateString('en-US', { month: '2-digit', day: '2-digit', year: 'numeric' });
+
+  const pre = v => v ? ' prefilled' : '';
+  document.getElementById('form1571Body').innerHTML = `
+    <div class="f1571-prefill-note">Green fields were pre-filled from your paper. Edit any field before printing.</div>
+    <div class="f1571">
+      <div class="f1571-header">
+        <div class="f1571-header-title">INVESTIGATIONAL NEW DRUG APPLICATION (IND)</div>
+        <div class="f1571-header-sub">(Title 21, Code of Federal Regulations (CFR) Part 312)</div>
+      </div>
+      <div class="f1571-omb">
+        <span>Form FDA 1571 (Rev. 09/2021)</span>
+        <span>OMB Control No. 0910-0014 · Expiration Date: 03/31/2025</span>
+      </div>
+
+      <!-- Box 1: Sponsor -->
+      <div class="f1571-box">
+        <div class="f1571-box-num">1.</div>
+        <div class="f1571-label">Name and mailing address of sponsor (include zip code)</div>
+        <input class="f1571-input" placeholder="Sponsor name" style="margin-bottom:3px" />
+        <input class="f1571-input" placeholder="Street address" style="margin-bottom:3px" />
+        <div style="display:flex;gap:6px">
+          <input class="f1571-input" placeholder="City" style="flex:2" />
+          <input class="f1571-input" placeholder="State" style="flex:1" />
+          <input class="f1571-input" placeholder="ZIP" style="flex:1" />
+        </div>
+        <input class="f1571-input" placeholder="Telephone number" style="margin-top:3px;width:50%" />
+      </div>
+
+      <!-- Box 2 + 3 row -->
+      <div class="f1571-box-row">
+        <div class="f1571-box">
+          <div class="f1571-box-num">2.</div>
+          <div class="f1571-label">Date of submission</div>
+          <input class="f1571-input" value="${today}" />
+        </div>
+        <div class="f1571-box">
+          <div class="f1571-box-num">3.</div>
+          <div class="f1571-label">IND number (if amendment to existing IND)</div>
+          <input class="f1571-input" placeholder="Leave blank for new IND" />
+        </div>
+      </div>
+
+      <!-- Box 4: Drug name -->
+      <div class="f1571-box">
+        <div class="f1571-box-num">4.</div>
+        <div class="f1571-label">Name(s) of drug</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:4px">
+          <div>
+            <div class="f1571-label">(a) Chemical / scientific name</div>
+            <input class="f1571-input${pre(compound)}" value="${compound}" placeholder="e.g. (R)-3-(cyclopentyloxy)..." />
+          </div>
+          <div>
+            <div class="f1571-label">(b) Trade name (if known)</div>
+            <input class="f1571-input" placeholder="Proposed trade name" />
+          </div>
+          <div>
+            <div class="f1571-label">(c) Code designation</div>
+            <input class="f1571-input" placeholder="e.g. ABC-123" />
+          </div>
+        </div>
+        ${drugClass ? `<div style="margin-top:5px"><div class="f1571-label">Drug class / mechanism</div><input class="f1571-input prefilled" value="${drugClass}${target ? ' — target: ' + target : ''}" /></div>` : ''}
+      </div>
+
+      <!-- Box 5: IND type -->
+      <div class="f1571-box">
+        <div class="f1571-box-num">5.</div>
+        <div class="f1571-label">IND type (check one)</div>
+        <div class="f1571-checkbox-group" style="flex-direction:row;flex-wrap:wrap;gap:10px;margin-top:4px">
+          <label class="f1571-checkbox-row"><input type="checkbox" checked /> INITIAL IND</label>
+          <label class="f1571-checkbox-row"><input type="checkbox" /> PROTOCOL AMENDMENT</label>
+          <label class="f1571-checkbox-row"><input type="checkbox" /> INFORMATION AMENDMENT</label>
+          <label class="f1571-checkbox-row"><input type="checkbox" /> IND SAFETY REPORT</label>
+          <label class="f1571-checkbox-row"><input type="checkbox" /> ANNUAL REPORT</label>
+          <label class="f1571-checkbox-row"><input type="checkbox" /> RESPONSE TO CLINICAL HOLD</label>
+        </div>
+      </div>
+
+      <!-- Box 6: Indication -->
+      <div class="f1571-box">
+        <div class="f1571-box-num">6.</div>
+        <div class="f1571-label">Indication(s) to be studied</div>
+        <textarea class="f1571-textarea${pre(indication)}">${indication || ''}</textarea>
+      </div>
+
+      <!-- Box 7: Phase -->
+      <div class="f1571-box">
+        <div class="f1571-box-num">7.</div>
+        <div class="f1571-label">Phase(s) of clinical investigation to be conducted</div>
+        <div class="f1571-checkbox-group" style="flex-direction:row;gap:16px;margin-top:4px">
+          <label class="f1571-checkbox-row"><input type="checkbox" checked /> Phase 1</label>
+          <label class="f1571-checkbox-row"><input type="checkbox" /> Phase 2</label>
+          <label class="f1571-checkbox-row"><input type="checkbox" /> Phase 3</label>
+          <label class="f1571-checkbox-row"><input type="checkbox" /> Phase 2/3</label>
+        </div>
+      </div>
+
+      <!-- Box 8: IND components -->
+      <div class="f1571-box">
+        <div class="f1571-box-num">8.</div>
+        <div class="f1571-label">List of IND components contained in this submission (check all that apply)</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:3px 20px;margin-top:4px">
+          <label class="f1571-checkbox-row"><input type="checkbox" checked /> Cover sheet (Form FDA 1571)</label>
+          <label class="f1571-checkbox-row"><input type="checkbox" /> Investigator's Brochure (§312.23(a)(5))</label>
+          <label class="f1571-checkbox-row"><input type="checkbox" /> Table of Contents (§312.23(a)(2))</label>
+          <label class="f1571-checkbox-row"><input type="checkbox" /> Protocols (§312.23(a)(6))</label>
+          <label class="f1571-checkbox-row"><input type="checkbox" /> Introductory Statement (§312.23(a)(3))</label>
+          <label class="f1571-checkbox-row"><input type="checkbox" /> CMC Information (§312.23(a)(7))</label>
+          <label class="f1571-checkbox-row"><input type="checkbox" /> General Investigational Plan (§312.23(a)(4))</label>
+          <label class="f1571-checkbox-row"><input type="checkbox" /> Pharmacology &amp; Toxicology (§312.23(a)(8))</label>
+          <label class="f1571-checkbox-row"><input type="checkbox" /> Previous Human Experience (§312.23(a)(9))</label>
+          <label class="f1571-checkbox-row"><input type="checkbox" /> Additional Information (§312.23(a)(10))</label>
+        </div>
+      </div>
+
+      <!-- Box 9: Commitment / Signature -->
+      <div class="f1571-box">
+        <div class="f1571-box-num">9.</div>
+        <div class="f1571-label">Sponsor's commitment</div>
+        <div class="f1571-note" style="margin-bottom:6px">
+          The sponsor hereby agrees to conduct the investigation(s) in accordance with all applicable regulations governing the conduct of clinical investigations and to update this application as required under 21 CFR 312.31.
+        </div>
+        <div style="display:grid;grid-template-columns:2fr 1fr;gap:12px;margin-top:6px">
+          <div>
+            <div class="f1571-label">Signature of sponsor or sponsor's authorized representative</div>
+            <div class="f1571-sig-box"><span class="f1571-sig-line">Sign here</span></div>
+          </div>
+          <div>
+            <div class="f1571-label">Date signed</div>
+            <div class="f1571-sig-box"><span class="f1571-sig-line"></span></div>
+          </div>
+        </div>
+        <div style="margin-top:8px">
+          <div class="f1571-label">Printed name and title of person signing</div>
+          <input class="f1571-input" placeholder="Name and title" />
+        </div>
+      </div>
+    </div>
+    <div class="f1571-note" style="margin-top:8px">
+      Note: This form must be signed by the sponsor or sponsor's authorized representative. A pre-IND meeting request can be submitted before this form. See 21 CFR §312.82 for pre-submission guidance.
+    </div>`;
+}
+
 // ── Draft panel ───────────────────────────────────────────────────────────────
 let _draftController = null;
 
 function openDraftPanel(sectionNum, sectionTitle, evt) {
   if (evt) evt.stopPropagation();
+  if (sectionNum === 1) { openForm1571(evt); return; }
   document.getElementById('draftPanelTitle').textContent = `§${sectionNum} · ${sectionTitle}`;
   document.getElementById('draftPanelMeta').textContent = '21 CFR §312.23(a)(' + sectionNum + ')';
   document.getElementById('draftBody').innerHTML = '<div class="draft-loading"><div class="spinner" style="width:16px;height:16px;border-width:2px"></div>Generating draft…</div>';
