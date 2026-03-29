@@ -150,8 +150,10 @@
     .study-card:hover { box-shadow: 3px 3px 0 var(--fg); z-index: 20; }
     .study-card.expanded { z-index: 20; overflow: visible; }
     .study-card.phase2 { opacity: 0.4; }
+    .study-card.recommended { opacity: 0.7; border-style: dashed; border-color: #7c9cbf; }
     /* When popup is open, restore full opacity so it's readable */
     .study-card.phase2.expanded { opacity: 1; }
+    .study-card.recommended.expanded { opacity: 1; }
 
     /* Left bar — failure risk color */
     .card-bar { width: 5px; position: absolute; left: 0; top: 0; bottom: 0; }
@@ -189,6 +191,7 @@
     .cbadge.p1   { background: var(--fg); color: var(--bg); }
     .cbadge.p2   { border-style: dashed; }
     .cbadge.cond { border-style: dashed; }
+    .cbadge.rec  { border-color: #7c9cbf; color: #7c9cbf; border-style: dashed; }
     .cbadge.wk   { border-color: #ccc; color: var(--fg); opacity: 0.6; }
 
     /* ── Expanded popup — full width of the card ───────────────────── */
@@ -429,6 +432,7 @@
     <div class="legend-group">
       <div class="leg"><span class="cbadge p1">P1</span>&nbsp;Phase 1 required</div>
       <div class="leg"><span class="cbadge cond">Cond</span>&nbsp;Conditional</div>
+      <div class="leg"><span class="cbadge rec">Rec</span>&nbsp;Recommended</div>
       <div class="leg"><span class="cbadge p2">P2</span>&nbsp;Defer to Phase 2</div>
     </div>
   </div>
@@ -627,15 +631,18 @@ function renderCard(s) {
   const risk = s.failure_likelihood || 'low';
   const tier = s.fda_tier || 'phase1_blocking';
   const tierLabel = tier === 'phase1_blocking' ? 'Phase 1 Blocking'
-    : tier === 'conditional' ? 'Conditional' : 'Defer to Phase 2';
+    : tier === 'conditional'  ? 'Conditional'
+    : tier === 'recommended'  ? 'Recommended'
+    : 'Defer to Phase 2';
   const tierBadge = tier === 'phase1_blocking' ? '<span class="cbadge p1">P1</span>'
     : tier === 'conditional'  ? '<span class="cbadge cond">COND</span>'
+    : tier === 'recommended'  ? '<span class="cbadge rec">REC</span>'
     : '<span class="cbadge p2">P2</span>';
 
   const tip = (s.cost_saving_tips || [])[0] || null;
   const pubmedQuery = s.pubmed_query || s.name;
   const pubmedUrl = `https://pubmed.ncbi.nlm.nih.gov/?term=${encodeURIComponent(pubmedQuery)}&sort=relevance`;
-  const tierPill = `tier-${tier === 'phase1_blocking' ? 'p1' : tier === 'conditional' ? 'cond' : 'p2'}`;
+  const tierPill = `tier-${tier === 'phase1_blocking' ? 'p1' : tier === 'conditional' ? 'cond' : tier === 'recommended' ? 'rec' : 'p2'}`;
 
   // Dependency chain: what runs before and after this study
   const depNames  = (s.depends_on || []).map(id => studies[id]?.name || id);
@@ -659,7 +666,9 @@ function renderCard(s) {
   }
 
   const card = document.createElement('div');
-  card.className = `study-card${!s.phase1_required ? ' phase2' : ''}`;
+  const cardClass = s.fda_tier === 'recommended' ? ' recommended'
+    : !s.phase1_required ? ' phase2' : '';
+  card.className = `study-card${cardClass}`;
   card.id = `card-${s.id}`;
   card.innerHTML = `
     <div class="card-bar ${risk}"></div>
@@ -770,22 +779,22 @@ function applyScenario(scenario, btn) {
   if (scenario === 'fastest') {
     included  = allStudies.filter(s => s.phase1_required);
     costField = 'cost_high';
-    costNote  = 'high-end CRO estimate';
+    costNote  = 'high-end CRO estimate · recommended studies excluded';
   } else if (scenario === 'cheapest') {
     // Only phase1_required AND not conditional — skip studies that may never be needed
     included  = allStudies.filter(s => s.phase1_required && s.fda_tier !== 'conditional');
     costField = 'cost_low';
-    costNote  = 'low-end CRO estimate · conditionals deferred until triggered';
+    costNote  = 'low-end CRO estimate · conditionals & recommended deferred';
   } else {
-    // Balanced: required + conditionals pre-commissioned, midpoint cost
-    included  = allStudies.filter(s => s.phase1_required || s.fda_tier === 'conditional');
+    // Balanced: required + conditionals + recommended (most effective package)
+    included  = allStudies.filter(s => s.phase1_required || s.fda_tier === 'conditional' || s.fda_tier === 'recommended');
     costField = null; // use midpoint
-    costNote  = 'mid-range estimate · conditionals run upfront';
+    costNote  = 'mid-range estimate · conditionals + recommended included';
   }
 
   // Apply budget cap — always protect phase1_blocking studies first
   if (_budgetCap < Infinity) {
-    const tierOrder = { phase1_blocking: 0, conditional: 1, phase2_defer: 2 };
+    const tierOrder = { phase1_blocking: 0, conditional: 1, recommended: 2, phase2_defer: 3 };
     const prioritised = [...included].sort((a, b) =>
       (tierOrder[a.fda_tier] ?? 1) - (tierOrder[b.fda_tier] ?? 1));
     const cf = costField || 'cost_low';
@@ -813,14 +822,17 @@ function applyScenario(scenario, btn) {
     return sum + c;
   }, 0);
   const maxWeek = included.reduce((max, s) => Math.max(max, s.week_end || 0), 0);
-  const p1Count = included.filter(s => s.phase1_required).length;
+  const p1Count   = included.filter(s => s.phase1_required).length;
   const condCount = included.filter(s => s.fda_tier === 'conditional').length;
+  const recCount  = included.filter(s => s.fda_tier === 'recommended').length;
 
   document.getElementById('spendResult').style.display = 'flex';
   document.getElementById('srWeeks').textContent = maxWeek + ' wks';
   document.getElementById('srCost').textContent = fmt$k(totalCost);
-  document.getElementById('srStudies').textContent =
-    p1Count + ' req' + (condCount ? ' + ' + condCount + ' cond' : '');
+  let studyStr = p1Count + ' req';
+  if (condCount) studyStr += ' + ' + condCount + ' cond';
+  if (recCount)  studyStr += ' + ' + recCount + ' rec';
+  document.getElementById('srStudies').textContent = studyStr;
   document.getElementById('srCostNote').textContent = costNote;
 }
 
