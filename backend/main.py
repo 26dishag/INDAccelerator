@@ -205,6 +205,7 @@ async def build_study_briefs_endpoint():
             drug_class=profile.get("drug_class", ""),
             target=profile.get("target", ""),
             indication=profile.get("indication", ""),
+            profile=profile,
         ):
             yield f"data: {json.dumps({'type': 'brief', 'data': brief})}\n\n"
         yield f"data: {json.dumps({'type': 'done'})}\n\n"
