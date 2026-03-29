@@ -74,6 +74,11 @@
     .stat-tile.complete .stat-bar-fill { background: #16a34a; }
     .stat-tile.partial  .stat-bar-fill { background: #b45309; }
     .stat-tile.missing  .stat-bar-fill { background: #dc2626; }
+    .stat-section-list { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 6px; }
+    .stat-sec-pill {
+      font-size: 9px; font-weight: 700; padding: 2px 6px;
+      border: 1px solid currentColor; opacity: 0.7; white-space: nowrap;
+    }
 
     /* ── Section 8 panel ─────────────────────────────────────── */
     .sec8-panel { overflow: hidden; margin-bottom: 48px; }
@@ -370,24 +375,27 @@
           <div class="stat-num" id="stat-complete">0</div>
           <div class="stat-text">
             <div class="stat-label">Complete</div>
-            <div class="stat-desc">Sections with sufficient data for Phase 1 filing</div>
+            <div class="stat-desc">Sufficient data for Phase 1 filing</div>
             <div class="stat-bar-track"><div class="stat-bar-fill" id="bar-complete" style="width:0%"></div></div>
+            <div class="stat-section-list" id="list-complete"></div>
           </div>
         </div>
         <div class="stat-tile partial">
           <div class="stat-num" id="stat-partial">0</div>
           <div class="stat-text">
             <div class="stat-label">Partial</div>
-            <div class="stat-desc">Sections with gaps — additional studies needed</div>
+            <div class="stat-desc">Gaps present — additional studies needed</div>
             <div class="stat-bar-track"><div class="stat-bar-fill" id="bar-partial" style="width:0%"></div></div>
+            <div class="stat-section-list" id="list-partial"></div>
           </div>
         </div>
         <div class="stat-tile missing">
           <div class="stat-num" id="stat-missing">0</div>
           <div class="stat-text">
             <div class="stat-label">Missing</div>
-            <div class="stat-desc">Sections with no data — studies must be initiated</div>
+            <div class="stat-desc">No data — studies must be initiated</div>
             <div class="stat-bar-track"><div class="stat-bar-fill" id="bar-missing" style="width:0%"></div></div>
+            <div class="stat-section-list" id="list-missing"></div>
           </div>
         </div>
       </div>
@@ -581,12 +589,15 @@ function updateStats() {
   const total = sections.length;
   if (!total) return;
 
-  const counts = { complete: 0, partial: 0, missing: 0 };
+  const counts  = { complete: 0, partial: 0, missing: 0 };
+  const buckets = { complete: [], partial: [], missing: [] };
+
   for (const s of sections) {
     const st = s.number === 8 ? resolveStatus(s) : computeSectionColor(s);
-    if (st === 'complete') counts.complete++;
-    else if (st === 'partial') counts.partial++;
-    else counts.missing++;
+    const label = `§${s.number}`;
+    if (st === 'complete')      { counts.complete++; buckets.complete.push(label); }
+    else if (st === 'partial')  { counts.partial++;  buckets.partial.push(label); }
+    else                        { counts.missing++;  buckets.missing.push(label); }
   }
 
   document.getElementById('stat-complete').textContent = counts.complete;
@@ -596,6 +607,11 @@ function updateStats() {
   document.getElementById('bar-complete').style.width = `${(counts.complete / total * 100).toFixed(0)}%`;
   document.getElementById('bar-partial').style.width  = `${(counts.partial  / total * 100).toFixed(0)}%`;
   document.getElementById('bar-missing').style.width  = `${(counts.missing  / total * 100).toFixed(0)}%`;
+
+  ['complete','partial','missing'].forEach(st => {
+    document.getElementById(`list-${st}`).innerHTML =
+      buckets[st].map(l => `<span class="stat-sec-pill">${l}</span>`).join('');
+  });
 
   document.getElementById('overview-row').style.display = 'grid';
 }
@@ -728,12 +744,14 @@ function renderSubsection(sub) {
   const missingItems = missingExps.map(m => {
     const text     = typeof m === 'string' ? m : (m.study || m.description || m.requirement || JSON.stringify(m));
     const priority = typeof m === 'object' ? (m.priority || 'phase1_blocking') : 'phase1_blocking';
+    const gapId    = typeof m === 'object' ? (m.gap_id || '') : '';
     const cls  = { phase1_blocking: 'p-blocking', recommended: 'p-recommend', phase2_required: 'p-phase2' }[priority] || 'p-blocking';
     const icon = { phase1_blocking: '✗', recommended: '~', phase2_required: '→' }[priority] || '✗';
     const tagLabel = { phase1_blocking: 'Required', recommended: 'Recommended', phase2_required: 'Phase 2' }[priority] || 'Required';
     const tagCls   = { phase1_blocking: 'tag-blocking', recommended: 'tag-recommend', phase2_required: 'tag-phase2' }[priority] || 'tag-blocking';
     return `<div class="missing-item ${cls}">
       <div class="missing-icon">${icon}</div>
+      ${gapId ? `<span style="font-size:9px;font-weight:700;opacity:0.5;flex-shrink:0;margin-right:4px">${esc(gapId)}</span>` : ''}
       <div class="missing-text">${esc(text)}</div>
       <span class="missing-tag ${tagCls}">${tagLabel}</span>
     </div>`;

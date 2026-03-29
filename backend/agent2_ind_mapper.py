@@ -14,6 +14,22 @@ MODEL = "claude-sonnet-4-6"
 ECFR_URL = "https://www.ecfr.gov/current/title-21/chapter-I/subchapter-D/part-312"
 ICH_URL  = "https://database.ich.org/sites/default/files/M3_R2__Guideline.pdf"
 
+# Short prefix per subsection for gap IDs, e.g. PP01, CV01, GX01
+_SUB_ABBREV = {
+    "Primary Pharmacology":                           "PP",
+    "Secondary Pharmacology and Selectivity":         "SP",
+    "Secondary Pharmacology & Selectivity":           "SP",
+    "Safety Pharmacology — Cardiovascular (hERG/QT)": "CV",
+    "Safety Pharmacology — CNS":                      "CN",
+    "Safety Pharmacology — Respiratory":              "RS",
+    "Pharmacokinetics and ADME":                      "PK",
+    "Pharmacokinetics & ADME":                        "PK",
+    "Single-Dose Toxicity":                           "SD",
+    "Repeat-Dose Toxicity":                           "RD",
+    "Genotoxicity":                                   "GX",
+    "Drug-Drug Interaction / CYP Profiling":          "DI",
+}
+
 
 async def _fetch_ecfr() -> str:
     """Fetch 21 CFR Part 312 text from eCFR."""
@@ -107,7 +123,8 @@ Rules for Section 8 subsections:
 - Map each experiment ID (from extracted experiments) to the correct subsection(s) based on what it measured
 - status: "complete" = sufficient for Phase 1 IND submission per ICH M3(R2) — does NOT mean every possible experiment is done, only that the data package justifies human exposure; "partial" = some data exists but a Phase 1-blocking gap remains; "missing" = no relevant study exists
 - Write specific status_rationale (1-2 sentences citing the gap or why it's complete)
-- missing_experiments: structured objects with EXACT schema: {{"study": "<what is needed>", "priority": "<phase1_blocking|recommended|phase2_required>"}}
+- missing_experiments: structured objects with EXACT schema: {{"gap_id": "<G01>", "study": "<what is needed>", "priority": "<phase1_blocking|recommended|phase2_required>"}}
+  - gap_id: sequential identifier starting at G01 within each subsection (G01, G02, G03 ...) — used for cross-agent traceability into the development timeline
   - "phase1_blocking" = FDA will not accept the IND without this; blocks human exposure
   - "recommended" = best practice or strengthens the package but NOT required for Phase 1 IND submission; the section CAN be complete even if this is listed
   - "phase2_required" = not needed before Phase 1; defer until Phase 2
@@ -168,6 +185,14 @@ async def stream_ind_map(experiments: list[dict]):
                                             parsed["status"] = "missing"
                                         else:
                                             parsed["status"] = "partial"
+                                    # Ensure all missing_experiments have stable gap_ids
+                                    _gap_counter = 1
+                                    for sub in parsed.get("subsections", []):
+                                        sub_prefix = _SUB_ABBREV.get(sub.get("name", ""), "G")
+                                        for m in sub.get("missing_experiments", []):
+                                            if isinstance(m, dict) and not m.get("gap_id"):
+                                                m["gap_id"] = f"{sub_prefix}{_gap_counter:02d}"
+                                            _gap_counter += 1
                                 all_sections.append(parsed)
                                 yield parsed
                             elif "summary" in parsed:

@@ -750,6 +750,7 @@ function renderCard(s) {
       <div class="cd-why">
         ${s.regulatory_ref ? `<span class="cd-why-reg">${esc(s.regulatory_ref)}</span>` : ''}
         <span class="cd-why-gap">${esc(s.context || s.recommendation || s.name)}</span>
+        ${(s.covers_gaps && s.covers_gaps.length) ? `<div style="margin-top:4px;display:flex;flex-wrap:wrap;gap:3px">${s.covers_gaps.map(g=>`<span style="font-size:9px;font-weight:700;padding:1px 5px;border:1px solid #9ca3af;color:#6b7280">Gap ${esc(g)}</span>`).join('')}</div>` : ''}
       </div>
 
       ${chainHTML}

@@ -40,7 +40,7 @@ fda_tier values and meaning:
 OUTPUT FORMAT — each study on its own line, then a summary line.
 
 Study schema:
-{{"type":"study","id":"S01","name":"<concise name>","subsection":"<Section 8 subsection>","regulatory_ref":"<exact CFR/ICH clause this study satisfies, e.g. 'ICH S7A §4.4 · Safety Pharmacology Core Battery — CNS'>","phase1_required":<bool>,"track":"<A|B|C>","track_name":"<In Vitro & Assays|Safety Pharmacology|GLP Toxicology>","week_start":<int>,"week_end":<int>,"cost_low":<int>,"cost_high":<int>,"cost_basis":"<1 sentence: which CRO tier and what drives the range for this study type>","failure_likelihood":"<low|medium|high>","failure_pct":<int 0-100>,"failure_rationale":"<1 sentence specific to this compound class — why it fails and what the consequence is>","fda_tier":"<phase1_blocking|conditional|phase2_defer|recommended>","depends_on":["S01",...],"compound_flag":"<specific design warning or null>","recommendation":"<1 sentence on key design consideration>","cost_saving_tips":["<tip 1: specific, verifiable, cite the mechanism e.g. 'Multiplex PPB with MDR1 assay at same CRO — Cyprotex panel pricing reduces per-assay cost ~30%'>","<tip 2 — optional>"],"context":"<1 sentence: either 'Extends [EXPXX] from source paper ([assay type] already performed; this adds GLP confirmation)' OR 'New study — no [assay type] data present in source paper' OR 'Conditional follow-up to [SXX]: only required if [trigger condition]'>","pubmed_query":"<5-8 PubMed search terms for finding published precedent studies of this exact assay in this compound class, e.g. 'hERG inhibition PDE4 inhibitor safety pharmacology preclinical'>"}}
+{{"type":"study","id":"S01","name":"<concise name>","subsection":"<Section 8 subsection>","regulatory_ref":"<exact CFR/ICH clause this study satisfies, e.g. 'ICH S7A §4.4 · Safety Pharmacology Core Battery — CNS'>","phase1_required":<bool>,"track":"<A|B|C>","track_name":"<In Vitro & Assays|Safety Pharmacology|GLP Toxicology>","week_start":<int>,"week_end":<int>,"cost_low":<int>,"cost_high":<int>,"cost_basis":"<1 sentence: which CRO tier and what drives the range for this study type>","failure_likelihood":"<low|medium|high>","failure_pct":<int 0-100>,"failure_rationale":"<1 sentence specific to this compound class — why it fails and what the consequence is>","fda_tier":"<phase1_blocking|conditional|phase2_defer|recommended>","depends_on":["S01",...],"compound_flag":"<specific design warning or null>","recommendation":"<1 sentence on key design consideration>","cost_saving_tips":["<tip 1: specific, verifiable, cite the mechanism e.g. 'Multiplex PPB with MDR1 assay at same CRO — Cyprotex panel pricing reduces per-assay cost ~30%'>","<tip 2 — optional>"],"covers_gaps":["<gap_id e.g. GX01>",...],"context":"<1 sentence: either 'Covers gaps [GX01, GX02] from IND readiness map — extends [EXPXX] from source paper' OR 'Covers gap [PP01] — new study, no prior data' OR 'Conditional follow-up to [SXX]: only required if [trigger condition]; not in gap list'>","pubmed_query":"<5-8 PubMed search terms for finding published precedent studies of this exact assay in this compound class, e.g. 'hERG inhibition PDE4 inhibitor safety pharmacology preclinical'>"}}
 
 Summary (last line):
 {{"type":"summary","total_weeks_to_phase1":<int>,"cost_low":<int>,"cost_high":<int>,"critical_path":["S01",...],"phase1_gate_week":<int>,"phase2_studies":["S08",...],"compound_assessment":"<1 sentence>","highlights":[{{"label":"<6 words max>","detail":"<1 tight sentence>","tone":"<positive|warning|neutral>"}},{{"label":"<6 words max>","detail":"<1 tight sentence>","tone":"<positive|warning|neutral>"}},{{"label":"<6 words max>","detail":"<1 tight sentence>","tone":"<positive|warning|neutral>"}}]}}
@@ -134,7 +134,15 @@ COST-SAVING TIPS — only include tips that are grounded in one of these mechani
 
 For each tip, name the specific savings mechanism. Do NOT invent discounts or cite specific dollar figures you cannot verify.
 
-Output 8–14 studies total. Consolidate related gaps into logical studies (e.g., multiple CYP gaps = 2 studies max).
+GAP COVERAGE MANDATE — CRITICAL:
+- Every gap with priority "phase1_blocking" MUST appear in at least one study's covers_gaps list. No exceptions.
+- Every gap with priority "recommended" MUST appear in at least one study — either as fda_tier "recommended" or bundled into a phase1_blocking study. These go into the Balanced scenario.
+- Every gap with priority "phase2_required" MUST appear as fda_tier "phase2_defer". Do not drop them.
+- You MAY consolidate multiple gaps into one study (e.g., GX01+GX02 → one Ames study) but list all gap IDs in covers_gaps.
+- You MAY ADD studies for ICH M3(R2) requirements not listed in the gaps (e.g., dose-ranging pilot, PPB) — set covers_gaps: [] for these and explain in context.
+- After generating all studies, mentally check: does every gap_id from the input appear in at least one covers_gaps list? If not, add the missing study.
+
+Output 8–18 studies total. Consolidate related gaps where logical (e.g., multiple CYP gaps = 2 studies max) but do not drop any gap.
 
 HIGHLIGHTS — write exactly 3, covering different dimensions:
 1. Biggest risk or bottleneck (e.g. high-failure study on critical path, known class liability) — tone: "warning" if serious, "neutral" if manageable
@@ -158,13 +166,15 @@ def extract_gaps(ind_map: dict) -> list[dict]:
                         priority = "phase1_blocking" if sub_status != "complete" else "recommended"
                     # Include all priorities — phase2_required deferred, recommended conditional,
                     # phase1_blocking required. Skip nothing so agent3 has full picture.
-                    gaps.append({
+                    gap = {
+                        "gap_id": req.get("gap_id", "") if isinstance(req, dict) else "",
                         "subsection": sub["name"],
                         "status": sub_status,
                         "regulatory_ref": sub.get("regulatory_ref", ""),
                         "requirement": req_text,
                         "priority": priority,
-                    })
+                    }
+                    gaps.append(gap)
     return gaps
 
 
