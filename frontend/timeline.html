@@ -760,29 +760,36 @@ function applyScenario(scenario, btn) {
   const allStudies = Object.values(studies);
   if (!allStudies.length) return;
 
-  // Decide which studies to include based on scenario
+  // Tier priority for budget ordering: phase1_blocking > conditional > phase2_defer
+  const tierOrder = { phase1_blocking: 0, conditional: 1, phase2_defer: 2 };
+
+  // Decide base set per scenario — all three exclude Phase 2 deferred studies
   let included = [];
   if (scenario === 'fastest') {
-    // All phase1_required first, then conditionals sorted by failure risk (high first = fail-fast)
-    const required = allStudies.filter(s => s.phase1_required);
-    const optional = allStudies.filter(s => !s.phase1_required);
-    included = [...required, ...optional];
+    // All phase1_required only — parallel tracks, minimum weeks to IND
+    included = allStudies.filter(s => s.phase1_required);
   } else if (scenario === 'cheapest') {
-    // Only phase1_required; sort by cost_low ascending (cheapest first)
+    // phase1_required only, sorted cheapest-first so budget cuts hit non-critical studies last
     included = allStudies
       .filter(s => s.phase1_required)
       .sort((a, b) => (a.cost_low || 0) - (b.cost_low || 0));
   } else {
-    // balanced: phase1_required + conditional studies; skip phase2_defer
-    included = allStudies.filter(s => s.phase1_required || s.fda_tier === 'conditional');
+    // balanced: phase1_required + conditionals (high-risk early warnings), no phase2_defer
+    included = allStudies
+      .filter(s => s.phase1_required || s.fda_tier === 'conditional')
+      .sort((a, b) => (tierOrder[a.fda_tier] ?? 1) - (tierOrder[b.fda_tier] ?? 1));
   }
 
-  // Apply budget cap: accumulate cost_low until budget exhausted
+  // Apply budget cap: always keep phase1_blocking first, cut lower-priority studies
   if (_budgetCap < Infinity) {
+    // Sort by tier so critical studies survive the cap
+    const prioritised = [...included].sort((a, b) =>
+      (tierOrder[a.fda_tier] ?? 1) - (tierOrder[b.fda_tier] ?? 1));
+    const costField = scenario === 'cheapest' ? 'cost_low' : 'cost_high';
     let spent = 0;
     const withinBudget = [];
-    for (const s of included) {
-      const cost = scenario === 'cheapest' ? (s.cost_low || 0) : (s.cost_high || 0);
+    for (const s of prioritised) {
+      const cost = s[costField] || 0;
       if (spent + cost <= _budgetCap) { withinBudget.push(s); spent += cost; }
     }
     included = withinBudget;
