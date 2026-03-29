@@ -15,18 +15,41 @@ MODEL = "claude-sonnet-4-6"
 EUTILS_BASE = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils"
 EUTILS_PARAMS = {"tool": "INDAccelerator", "email": "ind@accelerator.com"}
 
+# Drug class abbreviation → PubMed-indexed term
+# PubMed uses full MeSH terms; abbreviations like "PDE4 inhibitor" return ~0 results
+_DRUG_CLASS_EXPANSIONS = {
+    "pde4 inhibitor":  "phosphodiesterase inhibitor",
+    "pde5 inhibitor":  "phosphodiesterase inhibitor",
+    "pde inhibitor":   "phosphodiesterase inhibitor",
+    "jak inhibitor":   "janus kinase inhibitor",
+    "btk inhibitor":   "bruton tyrosine kinase inhibitor",
+    "mtor inhibitor":  "mTOR inhibitor",
+    "pi3k inhibitor":  "phosphoinositide 3-kinase inhibitor",
+    "cdk inhibitor":   "cyclin-dependent kinase inhibitor",
+    "hdac inhibitor":  "histone deacetylase inhibitor",
+    "ssri":            "serotonin reuptake inhibitor",
+    "nsaid":           "anti-inflammatory agents non-steroidal",
+}
+
+def _pubmed_drug_class(drug_class: str) -> str:
+    """Return a PubMed-friendly search term for a drug class."""
+    key = drug_class.lower().strip()
+    return _DRUG_CLASS_EXPANSIONS.get(key, drug_class)
+
+
 # Map subsection names → targeted PubMed queries
+# Use {drug_class} placeholder; it is expanded via _pubmed_drug_class() before searching
 SUBSECTION_QUERIES = {
-    "Primary Pharmacology":                        '"{drug_class}" pharmacology "mechanism of action" preclinical in vitro in vivo',
-    "Secondary Pharmacology & Selectivity":        '"{drug_class}" selectivity "off-target" binding panel preclinical',
-    "Safety Pharmacology — Cardiovascular (hERG/QT)": '"{drug_class}" hERG "cardiovascular safety pharmacology" preclinical',
-    "Safety Pharmacology — CNS":                   '"{drug_class}" "CNS safety pharmacology" "Irwin" OR "FOB" rat preclinical',
-    "Safety Pharmacology — Respiratory":           '"{drug_class}" "respiratory safety pharmacology" plethysmography rat',
-    "Pharmacokinetics & ADME":                     '"{drug_class}" pharmacokinetics ADME rat oral bioavailability preclinical',
-    "Single-Dose Toxicity":                        '"{drug_class}" "single dose" OR "acute toxicity" rat oral preclinical',
-    "Repeat-Dose Toxicity":                        '"{drug_class}" "repeat dose toxicity" OR "subchronic toxicity" rat oral GLP',
-    "Genotoxicity":                                '"{drug_class}" genotoxicity "Ames test" OR micronucleus preclinical',
-    "Drug-Drug Interaction / CYP Profiling":       '"{drug_class}" "CYP inhibition" OR "drug-drug interaction" in vitro',
+    "Primary Pharmacology":                           '{drug_class} pharmacology mechanism preclinical',
+    "Secondary Pharmacology & Selectivity":           '{drug_class} selectivity off-target binding preclinical',
+    "Safety Pharmacology — Cardiovascular (hERG/QT)": '{drug_class} hERG cardiovascular safety',
+    "Safety Pharmacology — CNS":                      '{drug_class} CNS safety rat preclinical',
+    "Safety Pharmacology — Respiratory":              '{drug_class} respiratory safety rat preclinical',
+    "Pharmacokinetics & ADME":                        '{drug_class} pharmacokinetics ADME rat oral',
+    "Single-Dose Toxicity":                           '{drug_class} acute toxicity rat oral',
+    "Repeat-Dose Toxicity":                           '{drug_class} repeat dose toxicity rat',
+    "Genotoxicity":                                   '{drug_class} genotoxicity Ames micronucleus',
+    "Drug-Drug Interaction / CYP Profiling":          '{drug_class} CYP inhibition drug interaction',
 }
 
 
@@ -81,9 +104,9 @@ async def _fetch_abstracts(pmids: list[str]) -> list[dict]:
 
 async def _fetch_precedents(drug_class: str, subsection: str) -> dict:
     """Search PubMed for precedent studies for one subsection."""
-    template = SUBSECTION_QUERIES.get(subsection,
-                                      '"{drug_class}" preclinical study')
-    query = template.format(drug_class=drug_class)
+    expanded = _pubmed_drug_class(drug_class)
+    template = SUBSECTION_QUERIES.get(subsection, '{drug_class} preclinical study')
+    query = template.format(drug_class=expanded)
     pmids = await _search_pubmed(query, max_results=5)
     papers = await _fetch_abstracts(pmids)
     return {"subsection": subsection, "search_query": query, "papers": papers}
