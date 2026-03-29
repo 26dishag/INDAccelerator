@@ -138,9 +138,25 @@
     .etype.vivo { border-color: #aaa; opacity: 1; }
 
     .missing-list { display: flex; flex-direction: column; gap: 4px; }
-    .missing-item { display: flex; align-items: flex-start; gap: 10px; padding: 6px 10px; font-size: var(--t-sm); line-height: 1.55; }
-    .missing-icon { font-size: var(--t-xs); font-weight: 600; color: var(--fg); margin-top: 1px; flex-shrink: 0; }
-    .missing-text { color: var(--fg); flex: 1; font-weight: 500; }
+    .missing-item { display: flex; align-items: flex-start; gap: 8px; padding: 5px 10px; font-size: var(--t-sm); line-height: 1.55; }
+    .missing-item.p-blocking  { background: #fef2f2; border-left: 3px solid #dc2626; }
+    .missing-item.p-recommend { background: #fffbeb; border-left: 3px solid #b45309; }
+    .missing-item.p-phase2    { background: #f9fafb; border-left: 3px solid #9ca3af; }
+    .missing-icon { font-size: 11px; font-weight: 800; flex-shrink: 0; margin-top: 2px; }
+    .missing-item.p-blocking  .missing-icon { color: #dc2626; }
+    .missing-item.p-recommend .missing-icon { color: #b45309; }
+    .missing-item.p-phase2    .missing-icon { color: #9ca3af; }
+    .missing-text { flex: 1; font-weight: 500; }
+    .missing-item.p-blocking  .missing-text { color: #991b1b; }
+    .missing-item.p-recommend .missing-text { color: #78350f; }
+    .missing-item.p-phase2    .missing-text { color: #6b7280; }
+    .missing-tag {
+      font-size: 9px; font-weight: 800; text-transform: uppercase;
+      letter-spacing: 0.4px; padding: 1px 5px; flex-shrink: 0; align-self: center;
+    }
+    .tag-blocking  { background: #dc2626; color: #fff; }
+    .tag-recommend { background: #b45309; color: #fff; }
+    .tag-phase2    { border: 1px solid #9ca3af; color: #9ca3af; }
 
     /* ── All IND Sections grid ───────────────────────────────── */
     .section-heading-row {
@@ -699,12 +715,24 @@ function renderSubsection(sub) {
     </span>`;
   }).join('');
 
-  const missingCount = (sub.missing_experiments || []).length;
-  const missingItems = (sub.missing_experiments || []).map(m => {
-    const text = typeof m === 'string' ? m : (m.study || m.description || m.requirement || JSON.stringify(m));
-    return `<div class="missing-item">
-      <div class="missing-icon">✗</div>
+  const missingExps = sub.missing_experiments || [];
+  // Only count phase1_blocking for the red badge — recommended/phase2 don't make it incomplete
+  const blockingCount = missingExps.filter(m =>
+    typeof m === 'string' || (m.priority || 'phase1_blocking') === 'phase1_blocking'
+  ).length;
+  const missingCount = blockingCount; // badge shows only true blockers
+
+  const missingItems = missingExps.map(m => {
+    const text     = typeof m === 'string' ? m : (m.study || m.description || m.requirement || JSON.stringify(m));
+    const priority = typeof m === 'object' ? (m.priority || 'phase1_blocking') : 'phase1_blocking';
+    const cls  = { phase1_blocking: 'p-blocking', recommended: 'p-recommend', phase2_required: 'p-phase2' }[priority] || 'p-blocking';
+    const icon = { phase1_blocking: '✗', recommended: '~', phase2_required: '→' }[priority] || '✗';
+    const tagLabel = { phase1_blocking: 'Required', recommended: 'Recommended', phase2_required: 'Phase 2' }[priority] || 'Required';
+    const tagCls   = { phase1_blocking: 'tag-blocking', recommended: 'tag-recommend', phase2_required: 'tag-phase2' }[priority] || 'tag-blocking';
+    return `<div class="missing-item ${cls}">
+      <div class="missing-icon">${icon}</div>
       <div class="missing-text">${esc(text)}</div>
+      <span class="missing-tag ${tagCls}">${tagLabel}</span>
     </div>`;
   }).join('');
 

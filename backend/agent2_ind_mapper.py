@@ -107,7 +107,12 @@ Rules for Section 8 subsections:
 - Map each experiment ID (from extracted experiments) to the correct subsection(s) based on what it measured
 - status: "complete" = sufficient for Phase 1 IND submission per ICH M3(R2) — does NOT mean every possible experiment is done, only that the data package justifies human exposure; "partial" = some data exists but a Phase 1-blocking gap remains; "missing" = no relevant study exists
 - Write specific status_rationale (1-2 sentences citing the gap or why it's complete)
-- missing_experiments: only list studies that are actually Phase 1 blocking or conditionally required; note "Phase 2" or "recommended" for non-blocking enhancements
+- missing_experiments: structured objects with EXACT schema: {"study": "<what is needed>", "priority": "<phase1_blocking|recommended|phase2_required>"}
+  - "phase1_blocking" = FDA will not accept the IND without this; blocks human exposure
+  - "recommended" = best practice or strengthens the package but NOT required for Phase 1 IND submission; the section CAN be complete even if this is listed
+  - "phase2_required" = not needed before Phase 1; defer until Phase 2
+  - CRITICAL: a subsection status can be "complete" AND still have "recommended" items — complete means Phase 1 ready, not that every possible study is done
+  - NEVER put a "recommended" or "phase2_required" item as the sole reason for marking a subsection "partial"
 - Non-GLP alone is NOT sufficient for genotoxicity or safety pharmacology core battery — these require GLP
 - 28-day rat non-GLP repeat-dose = partial (GLP replication required)
 - Ames alone (especially weak positive) = partial
