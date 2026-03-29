@@ -338,6 +338,85 @@
     .spend-result-lbl  { opacity: 0.4; font-weight: 600; text-transform: uppercase; letter-spacing: 0.4px; }
     .study-card.deferred-opt { opacity: 0.25; }
 
+    /* ── Critical path ─────────────────────────────────────────────── */
+    .study-card.critical-path { border-left: 3px solid #f5a623; }
+    .cbadge.cp { border-color: #f5a623; color: #f5a623; }
+
+    /* ── Failure impact ─────────────────────────────────────────────── */
+    .cd-impact { margin: 6px 0 0; padding: 6px 8px; background: #fff8f0; border-left: 2px solid #dc2626; font-size: var(--t-xs); }
+    .cd-impact-title { font-weight: 700; color: #dc2626; margin-bottom: 4px; }
+    .cd-impact-item { display: flex; justify-content: space-between; padding: 2px 0; border-bottom: 1px solid #fecaca; }
+    .cd-impact-item:last-child { border-bottom: none; }
+    .cd-impact-name { flex: 1; }
+    .cd-impact-meta { opacity: 0.7; white-space: nowrap; margin-left: 8px; }
+
+    /* ── Dose calculator ────────────────────────────────────────────── */
+    .dose-calc {
+      margin: 12px 0; padding: 12px 16px;
+      border: 1px solid #e8e8e8; background: var(--bg);
+      font-size: var(--t-xs);
+    }
+    .dc-header { display: flex; align-items: baseline; gap: 10px; margin-bottom: 8px; }
+    .dc-title { font-weight: 700; font-size: var(--t-sm); }
+    .dc-source { opacity: 0.55; font-size: 10px; }
+    .dc-body { display: flex; gap: 16px; align-items: flex-end; flex-wrap: wrap; }
+    .dc-field { display: flex; flex-direction: column; gap: 3px; }
+    .dc-field label { font-weight: 600; opacity: 0.6; text-transform: uppercase; font-size: 9px; letter-spacing: 0.4px; }
+    .dc-field input, .dc-field select {
+      font-family: inherit; font-size: var(--t-xs); border: 1px solid #ddd;
+      padding: 4px 6px; background: var(--bg); color: var(--fg); width: 110px;
+    }
+    .dc-result {
+      margin-left: auto; text-align: right; min-width: 160px;
+    }
+    .dc-result-main { font-size: 20px; font-weight: 700; }
+    .dc-result-sub  { font-size: var(--t-xs); opacity: 0.55; margin-top: 2px; }
+    .dc-steps { margin-top: 6px; color: var(--fg); opacity: 0.5; font-size: 10px; border-top: 1px solid #eee; padding-top: 6px; }
+    .dc-warn { color: #b45309; font-size: 10px; margin-top: 4px; }
+
+    /* ── Study briefs panel ─────────────────────────────────────────── */
+    .briefs-panel {
+      position: fixed; top: 0; right: -680px; width: 660px; height: 100vh;
+      background: var(--bg); border-left: 1px solid #e8e8e8;
+      box-shadow: -4px 0 24px rgba(0,0,0,0.08);
+      display: flex; flex-direction: column;
+      transition: right 0.25s ease; z-index: 200;
+    }
+    .briefs-panel.open { right: 0; }
+    .briefs-panel-header {
+      padding: 16px 20px; border-bottom: 1px solid #e8e8e8;
+      display: flex; align-items: baseline; gap: 10px; flex-shrink: 0;
+    }
+    .briefs-panel-title { font-weight: 700; font-size: var(--t-lg); flex: 1; }
+    .briefs-panel-sub { font-size: var(--t-xs); opacity: 0.5; }
+    .briefs-panel-close {
+      background: none; border: none; font-size: 20px; cursor: pointer;
+      color: var(--fg); padding: 0 4px; margin-left: auto;
+    }
+    .briefs-panel-body { flex: 1; overflow-y: auto; padding: 16px 20px; }
+    .brief-card {
+      border: 1px solid #e8e8e8; margin-bottom: 10px;
+    }
+    .brief-card-header {
+      display: flex; align-items: center; gap: 8px;
+      padding: 10px 12px; cursor: pointer; font-size: var(--t-xs);
+    }
+    .brief-card-header:hover { background: #f9f9f9; }
+    .brief-card-id { font-weight: 700; font-size: 10px; opacity: 0.5; }
+    .brief-card-name { flex: 1; font-weight: 600; }
+    .brief-glp { font-size: 9px; font-weight: 700; padding: 1px 5px; border: 1px solid; }
+    .brief-glp.yes { border-color: var(--fg); background: var(--fg); color: var(--bg); }
+    .brief-glp.no  { border-color: #aaa; color: #aaa; }
+    .brief-card-body { padding: 0 12px 12px; border-top: 1px solid #f0f0f0; display: none; font-size: var(--t-xs); }
+    .brief-card.open .brief-card-body { display: block; }
+    .brief-row { margin-top: 8px; }
+    .brief-row-label { font-weight: 700; opacity: 0.5; text-transform: uppercase; font-size: 9px; letter-spacing: 0.4px; margin-bottom: 2px; }
+    .brief-row-val { line-height: 1.5; }
+    .brief-ep-list { margin: 0; padding-left: 16px; }
+    .brief-ep-list li { margin-bottom: 2px; }
+    .brief-accept { padding: 6px 8px; background: #f0fdf4; border-left: 2px solid #16a34a; margin-top: 8px; }
+    .brief-fail   { padding: 6px 8px; background: #fff8f0; border-left: 2px solid #dc2626; margin-top: 4px; }
+
     /* ── Phase 1 gate ──────────────────────────────────────────────── */
     .gate-line {
       position: absolute; width: 1px;
@@ -368,6 +447,7 @@
   <span class="app-header-context" id="headerSub">Development Timeline · Phase 1 Roadmap</span>
   <div class="app-header-actions">
     <button class="btn btn-sm" onclick="history.back()">← Back</button>
+    <button class="btn btn-sm" onclick="openBriefsPanel()">Study Briefs</button>
     <button class="btn btn-sm" onclick="sessionStorage.removeItem('cache_timeline');location.reload()">Regenerate</button>
   </div>
 </header>
@@ -402,6 +482,40 @@
     </div>
   </div>
 
+  <!-- Starting dose calculator -->
+  <div class="dose-calc" id="doseCalc" style="display:none">
+    <div class="dc-header">
+      <span class="dc-title">Phase 1 Starting Dose Estimator</span>
+      <span class="dc-source" id="dcSource"></span>
+    </div>
+    <div class="dc-body">
+      <div class="dc-field">
+        <label>NOAEL (mg/kg)</label>
+        <input id="dcNoael" type="number" step="0.5" min="0" oninput="calcDose()" />
+      </div>
+      <div class="dc-field">
+        <label>Species</label>
+        <select id="dcSpecies" onchange="calcDose()">
+          <option value="3">Mouse (Km 3)</option>
+          <option value="6" selected>Rat (Km 6)</option>
+          <option value="12">Monkey (Km 12)</option>
+          <option value="20">Dog (Km 20)</option>
+        </select>
+      </div>
+      <div class="dc-field">
+        <label>Safety factor</label>
+        <select id="dcSafety" onchange="calcDose()">
+          <option value="10" selected>÷10 (FDA default)</option>
+          <option value="6">÷6</option>
+          <option value="2">÷2 (well-characterised)</option>
+        </select>
+      </div>
+      <div class="dc-result" id="dcResult"></div>
+    </div>
+    <div class="dc-steps" id="dcSteps"></div>
+    <div class="dc-warn" id="dcWarn"></div>
+  </div>
+
   <!-- Spend optimizer -->
   <div class="spend-bar" id="spendBar">
     <span class="spend-label">Scenario</span>
@@ -434,6 +548,7 @@
       <div class="leg"><span class="cbadge cond">Cond</span>&nbsp;Conditional</div>
       <div class="leg"><span class="cbadge rec">Rec</span>&nbsp;Recommended</div>
       <div class="leg"><span class="cbadge p2">P2</span>&nbsp;Defer to Phase 2</div>
+      <div class="leg"><span class="cbadge cp">CP</span>&nbsp;Critical path</div>
     </div>
   </div>
 
@@ -710,6 +825,8 @@ function renderCard(s) {
       ${s.compound_flag ? `<div class="cd-warn">${esc(s.compound_flag)}</div>` : ''}
       ${tip            ? `<div class="cd-saving">${esc(tip)}</div>` : ''}
 
+      <div class="cd-impact" id="impact-${s.id}" style="display:none"></div>
+
       <div class="cd-foot">
         <a href="${pubmedUrl}" target="_blank" rel="noopener">→ PubMed precedents</a>
       </div>
@@ -718,7 +835,6 @@ function renderCard(s) {
 
   card.querySelector('.card-collapsed').addEventListener('click', e => {
     e.stopPropagation();
-    // Close any other open popups first
     document.querySelectorAll('.card-detail.open').forEach(d => {
       if (d !== card.querySelector('.card-detail')) {
         d.classList.remove('open');
@@ -728,6 +844,7 @@ function renderCard(s) {
     const detail = card.querySelector('.card-detail');
     const isOpen = detail.classList.toggle('open');
     card.classList.toggle('expanded', isOpen);
+    if (isOpen) injectFailureImpact(s.id);
   });
 
   document.getElementById(`track-${s.track}`).appendChild(card);
@@ -847,6 +964,162 @@ function updateSummary() {
     fmt$k(summaryData.cost_low) + ' – ' + fmt$k(summaryData.cost_high);
   document.getElementById('sumCount').textContent =
     Object.values(studies).filter(s => s.phase1_required).length + ' required';
+
+  // Highlight critical path studies
+  const cp = new Set(summaryData.critical_path || []);
+  for (const id of cp) {
+    document.getElementById(`card-${id}`)?.classList.add('critical-path');
+  }
+}
+
+// ── Failure impact ──────────────────────────────────────────────────────────────
+function injectFailureImpact(studyId) {
+  const el = document.getElementById(`impact-${studyId}`);
+  if (!el) return;
+  // Find conditional studies that depend on this study
+  const triggered = Object.values(studies).filter(s =>
+    s.fda_tier === 'conditional' && (s.depends_on || []).includes(studyId)
+  );
+  if (!triggered.length) { el.style.display = 'none'; return; }
+  const rows = triggered.map(t => {
+    const extraWeeks = Math.max(0, (t.week_end || 0) - (studies[studyId]?.week_end || 0));
+    const cost = Math.round(((t.cost_low || 0) + (t.cost_high || 0)) / 2);
+    return `<div class="cd-impact-item">
+      <span class="cd-impact-name">${esc(t.name)}</span>
+      <span class="cd-impact-meta">+${extraWeeks} wks · ${fmt$k(cost)}</span>
+    </div>`;
+  }).join('');
+  el.innerHTML = `<div class="cd-impact-title">⚡ If positive / fail — triggers:</div>${rows}`;
+  el.style.display = 'block';
+}
+
+// ── Starting dose calculator ────────────────────────────────────────────────────
+const KM_HUMAN = 37;
+function loadDoseCalc() {
+  fetch(`${API}/api/paper-data`).then(r => r.ok ? r.json() : null).then(pd => {
+    if (!pd) return;
+    const exps = pd.experiments || [];
+    // Find best NOAEL/MTD experiment: prefer in vivo tox, then in vivo other
+    const tox = exps.find(e => e.type === 'in vivo' &&
+      /mtd|tolerat|maximum tolerat/i.test(JSON.stringify(e)));
+    if (tox) {
+      // Try to extract a dose number from the experiment results
+      const doseMatch = JSON.stringify(tox).match(/(\d+(?:\.\d+)?)\s*mg\/kg/g);
+      const doses = doseMatch ? doseMatch.map(d => parseFloat(d)) : [];
+      const maxDose = doses.length ? Math.max(...doses) : null;
+      const species = /mouse/i.test(JSON.stringify(tox)) ? '3'
+        : /rat/i.test(JSON.stringify(tox)) ? '6' : '6';
+      document.getElementById('dcSpecies').value = species;
+      if (maxDose) {
+        document.getElementById('dcNoael').value = maxDose;
+        document.getElementById('dcSource').textContent =
+          `Source: ${tox.id} — ${tox.model || 'MTD study'}`;
+        document.getElementById('dcWarn').textContent =
+          'Formal GLP NOAEL pending. This is a planning estimate from available non-GLP data.';
+      }
+      document.getElementById('doseCalc').style.display = 'block';
+      calcDose();
+    }
+  }).catch(() => {});
+}
+
+function calcDose() {
+  const noael = parseFloat(document.getElementById('dcNoael').value);
+  const km    = parseFloat(document.getElementById('dcSpecies').value);
+  const sf    = parseFloat(document.getElementById('dcSafety').value);
+  const res   = document.getElementById('dcResult');
+  const steps = document.getElementById('dcSteps');
+  if (!noael || noael <= 0) { res.innerHTML = ''; steps.innerHTML = ''; return; }
+  const hed    = noael * (km / KM_HUMAN);
+  const start  = hed / sf;
+  const mg70kg = start * 70;
+  res.innerHTML = `<div class="dc-result-main">${start.toFixed(2)} mg/kg</div>
+    <div class="dc-result-sub">${mg70kg.toFixed(0)} mg (70 kg adult)</div>`;
+  steps.innerHTML =
+    `NOAEL ${noael} mg/kg × (Km ${km}/Km ${KM_HUMAN}) = HED ${hed.toFixed(2)} mg/kg ÷ ${sf}× = <strong>${start.toFixed(2)} mg/kg</strong>`;
+}
+
+// ── Study briefs panel ──────────────────────────────────────────────────────────
+let _briefsLoaded = false;
+
+function openBriefsPanel() {
+  document.getElementById('briefsPanel').classList.add('open');
+  if (!_briefsLoaded) streamBriefs();
+}
+function closeBriefsPanel() {
+  document.getElementById('briefsPanel').classList.remove('open');
+}
+
+async function streamBriefs() {
+  _briefsLoaded = true;
+  const list = document.getElementById('briefsList');
+  const loading = document.getElementById('briefsLoading');
+  loading.style.display = 'flex';
+  list.innerHTML = '';
+
+  const resp = await fetch(`${API}/api/study-briefs`, { method: 'POST' });
+  if (!resp.ok) {
+    loading.style.display = 'none';
+    list.innerHTML = `<div style="color:#dc2626;padding:12px">Error generating briefs. Run the timeline first.</div>`;
+    return;
+  }
+
+  const reader = resp.body.getReader();
+  const decoder = new TextDecoder();
+  let buf = '';
+
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    buf += decoder.decode(value, { stream: true });
+    const lines = buf.split('\n');
+    buf = lines.pop();
+    for (const line of lines) {
+      if (!line.startsWith('data: ')) continue;
+      let ev;
+      try { ev = JSON.parse(line.slice(6)); } catch { continue; }
+      if (ev.type === 'brief') {
+        loading.style.display = 'none';
+        list.appendChild(renderBriefCard(ev.data));
+      } else if (ev.type === 'done') {
+        loading.style.display = 'none';
+      }
+    }
+  }
+}
+
+function renderBriefCard(b) {
+  const div = document.createElement('div');
+  div.className = 'brief-card';
+  const glpCls = b.glp_required ? 'yes' : 'no';
+  const glpLbl = b.glp_required ? 'GLP' : 'non-GLP';
+  const eps = (b.primary_endpoints || []).map(e => `<li>${esc(e)}</li>`).join('');
+  const seps = (b.secondary_endpoints || []).map(e => `<li>${esc(e)}</li>`).join('');
+  const cro = (b.cro_minimum_requirements || []).map(e => `<li>${esc(e)}</li>`).join('');
+  div.innerHTML = `
+    <div class="brief-card-header" onclick="this.closest('.brief-card').classList.toggle('open')">
+      <span class="brief-card-id">${esc(b.study_id)}</span>
+      <span class="brief-card-name">${esc(b.study_name)}</span>
+      <span class="brief-glp ${glpCls}">${glpLbl}</span>
+      <span style="opacity:0.35;font-size:11px;margin-left:6px">▸</span>
+    </div>
+    <div class="brief-card-body">
+      <div class="brief-row"><div class="brief-row-label">Objective</div><div class="brief-row-val">${esc(b.objective || '')}</div></div>
+      <div class="brief-row"><div class="brief-row-label">Regulatory basis</div><div class="brief-row-val">${esc(b.regulatory_basis || '')}</div></div>
+      <div class="brief-row"><div class="brief-row-label">Species / Strain / Sex</div><div class="brief-row-val">${esc(b.species || '')} · ${esc(b.strain_sex || '')}</div></div>
+      <div class="brief-row"><div class="brief-row-label">Route / Duration</div><div class="brief-row-val">${esc(b.route || '')} · ${esc(b.duration || '')}</div></div>
+      <div class="brief-row"><div class="brief-row-label">Dose levels</div><div class="brief-row-val">${esc(b.dose_levels || '')}</div></div>
+      <div class="brief-row"><div class="brief-row-label">Dose rationale</div><div class="brief-row-val">${esc(b.dose_rationale || '')}</div></div>
+      <div class="brief-row"><div class="brief-row-label">Primary endpoints</div><ul class="brief-ep-list">${eps}</ul></div>
+      ${seps ? `<div class="brief-row"><div class="brief-row-label">Secondary endpoints</div><ul class="brief-ep-list">${seps}</ul></div>` : ''}
+      <div class="brief-accept">${esc(b.acceptance_criteria || '')}</div>
+      <div class="brief-fail">${esc(b.fail_consequence || '')}</div>
+      ${cro ? `<div class="brief-row"><div class="brief-row-label">CRO requirements</div><ul class="brief-ep-list">${cro}</ul></div>` : ''}
+      ${b.paper_connection ? `<div class="brief-row"><div class="brief-row-label">Paper connection</div><div class="brief-row-val">${esc(b.paper_connection)}</div></div>` : ''}
+      ${b.cro_notes ? `<div class="brief-row"><div class="brief-row-label">CRO notes</div><div class="brief-row-val">${esc(b.cro_notes)}</div></div>` : ''}
+    </div>
+  `;
+  return div;
 }
 
 // ── Load ───────────────────────────────────────────────────────────────────────
@@ -858,6 +1131,8 @@ async function load() {
       document.getElementById('sumCompound').textContent = pd.compound || 'Unknown';
     }
   } catch (_) {}
+
+  loadDoseCalc();
 
   // Restore from cache if available
   const cached = sessionStorage.getItem('cache_timeline');
@@ -931,5 +1206,21 @@ document.addEventListener('click', () => {
 window.addEventListener('resize', () => positionAllCards());
 load();
 </script>
+
+<!-- Study briefs panel -->
+<div id="briefsPanel" class="briefs-panel">
+  <div class="briefs-panel-header">
+    <span class="briefs-panel-title">CRO Study Briefs</span>
+    <span class="briefs-panel-sub">Ready to send to CROs for quotes</span>
+    <button class="briefs-panel-close" onclick="closeBriefsPanel()">×</button>
+  </div>
+  <div class="briefs-panel-body" id="briefsBody">
+    <div class="briefs-loading" id="briefsLoading" style="display:none;gap:10px;align-items:center;padding:12px">
+      <div class="spinner"></div><div>Generating study briefs…</div>
+    </div>
+    <div id="briefsList"></div>
+  </div>
+</div>
+
 </body>
 </html>
