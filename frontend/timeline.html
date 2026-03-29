@@ -482,38 +482,17 @@
     </div>
   </div>
 
-  <!-- Starting dose calculator -->
+  <!-- Starting dose estimate (provisional) -->
   <div class="dose-calc" id="doseCalc" style="display:none">
     <div class="dc-header">
-      <span class="dc-title">Phase 1 Human Starting Dose</span>
+      <span class="dc-title">Provisional Human Starting Dose</span>
       <span class="dc-source" id="dcSource"></span>
     </div>
     <div class="dc-body">
-      <div class="dc-field">
-        <label>Animal NOAEL (mg/kg)</label>
-        <input id="dcNoael" type="number" step="0.5" min="0" oninput="calcDose()" />
-      </div>
-      <div class="dc-field">
-        <label>Preclinical species</label>
-        <select id="dcSpecies" onchange="calcDose()">
-          <option value="3">Mouse (Km 3)</option>
-          <option value="6" selected>Rat (Km 6)</option>
-          <option value="12">Monkey (Km 12)</option>
-          <option value="20">Dog (Km 20)</option>
-        </select>
-      </div>
-      <div class="dc-field">
-        <label>Safety factor</label>
-        <select id="dcSafety" onchange="calcDose()">
-          <option value="10" selected>÷10 (FDA default)</option>
-          <option value="6">÷6</option>
-          <option value="2">÷2 (well-characterised)</option>
-        </select>
-      </div>
       <div class="dc-result" id="dcResult"></div>
     </div>
     <div class="dc-steps" id="dcSteps"></div>
-    <div class="dc-warn" id="dcWarn"></div>
+    <div class="dc-warn">⚠ Provisional estimate only — based on non-GLP data from the source paper. Formal NOAEL will be established by the GLP repeat-dose toxicology study. This number is used now only to set dose levels in the GLP studies (they must cover multiples of the expected human dose).</div>
   </div>
 
   <!-- Spend optimizer -->
@@ -996,53 +975,35 @@ function injectFailureImpact(studyId) {
 // ── Starting dose calculator ────────────────────────────────────────────────────
 const KM_HUMAN = 37;
 const KM_LABELS = { '3': 'mouse', '6': 'rat', '12': 'monkey', '20': 'dog' };
-function dcSpeciesLabel() {
-  return KM_LABELS[document.getElementById('dcSpecies').value] || 'animal';
-}
+
 function loadDoseCalc() {
   fetch(`${API}/api/paper-data`).then(r => r.ok ? r.json() : null).then(pd => {
     if (!pd) return;
     const exps = pd.experiments || [];
-    // Find best NOAEL/MTD experiment: prefer in vivo tox, then in vivo other
     const tox = exps.find(e => e.type === 'in vivo' &&
       /mtd|tolerat|maximum tolerat/i.test(JSON.stringify(e)));
-    if (tox) {
-      // Try to extract a dose number from the experiment results
-      const doseMatch = JSON.stringify(tox).match(/(\d+(?:\.\d+)?)\s*mg\/kg/g);
-      const doses = doseMatch ? doseMatch.map(d => parseFloat(d)) : [];
-      const maxDose = doses.length ? Math.max(...doses) : null;
-      const species = /mouse/i.test(JSON.stringify(tox)) ? '3'
-        : /rat/i.test(JSON.stringify(tox)) ? '6' : '6';
-      document.getElementById('dcSpecies').value = species;
-      if (maxDose) {
-        document.getElementById('dcNoael').value = maxDose;
-        document.getElementById('dcSource').textContent =
-          `Source: ${tox.id} — ${tox.model || 'MTD study'}`;
-        document.getElementById('dcWarn').textContent =
-          'Formal GLP NOAEL pending. This is a planning estimate from available non-GLP data.';
-      }
-      document.getElementById('doseCalc').style.display = 'block';
-      calcDose();
-    }
-  }).catch(() => {});
-}
+    if (!tox) return;
+    const doseMatch = JSON.stringify(tox).match(/(\d+(?:\.\d+)?)\s*mg\/kg/g);
+    const doses = doseMatch ? doseMatch.map(d => parseFloat(d)) : [];
+    const maxDose = doses.length ? Math.max(...doses) : null;
+    if (!maxDose) return;
+    const km      = /mouse/i.test(JSON.stringify(tox)) ? 3 : 6;
+    const species = KM_LABELS[String(km)] || 'animal';
+    const sf      = 10;
+    const hed     = maxDose * (km / KM_HUMAN);
+    const start   = hed / sf;
+    const mg70kg  = start * 70;
 
-function calcDose() {
-  const noael = parseFloat(document.getElementById('dcNoael').value);
-  const km    = parseFloat(document.getElementById('dcSpecies').value);
-  const sf    = parseFloat(document.getElementById('dcSafety').value);
-  const res   = document.getElementById('dcResult');
-  const steps = document.getElementById('dcSteps');
-  if (!noael || noael <= 0) { res.innerHTML = ''; steps.innerHTML = ''; return; }
-  const hed    = noael * (km / KM_HUMAN);
-  const start  = hed / sf;
-  const mg70kg = start * 70;
-  res.innerHTML = `
-    <div class="dc-result-main">${mg70kg.toFixed(0)} mg</div>
-    <div class="dc-result-sub">proposed human starting dose · 70 kg adult</div>
-    <div class="dc-result-sub">(${start.toFixed(2)} mg/kg)</div>`;
-  steps.innerHTML =
-    `Animal NOAEL ${noael} mg/kg [${dcSpeciesLabel()}] → Human Equivalent Dose = ${noael} × (${km}÷${KM_HUMAN}) = ${hed.toFixed(2)} mg/kg → ÷${sf} safety factor = <strong>${start.toFixed(2)} mg/kg = ${mg70kg.toFixed(0)} mg for a 70 kg human</strong>`;
+    document.getElementById('dcSource').textContent =
+      `Source: ${tox.id} (${tox.model || 'MTD study'}, non-GLP)`;
+    document.getElementById('dcResult').innerHTML = `
+      <div class="dc-result-main">${mg70kg.toFixed(0)} mg</div>
+      <div class="dc-result-sub">provisional human starting dose · 70 kg adult</div>
+      <div class="dc-result-sub">(${start.toFixed(2)} mg/kg)</div>`;
+    document.getElementById('dcSteps').innerHTML =
+      `${species} NOAEL ${maxDose} mg/kg × (Km ${km} ÷ Km ${KM_HUMAN}) = HED ${hed.toFixed(2)} mg/kg ÷ ${sf}× safety factor = <strong>${start.toFixed(2)} mg/kg → ${mg70kg.toFixed(0)} mg (70 kg human)</strong>`;
+    document.getElementById('doseCalc').style.display = 'block';
+  }).catch(() => {});
 }
 
 // ── Study briefs panel ──────────────────────────────────────────────────────────
