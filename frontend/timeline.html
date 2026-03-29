@@ -485,16 +485,16 @@
   <!-- Starting dose calculator -->
   <div class="dose-calc" id="doseCalc" style="display:none">
     <div class="dc-header">
-      <span class="dc-title">Phase 1 Starting Dose Estimator</span>
+      <span class="dc-title">Phase 1 Human Starting Dose</span>
       <span class="dc-source" id="dcSource"></span>
     </div>
     <div class="dc-body">
       <div class="dc-field">
-        <label>NOAEL (mg/kg)</label>
+        <label>Animal NOAEL (mg/kg)</label>
         <input id="dcNoael" type="number" step="0.5" min="0" oninput="calcDose()" />
       </div>
       <div class="dc-field">
-        <label>Species</label>
+        <label>Preclinical species</label>
         <select id="dcSpecies" onchange="calcDose()">
           <option value="3">Mouse (Km 3)</option>
           <option value="6" selected>Rat (Km 6)</option>
@@ -995,6 +995,10 @@ function injectFailureImpact(studyId) {
 
 // ── Starting dose calculator ────────────────────────────────────────────────────
 const KM_HUMAN = 37;
+const KM_LABELS = { '3': 'mouse', '6': 'rat', '12': 'monkey', '20': 'dog' };
+function dcSpeciesLabel() {
+  return KM_LABELS[document.getElementById('dcSpecies').value] || 'animal';
+}
 function loadDoseCalc() {
   fetch(`${API}/api/paper-data`).then(r => r.ok ? r.json() : null).then(pd => {
     if (!pd) return;
@@ -1033,10 +1037,12 @@ function calcDose() {
   const hed    = noael * (km / KM_HUMAN);
   const start  = hed / sf;
   const mg70kg = start * 70;
-  res.innerHTML = `<div class="dc-result-main">${start.toFixed(2)} mg/kg</div>
-    <div class="dc-result-sub">${mg70kg.toFixed(0)} mg (70 kg adult)</div>`;
+  res.innerHTML = `
+    <div class="dc-result-main">${mg70kg.toFixed(0)} mg</div>
+    <div class="dc-result-sub">proposed human starting dose · 70 kg adult</div>
+    <div class="dc-result-sub">(${start.toFixed(2)} mg/kg)</div>`;
   steps.innerHTML =
-    `NOAEL ${noael} mg/kg × (Km ${km}/Km ${KM_HUMAN}) = HED ${hed.toFixed(2)} mg/kg ÷ ${sf}× = <strong>${start.toFixed(2)} mg/kg</strong>`;
+    `Animal NOAEL ${noael} mg/kg [${dcSpeciesLabel()}] → Human Equivalent Dose = ${noael} × (${km}÷${KM_HUMAN}) = ${hed.toFixed(2)} mg/kg → ÷${sf} safety factor = <strong>${start.toFixed(2)} mg/kg = ${mg70kg.toFixed(0)} mg for a 70 kg human</strong>`;
 }
 
 // ── Study briefs panel ──────────────────────────────────────────────────────────
