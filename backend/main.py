@@ -269,44 +269,71 @@ async def generate_flowchart(request: Request):
 
     client = anthropic.AsyncAnthropic(api_key=os.environ["ANTHROPIC_API_KEY"])
 
-    prompt = f"""You are extracting a flowchart from a passage of a scientific paper.
+    prompt = f"""You are extracting a biological pathway or experimental relationship network from a passage of a scientific paper.
 
 COMPOUND: {compound or "unknown"}
 
 SELECTED TEXT:
 {text}
 
-Identify the key steps, mechanisms, causes, effects, or experimental sequence in this passage.
+Your job is to find ALL relationships described — not just the main chain. Real biological networks are interconnected webs, not lines. Find:
+- Branching: one entity activating or inhibiting MULTIPLE downstream targets simultaneously
+- Convergence: multiple upstream entities feeding into the same node
+- Feedback loops: downstream effects that loop back to regulate upstream nodes
+- Cross-talk: connections between different branches of the pathway
+- Co-regulation: two nodes jointly regulating a third
+- Parallel pathways running at the same time
+
+DO NOT produce a linear A→B→C→D chain. If the biology has branches, cross-connections, or feedback, capture them as explicit edges.
+
 Return ONLY a JSON object (no markdown, no commentary):
 
 {{
-  "title": "<5-8 word title for this flowchart>",
+  "title": "<5-8 word title>",
   "nodes": [
-    {{"id": "n1", "label": "<concise label, max 6 words>", "type": "<compound|mechanism|signal|outcome|method|observation>"}}
+    {{
+      "id": "n1",
+      "label": "<concise label, max 5 words>",
+      "type": "<compound|mechanism|signal|outcome|method|observation>",
+      "details": {{
+        "what_it_is": "<one sentence: what this entity is>",
+        "role": "<one sentence: its specific causal role in this passage>",
+        "from_text": "<direct quote or close paraphrase from the selected text, max 25 words>"
+      }}
+    }}
   ],
   "edges": [
-    {{"from": "n1", "to": "n2", "label": "<optional short relationship word, e.g. inhibits/activates/leads to/produces>"}}
+    {{
+      "from": "n1",
+      "to": "n2",
+      "label": "<short verb: activates / inhibits / phosphorylates / recruits / produces / upregulates / requires / etc.>",
+      "type": "<activation|inhibition|feedback|bidirectional|association>"
+    }}
   ]
 }}
 
-Node type guide:
-- compound: the drug or chemical entity
-- mechanism: a molecular mechanism or pathway step
-- signal: a measurable signal, biomarker, or intermediate
-- outcome: a functional or phenotypic outcome
-- method: an experimental procedure or assay
-- observation: an empirical observation or result
+Node types:
+- compound: drug, small molecule, ligand, receptor ligand
+- mechanism: kinase, phosphorylation event, transcription factor, molecular machine, pathway component
+- signal: second messenger, biomarker, intermediate, measured readout (cAMP, Ca2+, pERK)
+- outcome: cellular or phenotypic result (proliferation, apoptosis, differentiation, behavioral effect)
+- method: assay or experimental procedure
+- observation: empirical finding or measured result from this specific experiment
 
 Rules:
-- 3-8 nodes total — be selective, not exhaustive
-- Edges must only reference node IDs that exist
-- Prefer a linear or branching chain over a web — readability matters
-- If the text describes an experiment: compound → treatment → measurement → result
-- If the text describes a mechanism: target → pathway → downstream effect → outcome"""
+- 4-14 nodes — capture the real complexity, don't over-simplify
+- Every edge must reference node IDs that exist
+- If a node receives edges from 3+ other nodes, that convergence is important — keep it
+- If a node sends edges to 3+ other nodes, that divergence/branching is important — keep it
+- Feedback loops (B inhibits A where A activated B) must be captured as explicit back-edges
+- Use "inhibition" type for suppressive relationships (inhibits, blocks, reduces, suppresses)
+- Use "feedback" type for regulatory loops back to an upstream node
+- Use "activation" type for stimulatory relationships
+- Aim for a graph where most nodes have at least 2 connections"""
 
     msg = await client.messages.create(
         model="claude-sonnet-4-6",
-        max_tokens=1024,
+        max_tokens=4096,
         messages=[{"role": "user", "content": prompt}],
     )
     raw = msg.content[0].text.strip()
