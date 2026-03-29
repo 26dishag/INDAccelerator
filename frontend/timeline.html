@@ -412,8 +412,8 @@
       <input class="spend-budget-input" type="text" id="budgetInput" placeholder="e.g. $800k" oninput="onBudgetInput(this.value)" />
     </div>
     <div class="spend-result" id="spendResult" style="display:none">
-      <div class="spend-result-item"><span class="spend-result-val" id="srWeeks">—</span><span class="spend-result-lbl">Weeks</span></div>
-      <div class="spend-result-item"><span class="spend-result-val" id="srCost">—</span><span class="spend-result-lbl">Est. Cost</span></div>
+      <div class="spend-result-item"><span class="spend-result-val" id="srWeeks">—</span><span class="spend-result-lbl">Weeks to IND</span></div>
+      <div class="spend-result-item"><span class="spend-result-val" id="srCost">—</span><span class="spend-result-lbl">Total Cost</span><span id="srCostNote" style="font-size:9px;opacity:0.45;display:block;margin-top:1px"></span></div>
       <div class="spend-result-item"><span class="spend-result-val" id="srStudies">—</span><span class="spend-result-lbl">Studies</span></div>
     </div>
   </div>
@@ -760,36 +760,39 @@ function applyScenario(scenario, btn) {
   const allStudies = Object.values(studies);
   if (!allStudies.length) return;
 
-  // Tier priority for budget ordering: phase1_blocking > conditional > phase2_defer
-  const tierOrder = { phase1_blocking: 0, conditional: 1, phase2_defer: 2 };
-
-  // Decide base set per scenario — all three exclude Phase 2 deferred studies
+  // Scenario definitions — studies included and which cost field to use
+  // Fastest:  required only, high-end CRO pricing (conservative planning)
+  // Cheapest: required only, NO conditionals (bet nothing triggers), low-end pricing
+  // Balanced: required + all conditionals run upfront as insurance, midpoint pricing
   let included = [];
+  let costField, costNote;
+
   if (scenario === 'fastest') {
-    // All phase1_required only — parallel tracks, minimum weeks to IND
-    included = allStudies.filter(s => s.phase1_required);
+    included  = allStudies.filter(s => s.phase1_required);
+    costField = 'cost_high';
+    costNote  = 'high-end CRO estimate';
   } else if (scenario === 'cheapest') {
-    // phase1_required only, sorted cheapest-first so budget cuts hit non-critical studies last
-    included = allStudies
-      .filter(s => s.phase1_required)
-      .sort((a, b) => (a.cost_low || 0) - (b.cost_low || 0));
+    // Only phase1_required AND not conditional — skip studies that may never be needed
+    included  = allStudies.filter(s => s.phase1_required && s.fda_tier !== 'conditional');
+    costField = 'cost_low';
+    costNote  = 'low-end CRO estimate · conditionals deferred until triggered';
   } else {
-    // balanced: phase1_required + conditionals (high-risk early warnings), no phase2_defer
-    included = allStudies
-      .filter(s => s.phase1_required || s.fda_tier === 'conditional')
-      .sort((a, b) => (tierOrder[a.fda_tier] ?? 1) - (tierOrder[b.fda_tier] ?? 1));
+    // Balanced: required + conditionals pre-commissioned, midpoint cost
+    included  = allStudies.filter(s => s.phase1_required || s.fda_tier === 'conditional');
+    costField = null; // use midpoint
+    costNote  = 'mid-range estimate · conditionals run upfront';
   }
 
-  // Apply budget cap: always keep phase1_blocking first, cut lower-priority studies
+  // Apply budget cap — always protect phase1_blocking studies first
   if (_budgetCap < Infinity) {
-    // Sort by tier so critical studies survive the cap
+    const tierOrder = { phase1_blocking: 0, conditional: 1, phase2_defer: 2 };
     const prioritised = [...included].sort((a, b) =>
       (tierOrder[a.fda_tier] ?? 1) - (tierOrder[b.fda_tier] ?? 1));
-    const costField = scenario === 'cheapest' ? 'cost_low' : 'cost_high';
+    const cf = costField || 'cost_low';
     let spent = 0;
     const withinBudget = [];
     for (const s of prioritised) {
-      const cost = s[costField] || 0;
+      const cost = s[cf] || 0;
       if (spent + cost <= _budgetCap) { withinBudget.push(s); spent += cost; }
     }
     included = withinBudget;
@@ -797,26 +800,28 @@ function applyScenario(scenario, btn) {
 
   const includedIds = new Set(included.map(s => s.id));
 
-  // Update card visibility
+  // Gray out excluded cards
   for (const s of allStudies) {
     const card = document.getElementById(`card-${s.id}`);
     if (!card) continue;
-    if (includedIds.has(s.id)) {
-      card.classList.remove('deferred-opt');
-    } else {
-      card.classList.add('deferred-opt');
-    }
+    card.classList.toggle('deferred-opt', !includedIds.has(s.id));
   }
 
   // Compute totals
-  const costField = scenario === 'cheapest' ? 'cost_low' : 'cost_high';
-  const totalCost = included.reduce((sum, s) => sum + (s[costField] || 0), 0);
+  const totalCost = included.reduce((sum, s) => {
+    const c = costField ? (s[costField] || 0) : Math.round(((s.cost_low || 0) + (s.cost_high || 0)) / 2);
+    return sum + c;
+  }, 0);
   const maxWeek = included.reduce((max, s) => Math.max(max, s.week_end || 0), 0);
+  const p1Count = included.filter(s => s.phase1_required).length;
+  const condCount = included.filter(s => s.fda_tier === 'conditional').length;
 
   document.getElementById('spendResult').style.display = 'flex';
   document.getElementById('srWeeks').textContent = maxWeek + ' wks';
   document.getElementById('srCost').textContent = fmt$k(totalCost);
-  document.getElementById('srStudies').textContent = included.filter(s => s.phase1_required).length + ' P1 req';
+  document.getElementById('srStudies').textContent =
+    p1Count + ' req' + (condCount ? ' + ' + condCount + ' cond' : '');
+  document.getElementById('srCostNote').textContent = costNote;
 }
 
 // ── Priority table ─────────────────────────────────────────────────────────────
