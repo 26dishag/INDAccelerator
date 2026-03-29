@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>INDAccelerator: Experiment Hierarchy</title>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: #0f1117;
+      color: #e2e8f0;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    /* ── Loading overlay ── */
+    #loadingOverlay {
+      position: fixed; inset: 0;
+      background: #0f1117;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: 18px; z-index: 100;
+    }
+    .spinner {
+      width: 38px; height: 38px;
+      border: 3px solid #2d3748; border-top-color: #63b3ed;
+      border-radius: 50%; animation: spin 0.9s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    #loadingMsg { font-size: 14px; color: #90cdf4; }
+
+    /* ── Header ── */
+    header {
+      flex-shrink: 0;
+      background: #1a1d2e;
+      border-bottom: 1px solid #2d3748;
+      padding: 12px 24px;
+      display: flex; align-items: center; gap: 16px;
+    }
+    header h1 { font-size: 18px; font-weight: 700; color: #63b3ed; }
+    #compoundName {
+      flex: 1; font-size: 13px; color: #a0aec0;
+      overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    }
+    .back-btn {
+      cursor: pointer; border: 1px solid #4a5568; border-radius: 7px;
+      background: transparent; color: #a0aec0; font-size: 13px;
+      font-weight: 500; padding: 6px 14px; flex-shrink: 0;
+    }
+    .back-btn:hover { background: #2d3748; color: #e2e8f0; }
+
+    /* ── Stats bar ── */
+    #statsBar {
+      flex-shrink: 0;
+      background: #13151f;
+      border-bottom: 1px solid #2d3748;
+      padding: 8px 24px;
+      display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+      min-height: 40px;
+    }
+    .stat-pill {
+      background: #1a1d2e; border: 1px solid #2d3748;
+      border-radius: 20px; padding: 3px 12px;
+      font-size: 12px; color: #718096;
+    }
+    .stat-pill b { font-weight: 700; }
+    .stat-pill.vitro  b { color: #90cdf4; }
+    .stat-pill.exvivo b { color: #5eead4; }
+    .stat-pill.vivo   b { color: #fca5a5; }
+    .stat-pill.clin   b { color: #fbbf24; }
+    .stat-pill.glp    b { color: #63b3ed; }
+    .stat-pill.claims b { color: #e2e8f0; }
+
+    /* ── Main split ── */
+    #main { flex: 1; display: flex; overflow: hidden; }
+
+    /* ── Diagram column ── */
+    #diagramCol {
+      flex: 1; overflow: auto; padding: 20px;
+      background: #0b0d14;
+    }
+    #diagramCol::-webkit-scrollbar { width: 6px; height: 6px; }
+    #diagramCol::-webkit-scrollbar-track { background: #0b0d14; }
+    #diagramCol::-webkit-scrollbar-thumb { background: #2d3748; border-radius: 4px; }
+
+    #legend {
+      display: flex; gap: 16px; flex-wrap: wrap;
+      padding: 10px 14px; margin-bottom: 16px;
+      background: #1a1d2e; border: 1px solid #2d3748;
+      border-radius: 8px; width: fit-content;
+    }
+    .leg-item { display: flex; align-items: center; gap: 6px; font-size: 11px; color: #718096; }
+    .leg-dot { width: 10px; height: 10px; border-radius: 3px; flex-shrink: 0; }
+    .leg-dot.vitro  { background: #1e3a5f; border: 1px solid #4f7ef0; }
+    .leg-dot.exvivo { background: #0e2a2a; border: 1px solid #2dd4bf; }
+    .leg-dot.vivo   { background: #3b1010; border: 1px solid #e53e3e; }
+    .leg-dot.clin   { background: #2a1f00; border: 1px solid #f59e0b; }
+
+    #diagramContainer { min-width: 500px; }
+    #diagramContainer svg { max-width: none !important; cursor: default; }
+
+    /* ── Detail panel ── */
+    #panelCol {
+      flex: 0 0 400px; border-left: 1px solid #2d3748;
+      overflow-y: auto; background: #1a1d2e;
+      display: flex; flex-direction: column;
+    }
+    #panelCol::-webkit-scrollbar { width: 4px; }
+    #panelCol::-webkit-scrollbar-thumb { background: #4a5568; border-radius: 4px; }
+
+    #panelEmpty {
+      flex: 1; display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: 12px; color: #4a5568; font-size: 13px;
+      text-align: center; padding: 40px;
+    }
+    #panelEmpty svg { opacity: 0.25; }
+
+    #panelContent { display: none; padding: 20px; }
+
+    /* Panel inner styles */
+    .p-badges { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 10px; }
+    .p-badge {
+      font-size: 10px; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.5px; border-radius: 4px; padding: 2px 8px;
+    }
+    .p-badge.vitro  { background:#1e3a5f; color:#90cdf4; border:1px solid #4f7ef0; }
+    .p-badge.exvivo { background:#0e2a2a; color:#5eead4; border:1px solid #2dd4bf; }
+    .p-badge.vivo   { background:#3b1010; color:#fca5a5; border:1px solid #e53e3e; }
+    .p-badge.clin   { background:#2a1f00; color:#fbbf24; border:1px solid #f59e0b; }
+    .p-badge.glp    { background:#1a2744; color:#63b3ed; border:1px solid #3182ce; }
+    .p-badge.cat    { background:#2d3748; color:#a0aec0; border:1px solid #4a5568; }
+
+    .p-id    { font-size: 11px; font-weight: 700; color: #63b3ed; font-family: "SF Mono","Fira Code",monospace; margin-bottom: 4px; }
+    .p-model { font-size: 15px; font-weight: 700; color: #e2e8f0; line-height: 1.4; margin-bottom: 14px; }
+
+    .p-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0; margin-bottom: 14px; }
+    .p-cell { padding: 8px 10px; border: 1px solid #2d3748; border-collapse: collapse; }
+    .p-cell:nth-child(odd) { border-right: none; }
+    .p-cell + .p-cell { border-top: none; }
+    .p-cell:nth-child(3), .p-cell:nth-child(4) { border-top: none; }
+
+    .p-block { margin-bottom: 14px; }
+    .p-label {
+      font-size: 10px; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.8px; color: #718096; margin-bottom: 5px;
+    }
+    .p-text { font-size: 12px; color: #a0aec0; line-height: 1.65; }
+    .p-text.lim { color: #fc8181; }
+    .p-text.good { color: #68d391; }
+
+    .p-divider { border: none; border-top: 1px solid #2d3748; margin: 14px 0; }
+
+    /* Claims panel */
+    #claimsPanel { border-top: 1px solid #2d3748; padding: 20px; }
+    #claimsPanel h3 { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; color: #718096; margin-bottom: 12px; }
+    .claim-item {
+      font-size: 12px; color: #a0aec0; line-height: 1.6;
+      padding: 8px 0 8px 16px; border-bottom: 1px solid #1a2035;
+      position: relative;
+    }
+    .claim-item:last-child { border-bottom: none; }
+    .claim-item::before { content: "›"; position: absolute; left: 0; top: 9px; color: #63b3ed; }
+  </style>
+</head>
+<body>
+
+<div id="loadingOverlay">
+  <div class="spinner"></div>
+  <div id="loadingMsg">Loading experiment data…</div>
+</div>
+
+<header>
+  <h1>INDAccelerator</h1>
+  <div id="compoundName">Stage 2: Experiment Hierarchy</div>
+  <button class="back-btn" onclick="history.back()">← Back to Paper</button>
+</header>
+
+<div id="statsBar"></div>
+
+<div id="main">
+
+  <div id="diagramCol">
+    <div id="legend">
+      <div class="leg-item"><div class="leg-dot vitro"></div>In Vitro</div>
+      <div class="leg-item"><div class="leg-dot exvivo"></div>Ex Vivo</div>
+      <div class="leg-item"><div class="leg-dot vivo"></div>In Vivo</div>
+      <div class="leg-item"><div class="leg-dot clin"></div>Clinical</div>
+      <div class="leg-item" style="margin-left:8px;color:#a0aec0">Click any node for details</div>
+    </div>
+    <div id="diagramContainer"></div>
+  </div>
+
+  <div id="panelCol">
+    <div id="panelEmpty">
+      <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <rect x="3" y="3" width="18" height="18" rx="2"/>
+        <path d="M9 9h6M9 12h6M9 15h4"/>
+      </svg>
+      Click any experiment node<br>to see details
+    </div>
+    <div id="panelContent"></div>
+    <div id="claimsPanel" style="display:none"></div>
+  </div>
+
+</div>
+
+<script>
+mermaid.initialize({
+  startOnLoad: false,
+  securityLevel: 'loose',
+  theme: 'dark',
+  flowchart: { useMaxWidth: false, htmlLabels: true, curve: 'basis' },
+});
+
+const API = 'http://localhost:8000';
+let _expMap = {};
+let _allData = null;
+
+// ── Utilities ─────────────────────────────────────────────────────────────────
+function esc(s) {
+  if (s == null) return '';
+  return String(s)
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function trunc(s, n) {
+  if (!s) return '';
+  return s.length > n ? s.slice(0, n) + '…' : s;
+}
+
+function safeId(id) {
+  return String(id).replace(/[^a-zA-Z0-9_]/g, '');
+}
+
+function typeClass(t) {
+  if (!t) return 'cat';
+  const tl = t.toLowerCase();
+  if (tl === 'ex vivo' || tl.startsWith('ex')) return 'exvivo';
+  if (tl.includes('vitro')) return 'vitro';
+  if (tl.includes('vivo')) return 'vivo';
+  if (tl.includes('clinical')) return 'clin';
+  return 'cat';
+}
+
+// ── Load ──────────────────────────────────────────────────────────────────────
+async function load() {
+  try {
+    const resp = await fetch(`${API}/api/paper-data`);
+    if (!resp.ok) {
+      const err = await resp.json().catch(() => ({ detail: resp.statusText }));
+      showError(err.detail || resp.statusText);
+      return;
+    }
+    _allData = await resp.json();
+
+    for (const exp of _allData.experiments || []) {
+      _expMap[exp.id] = exp;
+    }
+
+    renderHeader(_allData);
+    renderStats(_allData);
+    await renderDiagram(_allData);
+    renderClaims(_allData);
+    hideLoading();
+
+  } catch (err) {
+    showError(`Network error: ${err.message}. Is the backend running on localhost:8000?`);
+  }
+}
+
+function hideLoading() {
+  document.getElementById('loadingOverlay').style.display = 'none';
+}
+
+function showError(msg) {
+  document.getElementById('loadingMsg').textContent = `Error: ${msg}`;
+  document.getElementById('loadingMsg').style.color = '#fc8181';
+  document.querySelector('.spinner').style.display = 'none';
+}
+
+// ── Header & stats ────────────────────────────────────────────────────────────
+function renderHeader(data) {
+  document.getElementById('compoundName').textContent =
+    `${data.compound || 'Unknown'}: ${(data.experiments || []).length} experiments`;
+}
+
+function renderStats(data) {
+  const exps = data.experiments || [];
+  const byType = {};
+  let glpCount = 0;
+  for (const exp of exps) {
+    const t = (exp.type || 'other').toLowerCase();
+    byType[t] = (byType[t] || 0) + 1;
+    if (exp.glp_status === 'GLP') glpCount++;
+  }
+
+  const typeOrder = ['in vitro', 'ex vivo', 'in vivo', 'clinical'];
+  let html = `<div class="stat-pill"><b>${exps.length}</b> total</div>`;
+  for (const t of typeOrder) {
+    if (!byType[t]) continue;
+    const cls = typeClass(t);
+    html += `<div class="stat-pill ${cls}"><b>${byType[t]}</b> ${t}</div>`;
+  }
+  for (const [t, n] of Object.entries(byType)) {
+    if (typeOrder.includes(t)) continue;
+    html += `<div class="stat-pill"><b>${n}</b> ${t}</div>`;
+  }
+  if (glpCount) html += `<div class="stat-pill glp"><b>${glpCount}</b> GLP</div>`;
+  if (data.claims?.length) html += `<div class="stat-pill claims"><b>${data.claims.length}</b> claims</div>`;
+
+  document.getElementById('statsBar').innerHTML = html;
+}
+
+// ── Mermaid diagram ────────────────────────────────────────────────────────────
+function buildMermaid(data) {
+  const exps = data.experiments || [];
+
+  const typeOrder = ['in vitro', 'ex vivo', 'in vivo', 'clinical'];
+  const byType = {};
+  for (const exp of exps) {
+    const t = (exp.type || 'other').toLowerCase();
+    if (!byType[t]) byType[t] = [];
+    byType[t].push(exp);
+  }
+
+  // ordered list of types present in the data
+  const orderedTypes = [];
+  for (const t of typeOrder) {
+    if (byType[t]) orderedTypes.push(t);
+  }
+  for (const t of Object.keys(byType)) {
+    if (!orderedTypes.includes(t)) orderedTypes.push(t);
+  }
+
+  let c = 'graph LR\n\n';
+
+  // Compound root
+  c += `  COMPOUND["<b>${esc(data.compound || 'Compound')}</b>"]\n`;
+  c += `  style COMPOUND fill:#1a2744,stroke:#3182ce,color:#90cdf4,font-weight:bold\n\n`;
+
+  // Type icons
+  const icons = { 'in vitro': '🔬', 'ex vivo': '🧫', 'in vivo': '🐭', 'clinical': '👤' };
+
+  // Build subgraphs
+  for (let i = 0; i < orderedTypes.length; i++) {
+    const type = orderedTypes[i];
+    const typeExps = byType[type];
+    const sgId = `SG${i}`;
+    const icon = icons[type] || '⚗️';
+    const label = type.charAt(0).toUpperCase() + type.slice(1);
+
+    c += `  subgraph ${sgId}["${icon} ${label} &nbsp;·&nbsp; ${typeExps.length}"]\n`;
+    c += `  direction TB\n`;
+
+    for (const exp of typeExps) {
+      const nid = safeId(exp.id);
+      const model = trunc(exp.model || exp.type || '', 28);
+      c += `    ${nid}["<b>${esc(exp.id)}</b><br/>${esc(model)}"]\n`;
+    }
+    c += `  end\n\n`;
+  }
+
+  // Connect compound → first type, then chain types
+  if (orderedTypes.length > 0) {
+    c += `  COMPOUND --> SG0\n`;
+  }
+  for (let i = 0; i < orderedTypes.length - 1; i++) {
+    c += `  SG${i} --> SG${i + 1}\n`;
+  }
+  c += '\n';
+
+  // Node classes
+  c += `  classDef vitro  fill:#1e3a5f,stroke:#4f7ef0,color:#90cdf4,cursor:pointer\n`;
+  c += `  classDef exvivo fill:#0e2a2a,stroke:#2dd4bf,color:#5eead4,cursor:pointer\n`;
+  c += `  classDef vivo   fill:#3b1010,stroke:#e53e3e,color:#fca5a5,cursor:pointer\n`;
+  c += `  classDef clin   fill:#2a1f00,stroke:#f59e0b,color:#fbbf24,cursor:pointer\n`;
+  c += `  classDef other  fill:#2d3748,stroke:#718096,color:#a0aec0,cursor:pointer\n`;
+
+  for (const exp of exps) {
+    const nid = safeId(exp.id);
+    c += `  class ${nid} ${typeClass(exp.type)}\n`;
+  }
+
+  // Click handlers
+  for (const exp of exps) {
+    const nid = safeId(exp.id);
+    c += `  click ${nid} call showDetail("${exp.id}")\n`;
+  }
+
+  return c;
+}
+
+let _renderCount = 0;
+async function renderDiagram(data) {
+  const container = document.getElementById('diagramContainer');
+  const code = buildMermaid(data);
+  try {
+    const id = `mermaid-${++_renderCount}`;
+    const { svg } = await mermaid.render(id, code);
+    container.innerHTML = svg;
+  } catch (err) {
+    // Fallback: render a simple list grouped by type
+    container.innerHTML = renderFallbackList(data);
+    console.warn('Mermaid render failed, using fallback. Error:', err.message);
+  }
+}
+
+function renderFallbackList(data) {
+  const exps = data.experiments || [];
+  const typeOrder = ['in vitro', 'ex vivo', 'in vivo', 'clinical'];
+  const byType = {};
+  for (const exp of exps) {
+    const t = (exp.type || 'other').toLowerCase();
+    if (!byType[t]) byType[t] = [];
+    byType[t].push(exp);
+  }
+  const orderedTypes = [...typeOrder.filter(t => byType[t]), ...Object.keys(byType).filter(t => !typeOrder.includes(t))];
+
+  const arrowStyle = `
+    display:flex;align-items:center;gap:12px;margin:8px 0;padding:0 4px;
+    font-size:24px;color:#4a5568;user-select:none;
+  `;
+  const groupStyle = (cls) => `
+    background:#1a1d2e;border:1px solid #2d3748;border-radius:10px;
+    padding:14px;margin-bottom:4px;
+  `;
+
+  let html = `<div style="display:flex;flex-direction:column;max-width:520px">`;
+  for (let i = 0; i < orderedTypes.length; i++) {
+    const type = orderedTypes[i];
+    const typeExps = byType[type];
+    const cls = typeClass(type);
+    const icons = { 'in vitro': '🔬', 'ex vivo': '🧫', 'in vivo': '🐭', 'clinical': '👤' };
+    const icon = icons[type] || '⚗️';
+
+    html += `<div style="${groupStyle(cls)}">`;
+    html += `<div style="font-size:13px;font-weight:700;color:#a0aec0;margin-bottom:10px">${icon} ${type.charAt(0).toUpperCase() + type.slice(1)} · ${typeExps.length}</div>`;
+    html += `<div style="display:flex;flex-wrap:wrap;gap:6px;">`;
+    for (const exp of typeExps) {
+      html += `<div onclick="showDetail('${exp.id}')" style="
+        background:#0f1117;border:1px solid #2d3748;border-radius:6px;
+        padding:6px 10px;cursor:pointer;font-size:11px;color:#a0aec0;
+        transition:border-color 0.15s;
+      " onmouseenter="this.style.borderColor='#63b3ed'" onmouseleave="this.style.borderColor='#2d3748'">
+        <span style="color:#63b3ed;font-weight:700">${esc(exp.id)}</span><br>
+        <span style="font-size:10px">${esc(trunc(exp.model || '', 24))}</span>
+      </div>`;
+    }
+    html += `</div></div>`;
+
+    if (i < orderedTypes.length - 1) {
+      html += `<div style="${arrowStyle}"><span>↓</span><span style="font-size:12px;color:#4a5568">Translational progression</span></div>`;
+    }
+  }
+  html += `</div>`;
+  return html;
+}
+
+// ── Detail panel ──────────────────────────────────────────────────────────────
+window.showDetail = function(expId) {
+  const exp = _expMap[expId];
+  if (!exp) return;
+
+  document.getElementById('panelEmpty').style.display = 'none';
+  const panel = document.getElementById('panelContent');
+  panel.style.display = 'block';
+
+  const cls = typeClass(exp.type);
+
+  const glpBadge = exp.glp_status === 'GLP'
+    ? `<span class="p-badge glp">GLP ★</span>` : '';
+  const speciesBadge = exp.species
+    ? `<span class="p-badge cat">${esc(exp.species)}</span>` : '';
+
+  panel.innerHTML = `
+    <div class="p-badges">
+      <span class="p-badge ${cls}">${esc(exp.type || '')}</span>
+      ${glpBadge}
+      ${speciesBadge}
+    </div>
+
+    <div class="p-id">${esc(exp.id)}</div>
+    <div class="p-model">${esc(exp.model || '')}</div>
+
+    <div class="p-grid">
+      <div class="p-cell">
+        <div class="p-label">Route</div>
+        <div class="p-text">${esc(exp.route || '')}</div>
+      </div>
+      <div class="p-cell">
+        <div class="p-label">n</div>
+        <div class="p-text">${esc(exp.n || '')}</div>
+      </div>
+      <div class="p-cell" style="grid-column:1/-1;border-right:1px solid #2d3748">
+        <div class="p-label">Dose</div>
+        <div class="p-text">${esc(exp.dose || '')}</div>
+      </div>
+    </div>
+
+    <div class="p-block">
+      <div class="p-label">Endpoints</div>
+      <div class="p-text">${esc(exp.endpoints || '')}</div>
+    </div>
+
+    <hr class="p-divider">
+
+    <div class="p-block">
+      <div class="p-label">Results</div>
+      <div class="p-text good">${esc(exp.results || '')}</div>
+    </div>
+
+    ${exp.limitations ? `
+    <div class="p-block">
+      <div class="p-label">Limitations</div>
+      <div class="p-text lim">${esc(exp.limitations)}</div>
+    </div>
+    ` : ''}
+  `;
+};
+
+// ── Claims panel ──────────────────────────────────────────────────────────────
+function renderClaims(data) {
+  const claims = data.claims || [];
+  if (!claims.length) return;
+  const cp = document.getElementById('claimsPanel');
+  cp.style.display = 'block';
+  cp.innerHTML = `
+    <h3>Scientific Claims (${claims.length})</h3>
+    ${claims.map(c => `<div class="claim-item">${esc(c)}</div>`).join('')}
+  `;
+}
+
+// ── Init ──────────────────────────────────────────────────────────────────────
+load();
+</script>
+</body>
+</html>

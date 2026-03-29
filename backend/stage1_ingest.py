@@ -20,8 +20,9 @@ def parse_input(raw: str) -> Tuple[Optional[str], Optional[str]]:
     """Return (pmid, pmcid). One of them may be None."""
     raw = raw.strip()
 
-    # PMC URL: ncbi.nlm.nih.gov/pmc/articles/PMC12345678
-    m = re.search(r'pmc/articles/PMC(\d+)', raw, re.IGNORECASE)
+    # PMC URL (old): ncbi.nlm.nih.gov/pmc/articles/PMC12345678
+    # PMC URL (new): pmc.ncbi.nlm.nih.gov/articles/PMC12345678
+    m = re.search(r'/articles/PMC(\d+)', raw, re.IGNORECASE)
     if m:
         return None, m.group(1)
 

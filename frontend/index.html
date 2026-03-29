@@ -3,320 +3,552 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>INDAccelerator — Stage 1: Paper Ingest</title>
+  <title>INDAccelerator: Preclinical Development Intelligence</title>
+  <link rel="stylesheet" href="shared.css" />
   <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      background: #0f1117;
-      color: #e2e8f0;
-      min-height: 100vh;
+    /* ── Pipeline stepper ─────────────────────────────────────────── */
+    .pipeline-strip {
+      background: #f8f9fa;
+      border-bottom: 1px solid #e8e8e8;
+      padding: 0 28px;
+      overflow-x: auto;
     }
-
-    header {
-      background: #1a1d2e;
-      border-bottom: 1px solid #2d3748;
-      padding: 16px 32px;
+    .pipeline-inner {
+      max-width: 1100px;
+      margin: 0 auto;
       display: flex;
       align-items: center;
-      gap: 16px;
+      height: 46px;
     }
-    header h1 { font-size: 20px; font-weight: 700; color: #63b3ed; letter-spacing: -0.3px; }
-    header span { font-size: 13px; color: #718096; }
-
-    .container { max-width: 1100px; margin: 0 auto; padding: 32px 24px; }
-
-    .input-card {
-      background: #1a1d2e;
-      border: 1px solid #2d3748;
-      border-radius: 12px;
-      padding: 24px;
-      margin-bottom: 28px;
+    .ps-step {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      padding: 0 12px;
+      height: 100%;
+      white-space: nowrap;
+      opacity: 0.28;
+      transition: opacity 0.2s;
+      cursor: default;
+      text-decoration: none;
+      color: inherit;
+      flex-shrink: 0;
     }
-    .input-row { display: flex; gap: 12px; align-items: flex-start; }
-    .input-row input {
-      flex: 1;
-      background: #0f1117;
-      border: 1px solid #4a5568;
-      border-radius: 8px;
-      color: #e2e8f0;
-      font-size: 14px;
-      padding: 10px 14px;
-      outline: none;
-      transition: border-color 0.2s;
+    .ps-step.active  { opacity: 1; }
+    .ps-step.done    { opacity: 0.55; }
+    .ps-step.done .ps-num   { background: #16a34a; color: #fff; border-color: #16a34a; }
+    .ps-step.active .ps-num { background: #000;    color: #fff; border-color: #000; }
+    .ps-step:hover:not([href]) { cursor: default; }
+    .ps-step[href]:hover { opacity: 0.8; }
+    .ps-num {
+      width: 20px; height: 20px;
+      border: 1.5px solid #ccc;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 10px; font-weight: 700;
+      flex-shrink: 0;
+      transition: background 0.2s, border-color 0.2s, color 0.2s;
     }
-    .input-row input:focus { border-color: #63b3ed; }
-    .hint { font-size: 12px; color: #718096; margin-top: 8px; }
+    .ps-label { font-size: 11px; font-weight: 600; letter-spacing: 0.2px; }
+    .ps-connector { flex: 1; min-width: 20px; max-width: 48px; height: 1px; background: #ddd; flex-shrink: 0; }
 
-    button {
-      cursor: pointer;
-      border: none;
-      border-radius: 8px;
-      font-size: 14px;
+    /* ── Hero ─────────────────────────────────────────────────────── */
+    .hero { padding: 52px 28px 40px; }
+    .hero-inner { max-width: 1100px; margin: 0 auto; }
+    .hero-headline {
+      font-size: var(--t-lg);
       font-weight: 600;
-      padding: 10px 20px;
-      transition: opacity 0.15s, background 0.15s;
+      line-height: 1.2;
+      color: var(--fg);
+      margin-bottom: 22px;
     }
-    button:disabled { opacity: 0.4; cursor: not-allowed; }
-    #fetchBtn { background: #3182ce; color: #fff; }
-    #fetchBtn:not(:disabled):hover { background: #2b6cb0; }
-    #stage2Btn {
-      background: #276749;
-      color: #fff;
-      width: 100%;
-      padding: 14px;
-      font-size: 15px;
-      margin-top: 28px;
+    .hero-headline em {
+      font-style: normal;
+      display: block;
+      font-weight: 300;
+      opacity: 0.35;
     }
-    #stage2Btn:not(:disabled):hover { background: #22543d; }
-
-    #statusBar {
-      display: none;
-      background: #1a1d2e;
-      border: 1px solid #2d3748;
-      border-radius: 8px;
-      padding: 14px 18px;
-      margin-bottom: 20px;
-      font-size: 13px;
-      color: #90cdf4;
-    }
-    #statusBar.error { border-color: #e53e3e; color: #fc8181; }
-    #statusBar.success { border-color: #38a169; color: #68d391; }
-
-    #results { display: none; }
-
-    .section-card {
-      background: #1a1d2e;
-      border: 1px solid #2d3748;
-      border-radius: 12px;
-      padding: 22px 24px;
-      margin-bottom: 18px;
-    }
-    .section-card h2 {
-      font-size: 13px;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.8px;
-      color: #90cdf4;
-      margin-bottom: 14px;
+    .hero-sub {
+      font-size: var(--t-md);
+      color: var(--fg);
+      max-width: 560px;
+      line-height: 1.7;
+      margin-bottom: 40px;
+      opacity: 0.6;
     }
 
-    .paper-title { font-size: 18px; font-weight: 700; color: #e2e8f0; line-height: 1.4; margin-bottom: 10px; }
-    .meta-row { display: flex; flex-wrap: wrap; gap: 16px; font-size: 13px; color: #a0aec0; }
-    .meta-row strong { color: #e2e8f0; }
+    /* ── Input area ───────────────────────────────────────────────── */
+    .input-zone { padding: 0; }
+    .input-row  { display: flex; gap: 0; }
+    .input-row .input { flex: 1; border-right: none; }
+    .input-hint { margin-top: 10px; font-size: var(--t-xs); color: var(--fg); opacity: 0.4; line-height: 1.6; }
 
-    .chips { display: flex; flex-wrap: wrap; gap: 8px; }
-    .chip { background: #2d3748; border-radius: 20px; padding: 4px 12px; font-size: 12px; color: #90cdf4; }
+    /* ── Main body ────────────────────────────────────────────────── */
+    .main-body  { padding: 40px 28px; }
+    .main-inner { max-width: 1100px; margin: 0 auto; }
+    #statusBar  { margin-bottom: 28px; }
 
-    .abstract-text { font-size: 14px; line-height: 1.7; color: #cbd5e0; }
+    /* ── Analysis section ─────────────────────────────────────────── */
+    #analysis-section { display: none; }
+    .analysis-header {
+      display: flex; align-items: center; gap: 12px;
+      padding-bottom: 12px; margin-bottom: 24px;
+    }
+    .analysis-heading { font-size: var(--t-lg); font-weight: 600; color: var(--fg); flex: 1; }
+    #analysisStatus   { font-size: var(--t-xs); color: var(--fg); opacity: 0.5; }
 
+    /* ── Visual Profile Card ──────────────────────────────────────── */
+    .profile-doc { margin-bottom: 36px; }
+
+    .profile-card { border: 1px solid #e8e8e8; overflow: hidden; }
+
+    .profile-card-header {
+      background: #000; color: #fff;
+      padding: 20px 24px;
+      display: flex; align-items: flex-start;
+      justify-content: space-between;
+      gap: 20px; flex-wrap: wrap;
+    }
+    .profile-name {
+      font-size: var(--t-xl); font-weight: 700;
+      letter-spacing: -0.3px; color: #fff;
+      line-height: 1.1; margin-bottom: 6px;
+    }
+    .profile-meta           { font-size: var(--t-sm); color: rgba(255,255,255,0.5); }
+    .profile-meta span + span::before { content: ' · '; color: rgba(255,255,255,0.25); }
+    .profile-stage-badge {
+      background: rgba(255,255,255,0.12);
+      color: #fff; padding: 4px 12px;
+      font-size: var(--t-xs); font-weight: 700;
+      letter-spacing: 0.5px; text-transform: uppercase;
+      border: 1px solid rgba(255,255,255,0.25);
+      white-space: nowrap; flex-shrink: 0;
+      align-self: flex-start; margin-top: 2px;
+    }
+
+    /* MOA flow */
+    .moa-section {
+      padding: 14px 24px;
+      background: #fafafa;
+      border-bottom: 1px solid #e8e8e8;
+      overflow-x: auto;
+    }
+    .moa-label {
+      font-size: 10px; font-weight: 700;
+      letter-spacing: 1px; text-transform: uppercase;
+      color: var(--fg); opacity: 0.4; margin-bottom: 10px;
+    }
+    .moa-flow { display: flex; align-items: center; gap: 0; min-height: 38px; flex-wrap: nowrap; }
+    .moa-node {
+      padding: 6px 13px; font-size: var(--t-sm); font-weight: 600;
+      border: 1.5px solid; white-space: nowrap; line-height: 1.3;
+      text-align: center; flex-shrink: 0;
+    }
+    .moa-node-compound  { border-color: #000; background: #000; color: #fff; }
+    .moa-node-target    { border-color: #2563eb; background: #eff6ff; color: #1e40af; }
+    .moa-node-indication{ border-color: #16a34a; background: #dcfce7; color: #166534; }
+    .moa-node-mechanism {
+      border-color: #c4b5fd; background: #f5f3ff; color: #7e22ce;
+      font-size: var(--t-xs); font-weight: 500; font-style: italic;
+      padding: 4px 10px;
+    }
+    .moa-arrow { display: flex; align-items: center; color: #bbb; font-size: 18px; padding: 0 5px; flex-shrink: 0; }
+
+    /* Profile body grid */
+    .profile-body {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0;
+      border-bottom: 1px solid #e8e8e8;
+    }
+    @media (max-width: 640px) { .profile-body { grid-template-columns: 1fr; } }
+    .profile-body-cell { padding: 16px 24px; border-right: 1px solid #e8e8e8; }
+    .profile-body-cell:last-child { border-right: none; }
+
+    .pbc-label {
+      font-size: 10px; font-weight: 700;
+      letter-spacing: 1px; text-transform: uppercase;
+      color: var(--fg); opacity: 0.4; margin-bottom: 7px;
+    }
+    .pbc-value { font-size: var(--t-sm); font-weight: 600; color: var(--fg); line-height: 1.4; margin-bottom: 5px; }
+    .pbc-sub   { font-size: var(--t-xs); color: var(--fg); opacity: 0.6; line-height: 1.5; }
+
+    /* Evidence meter */
+    .evidence-meter { height: 5px; background: #e8e8e8; margin-top: 9px; overflow: hidden; }
+    .evidence-meter-fill { height: 100%; transition: width 0.7s ease; }
+    .evidence-fill-weak     { background: #dc2626; width: 33%; }
+    .evidence-fill-moderate { background: #b45309; width: 66%; }
+    .evidence-fill-strong   { background: #16a34a; width: 100%; }
+
+    /* Alt chips row */
+    .profile-alts-row {
+      padding: 10px 24px;
+      display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+    }
+    .pbc-label-inline {
+      font-size: 10px; font-weight: 700;
+      letter-spacing: 1px; text-transform: uppercase;
+      color: var(--fg); opacity: 0.4; white-space: nowrap;
+    }
+    .alt-chip {
+      border: var(--line-ui); padding: 3px 10px;
+      font-size: var(--t-xs); font-weight: 500; color: var(--fg); cursor: default;
+    }
+    .alt-chip:hover { border-color: var(--fg); background: #f5f5f5; }
+
+    /* ── Experiments ──────────────────────────────────────────────── */
+    .exp-header-row {
+      display: none; align-items: baseline; gap: 12px;
+      padding-bottom: 14px; border-bottom: var(--line-ui); margin-bottom: 14px;
+    }
+    .exp-section-title { font-size: var(--t-md); font-weight: 600; color: var(--fg); }
+    .exp-count-badge   { font-size: var(--t-xs); font-weight: 600; border: var(--line-ui); padding: 2px 8px; color: var(--fg); opacity: 0.5; }
+    .exp-type-legend   { display: flex; gap: 14px; flex-wrap: wrap; margin-left: auto; }
+    .etl-item          { display: flex; align-items: center; gap: 5px; font-size: 10px; font-weight: 600; color: var(--fg); opacity: 0.5; }
+    .etl-dot           { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+
+    .exp-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 0;
+      margin-bottom: 32px;
+    }
+    .exp-card {
+      border: var(--line-ui);
+      border-top: none; border-left: none;
+      border-left: 3px solid transparent;
+      padding: 0; cursor: pointer;
+      background: var(--bg);
+      transition: background 0.08s;
+      overflow: hidden;
+    }
+    .exp-card:hover { background: #fafafa; }
+    .exp-card.expanded {
+      background: var(--fg); color: var(--bg);
+      grid-column: 1 / -1;
+      border-left-color: transparent !important;
+    }
+    .exp-card.type-vitro  { border-left-color: #2563eb; }
+    .exp-card.type-vivo   { border-left-color: #16a34a; }
+    .exp-card.type-exvivo { border-left-color: #ea580c; }
+    .exp-card.type-silico { border-left-color: #7c3aed; }
+    .exp-card.type-clin   { border-left-color: #0891b2; }
+
+    .exp-card-inner { padding: 10px 12px; }
+    .exp-card-top   { display: flex; align-items: center; gap: 8px; margin-bottom: 7px; }
+    .exp-id { font-size: var(--t-xs); font-weight: 600; color: var(--fg); opacity: 0.4; }
+    .exp-card.expanded .exp-id { opacity: 0.5; color: var(--bg); }
+
+    .exp-type-badge { font-size: var(--t-xs); font-weight: 600; padding: 1px 6px; border: 1px solid #ddd; }
+    .type-vivo   { border-color: #16a34a !important; color: #16a34a !important; }
+    .type-vitro  { border-color: #2563eb !important; color: #2563eb !important; }
+    .type-exvivo { border-color: #ea580c !important; color: #ea580c !important; }
+    .type-silico { border-color: #7c3aed !important; color: #7c3aed !important; }
+    .type-clin   { border-color: #0891b2 !important; color: #0891b2 !important; }
+    .exp-card.expanded .exp-type-badge { color: rgba(255,255,255,0.7) !important; border-color: rgba(255,255,255,0.3) !important; }
+
+    .exp-glp { margin-left: auto; font-size: var(--t-xs); font-weight: 600; border: 1px solid var(--fg); padding: 1px 6px; }
+    .exp-card.expanded .exp-glp { border-color: var(--bg); color: var(--bg); }
+
+    .exp-model { font-size: var(--t-sm); font-weight: 600; color: var(--fg); line-height: 1.3; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .exp-card.expanded .exp-model { color: var(--bg); }
+
+    .exp-result { display: none; }
+    .exp-card.expanded .exp-result { display: block; font-size: var(--t-sm); color: rgba(255,255,255,0.8); line-height: 1.6; margin-bottom: 10px; }
+
+    .exp-pills { display: none; }
+    .pill { border: var(--line-ui); padding: 2px 7px; font-size: var(--t-xs); color: var(--fg); opacity: 0.5; }
+    .exp-card.expanded .exp-pills { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 10px; }
+    .exp-card.expanded .pill { border-color: rgba(255,255,255,0.3); color: rgba(255,255,255,0.5); opacity: 1; }
+
+    .exp-expanded-body { display: none; margin-top: 16px; border-top: 1px solid rgba(255,255,255,0.2); padding-top: 16px; }
+    .exp-card.expanded .exp-expanded-body { display: block; }
+    .exp-detail-block { margin-bottom: 12px; }
+    .exp-detail-label { font-size: var(--t-xs); font-weight: 600; text-transform: uppercase; color: rgba(255,255,255,0.5); margin-bottom: 4px; }
+    .exp-detail-val   { font-size: var(--t-sm); color: rgba(255,255,255,0.8); line-height: 1.6; }
+    .exp-detail-val.limitation { color: rgba(255,255,255,0.6); }
+
+    /* ── Done row ─────────────────────────────────────────────────── */
+    .done-row {
+      display: none; align-items: center; justify-content: space-between;
+      gap: 16px; flex-wrap: wrap; padding: 24px 0; margin-bottom: 36px;
+    }
+    .done-text strong { font-size: var(--t-base); font-weight: 600; display: block; margin-bottom: 4px; }
+    .done-text span   { font-size: var(--t-sm); color: var(--fg); opacity: 0.6; }
+
+    /* ── Paper meta ───────────────────────────────────────────────── */
+    .paper-meta-section { display: none; }
+    .section-label { font-size: var(--t-xs); font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: var(--fg); opacity: 0.4; margin-bottom: 16px; }
+    .paper-title-text { font-size: var(--t-md); font-weight: 600; color: var(--fg); line-height: 1.4; margin-bottom: 14px; }
+    .paper-meta-row { display: flex; flex-wrap: wrap; gap: 20px; font-size: var(--t-sm); color: var(--fg); margin-bottom: 12px; }
+    .paper-meta-row strong { color: var(--fg); font-weight: 600; display: block; font-size: var(--t-xs); opacity: 0.4; text-transform: uppercase; margin-bottom: 1px; }
+    .keyword-row { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 16px; }
+    .keyword-chip { border: var(--line-ui); padding: 3px 9px; font-size: var(--t-xs); color: var(--fg); }
+    .source-grid { display: flex; gap: 32px; margin-bottom: 20px; }
+    .source-item { padding: 0; text-align: left; }
+    .source-val  { font-size: var(--t-lg); font-weight: 600; color: var(--fg); line-height: 1.1; }
+    .source-val.fail { opacity: 0.3; }
+    .source-label{ font-size: var(--t-xs); color: var(--fg); opacity: 0.4; margin-top: 2px; }
+
+    /* Section accordion */
     .section-list { list-style: none; }
-    .section-item { border-top: 1px solid #2d3748; padding: 10px 0; }
-    .section-item:first-child { border-top: none; }
-    .section-toggle { display: flex; align-items: center; justify-content: space-between; cursor: pointer; font-size: 14px; font-weight: 600; color: #63b3ed; user-select: none; }
-    .section-toggle .arrow { transition: transform 0.2s; font-size: 11px; color: #718096; }
-    .section-toggle.open .arrow { transform: rotate(90deg); }
-    .section-body { display: none; font-size: 13px; line-height: 1.7; color: #a0aec0; margin-top: 10px; max-height: 400px; overflow-y: auto; padding-right: 8px; }
-    .section-body::-webkit-scrollbar { width: 4px; }
-    .section-body::-webkit-scrollbar-track { background: #0f1117; }
-    .section-body::-webkit-scrollbar-thumb { background: #4a5568; border-radius: 4px; }
-
-    .figure-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 14px; }
-    .figure-card { background: #0f1117; border: 1px solid #2d3748; border-radius: 8px; padding: 14px; }
-    .figure-label { font-size: 11px; font-weight: 700; color: #68d391; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }
-    .figure-title { font-size: 13px; font-weight: 600; color: #e2e8f0; margin-bottom: 6px; line-height: 1.4; }
-    .figure-caption { font-size: 12px; color: #718096; line-height: 1.5; }
-
-    .table-grid { display: grid; gap: 18px; }
-    .table-card { background: #0f1117; border: 1px solid #2d3748; border-radius: 8px; padding: 14px; }
-    .table-label { font-size: 11px; font-weight: 700; color: #f6ad55; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }
-    .table-caption { font-size: 13px; color: #a0aec0; }
-    .table-scroll { overflow-x: auto; margin-top: 12px; }
-    table.data-table { border-collapse: collapse; width: 100%; font-size: 12px; }
-    table.data-table th { background: #2d3748; color: #90cdf4; font-weight: 700; padding: 6px 10px; text-align: left; border: 1px solid #4a5568; white-space: nowrap; }
-    table.data-table td { padding: 5px 10px; color: #cbd5e0; border: 1px solid #2d3748; vertical-align: top; }
-    table.data-table tr:nth-child(even) td { background: #1a1d2e; }
-
-    .ref-list { list-style: none; }
-    .ref-item { border-top: 1px solid #2d3748; padding: 8px 0; font-size: 13px; color: #a0aec0; line-height: 1.5; }
-    .ref-item:first-child { border-top: none; }
-    .pmid-badge { display: inline-block; background: #2b4c7e; color: #90cdf4; border-radius: 4px; font-size: 11px; font-weight: 700; padding: 1px 6px; margin-right: 6px; }
-    .ref-more { margin-top: 10px; font-size: 12px; color: #718096; }
-
-    .status-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 12px; }
-    .status-item { background: #0f1117; border: 1px solid #2d3748; border-radius: 8px; padding: 14px; text-align: center; }
-    .status-item .stat-value { font-size: 28px; font-weight: 700; color: #68d391; }
-    .status-item .stat-label { font-size: 12px; color: #718096; margin-top: 4px; }
-    .status-item.warn .stat-value { color: #f6ad55; }
-    .status-item.fail .stat-value { color: #fc8181; }
-
-    .section-tags { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 14px; }
-    .section-tag { background: #276749; color: #68d391; border-radius: 6px; padding: 3px 10px; font-size: 12px; font-weight: 600; }
-    .section-tag.missing { background: #742a2a; color: #fc8181; }
-
-    .raw-json-toggle { cursor: pointer; font-size: 13px; color: #718096; border: 1px solid #2d3748; background: transparent; padding: 6px 14px; border-radius: 6px; font-weight: 500; }
-    .raw-json-toggle:hover { background: #2d3748; }
-    pre { background: #0f1117; border: 1px solid #2d3748; border-radius: 8px; padding: 16px; font-size: 12px; color: #a0aec0; overflow-x: auto; margin-top: 12px; max-height: 500px; overflow-y: auto; display: none; }
-
-    .warning-list { list-style: none; margin-bottom: 14px; }
-    .warning-item { font-size: 13px; color: #f6ad55; padding: 4px 0; }
-    .warning-item::before { content: "⚠ "; }
+    .section-item { margin-bottom: 2px; }
+    .section-toggle {
+      display: flex; align-items: center; justify-content: space-between;
+      cursor: pointer; padding: 10px 0; font-size: var(--t-sm); font-weight: 500;
+      color: var(--fg); user-select: none; gap: 8px;
+    }
+    .section-toggle:hover { opacity: 0.7; }
+    .section-chevron { font-size: var(--t-xs); color: var(--fg); opacity: 0.4; transition: transform 0.15s; flex-shrink: 0; }
+    .section-toggle.open .section-chevron { transform: rotate(90deg); }
+    .section-body { display: none; font-size: var(--t-sm); line-height: 1.7; color: var(--fg-2); padding: 0 16px 14px; max-height: 280px; overflow-y: auto; }
   </style>
 </head>
 <body>
 
-<header>
-  <h1>INDAccelerator</h1>
-  <span>Stage 1 — Paper Ingest</span>
+<header class="app-header">
+  <a class="app-logo" href="/">
+    <span class="app-logo-name">INDAccelerator</span>
+  </a>
+  <span class="app-header-context" id="headerMeta">Preclinical development intelligence</span>
+  <div class="app-header-actions">
+    <a href="ind_map.html" class="btn btn-sm">IND Map</a>
+    <a href="timeline.html" class="btn btn-sm">Timeline</a>
+  </div>
 </header>
 
-<div class="container">
-
-  <div class="input-card">
-    <div class="input-row">
-      <input
-        type="text"
-        id="paperInput"
-        value="https://pubmed.ncbi.nlm.nih.gov/41585874/"
-        placeholder="PubMed URL, PMC URL, DOI URL, bare PMID, or bare PMCID"
-      />
-      <button id="fetchBtn" onclick="fetchPaper()">Fetch Paper</button>
+<!-- ── Pipeline Stepper ───────────────────────────────────────────────── -->
+<div class="pipeline-strip">
+  <div class="pipeline-inner">
+    <div class="ps-step" id="ps-1">
+      <div class="ps-num">1</div>
+      <div class="ps-label">Fetch Paper</div>
     </div>
-    <p class="hint">Accepts: PubMed URL · PMC URL · DOI URL (doi.org/…) · bare PMID · bare PMCID</p>
+    <div class="ps-connector"></div>
+    <div class="ps-step" id="ps-2">
+      <div class="ps-num">2</div>
+      <div class="ps-label">Extract Data</div>
+    </div>
+    <div class="ps-connector"></div>
+    <div class="ps-step" id="ps-3">
+      <div class="ps-num">3</div>
+      <div class="ps-label">Profile Compound</div>
+    </div>
+    <div class="ps-connector"></div>
+    <a class="ps-step" id="ps-4" href="ind_map.html">
+      <div class="ps-num">4</div>
+      <div class="ps-label">IND Map</div>
+    </a>
+    <div class="ps-connector"></div>
+    <a class="ps-step" id="ps-5" href="timeline.html">
+      <div class="ps-num">5</div>
+      <div class="ps-label">Timeline</div>
+    </a>
+  </div>
+</div>
+
+<!-- ── Hero ──────────────────────────────────────────────────────────── -->
+<section class="hero">
+  <div class="hero-inner">
+    <h1 class="hero-headline">
+      From paper
+      <em>to Phase 1.</em>
+    </h1>
+    <p class="hero-sub">
+      Paste any PubMed URL or DOI. Extract experimental data, map IND gaps (21 CFR §312.23), generate a preclinical development timeline.
+    </p>
+    <div class="input-zone">
+      <div class="input-row">
+        <input class="input" type="text" id="paperInput"
+          placeholder="PubMed URL, PMC URL, DOI, PMID, or PMCID" />
+        <button class="btn btn-primary" id="fetchBtn" onclick="fetchPaper()">
+          Analyze →
+        </button>
+      </div>
+      <p class="input-hint">
+        e.g. https://pubmed.ncbi.nlm.nih.gov/41585874/ &nbsp;·&nbsp; PMC12823826 &nbsp;·&nbsp; 10.1234/example
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- ── Main body ──────────────────────────────────────────────────────── -->
+<div class="main-body">
+<div class="main-inner">
+
+  <div class="alert" id="statusBar"></div>
+
+  <div id="analysis-section">
+    <div class="analysis-header">
+      <h2 class="analysis-heading">Analysis</h2>
+      <span class="spinner-inline" id="analysisSpinner"></span>
+      <span id="analysisStatus">Profiling compound…</span>
+    </div>
+
+    <div id="profile-slot"></div>
+
+    <div class="exp-header-row" id="exp-header">
+      <span class="exp-section-title">Experiments</span>
+      <span class="exp-count-badge" id="exp-counter">0</span>
+      <div class="exp-type-legend">
+        <div class="etl-item"><div class="etl-dot" style="background:#16a34a"></div>In Vivo</div>
+        <div class="etl-item"><div class="etl-dot" style="background:#2563eb"></div>In Vitro</div>
+        <div class="etl-item"><div class="etl-dot" style="background:#ea580c"></div>Ex Vivo</div>
+        <div class="etl-item"><div class="etl-dot" style="background:#7c3aed"></div>In Silico</div>
+      </div>
+    </div>
+    <div class="exp-grid" id="exp-grid"></div>
+
+    <div class="done-row" id="done-row">
+      <div class="done-text">
+        <strong id="done-title">Analysis complete</strong>
+        <span id="done-subtitle"></span>
+      </div>
+      <a href="ind_map.html" class="btn btn-primary">View IND Readiness Map →</a>
+    </div>
   </div>
 
-  <div id="statusBar"></div>
-  <div id="results"></div>
+  <div id="paper-meta-section" class="paper-meta-section stack-32">
+    <div id="paper-card-slot"></div>
+    <div id="sections-card-slot"></div>
+  </div>
 
-  <button id="stage2Btn" disabled title="Fetch a paper successfully first" onclick="goStage2()">
-    Proceed to Stage 2 →
-  </button>
-
+</div>
 </div>
 
 <script>
+const API = 'http://localhost:8000';
 let lastData = null;
 
-function setStatus(msg, type = 'info') {
-  const bar = document.getElementById('statusBar');
-  bar.textContent = msg;
-  bar.className = type;
-  bar.style.display = 'block';
-}
-
 function esc(s) {
-  if (!s) return '';
+  if (s == null) return '';
   return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
+function trunc(s, n) { return s && s.length > n ? s.slice(0, n) + '…' : (s || ''); }
 
-async function fetchPaper() {
-  const input = document.getElementById('paperInput').value.trim();
-  if (!input) { setStatus('Please enter a PubMed URL, PMC URL, DOI, PMID, or PMCID.', 'error'); return; }
+function setStatus(msg, type) {
+  const b = document.getElementById('statusBar');
+  b.textContent = msg;
+  b.className = 'alert show alert-' + (type || 'info');
+}
+function clearStatus() { document.getElementById('statusBar').className = 'alert'; }
 
-  document.getElementById('fetchBtn').disabled = true;
-  document.getElementById('stage2Btn').disabled = true;
-  document.getElementById('results').style.display = 'none';
-  lastData = null;
+function typeClass(t) {
+  if (!t) return 'vitro';
+  const tl = t.toLowerCase();
+  if (tl.includes('silico'))   return 'silico';
+  if (tl === 'ex vivo' || tl.startsWith('ex')) return 'exvivo';
+  if (tl.includes('vitro'))    return 'vitro';
+  if (tl.includes('vivo'))     return 'vivo';
+  if (tl.includes('clinical')) return 'clin';
+  return 'vitro';
+}
 
-  setStatus('Step 1/3 — Resolving identifier…', 'info');
-  setTimeout(() => { if (document.getElementById('fetchBtn').disabled) setStatus('Step 2/3 — Fetching PMC full-text XML…', 'info'); }, 600);
-  setTimeout(() => { if (document.getElementById('fetchBtn').disabled) setStatus('Step 3/3 — Parsing sections, figures, references…', 'info'); }, 1800);
-
-  try {
-    const resp = await fetch(`http://localhost:8000/api/fetch-paper?input=${encodeURIComponent(input)}`);
-    const data = await resp.json();
-
-    if (data.error) { setStatus(`Error: ${data.error}`, 'error'); renderResults(data); return; }
-
-    lastData = data;
-    setStatus(
-      `✓ Fetched "${data.title ? data.title.substring(0,80) + '…' : 'paper'}" — ` +
-      `${data.fetch_sources?.sections_found?.length || 0} sections, ` +
-      `${data.fetch_sources?.figures_found || 0} figures, ` +
-      `${data.fetch_sources?.references_found || 0} references`,
-      'success'
-    );
-    renderResults(data);
-    document.getElementById('stage2Btn').disabled = false;
-    document.getElementById('stage2Btn').title = '';
-  } catch (err) {
-    setStatus(`Network error: ${err.message} — is the backend running on localhost:8000?`, 'error');
-  } finally {
-    document.getElementById('fetchBtn').disabled = false;
+// ── Pipeline stepper ─────────────────────────────────────────────────────────
+function updatePipelineStep(n, done = false) {
+  for (let i = 1; i <= 5; i++) {
+    const el = document.getElementById(`ps-${i}`);
+    if (!el) continue;
+    el.classList.remove('active', 'done');
+    if (i < n)                { el.classList.add('done'); }
+    else if (i === n && !done){ el.classList.add('active'); }
+    else if (i === n && done) { el.classList.add('done'); }
   }
 }
 
-function renderResults(data) {
-  const el = document.getElementById('results');
-  el.style.display = 'block';
+// ── Fetch paper ───────────────────────────────────────────────────────────────
+async function fetchPaper() {
+  const input = document.getElementById('paperInput').value.trim();
+  if (!input) { setStatus('Enter a PubMed URL, DOI, PMID, or PMCID to continue.', 'error'); return; }
 
-  const warnings = (data.warnings || []).map(w => `<li class="warning-item">${esc(w)}</li>`).join('');
-  const warnBlock = warnings ? `<div class="section-card"><h2>Warnings</h2><ul class="warning-list">${warnings}</ul></div>` : '';
+  const btn = document.getElementById('fetchBtn');
+  btn.disabled = true;
+  btn.textContent = 'Fetching…';
 
-  const authors = (data.authors || []).map(a => esc(a.name)).join(', ');
-  const header = `<div class="section-card"><h2>Paper</h2>
-    <div class="paper-title">${esc(data.title) || '<em>Title not found</em>'}</div>
-    <div class="meta-row">
-      <span><strong>Authors:</strong> ${authors || '—'}</span>
-      <span><strong>Journal:</strong> ${esc(data.journal) || '—'}</span>
-      <span><strong>Year:</strong> ${esc(data.year) || '—'}</span>
-      <span><strong>DOI:</strong> ${data.doi ? `<a href="https://doi.org/${esc(data.doi)}" target="_blank" style="color:#63b3ed">${esc(data.doi)}</a>` : '—'}</span>
-      <span><strong>PMID:</strong> ${esc(data.pmid) || '—'}</span>
-      <span><strong>PMCID:</strong> ${esc(data.pmcid) || '—'}</span>
-    </div></div>`;
+  document.getElementById('analysis-section').style.display = 'none';
+  document.getElementById('paper-meta-section').style.display = 'none';
+  lastData = null;
+  sessionStorage.removeItem('cache_index');
+  sessionStorage.removeItem('cache_indmap');
+  sessionStorage.removeItem('cache_timeline');
+  setStatus('Fetching paper…', 'info');
+  updatePipelineStep(1);
 
-  const kwChips = (data.keywords || []).map(k => `<span class="chip">${esc(k)}</span>`).join('');
-  const kwBlock = kwChips ? `<div class="section-card"><h2>Keywords</h2><div class="chips">${kwChips}</div></div>` : '';
+  try {
+    const resp = await fetch(`${API}/api/fetch-paper?input=${encodeURIComponent(input)}`);
+    const data = await resp.json();
+    if (data.error) { setStatus(data.error, 'error'); return; }
 
-  const abstractBlock = data.abstract ? `<div class="section-card"><h2>Abstract</h2><p class="abstract-text">${esc(data.abstract)}</p></div>` : '';
+    lastData = data;
+    document.getElementById('headerMeta').textContent = trunc(data.title || '', 90);
+    clearStatus();
+    updatePipelineStep(1, true);
 
-  const KNOWN = ['introduction','methods','results','discussion'];
-  const knownFound = KNOWN.filter(k => data.fetch_sources?.sections_found?.includes(k));
-  const knownMissing = KNOWN.filter(k => !data.fetch_sources?.sections_found?.includes(k));
-  const sectionTags = [...knownFound.map(k => `<span class="section-tag">${k}</span>`), ...knownMissing.map(k => `<span class="section-tag missing">${k} missing</span>`)].join('');
-  const sectItems = (data.full_body_sections || []).map((s, i) => `
-    <li class="section-item">
-      <div class="section-toggle" id="stog-${i}" onclick="toggleSection(${i})"><span>${esc(s.heading)}</span><span class="arrow">▶</span></div>
-      <div class="section-body" id="sbod-${i}">${esc(s.text)}</div>
-    </li>`).join('');
-  const sectionsBlock = `<div class="section-card"><h2>Body Sections (${(data.full_body_sections || []).length} found)</h2><div class="section-tags">${sectionTags}</div><ul class="section-list">${sectItems}</ul></div>`;
-
-  const figCards = (data.figure_captions || []).map(f => `<div class="figure-card"><div class="figure-label">${esc(f.label)}</div><div class="figure-title">${esc(f.caption_title)}</div><div class="figure-caption">${esc(f.caption_text)}</div></div>`).join('');
-  const figBlock = `<div class="section-card"><h2>Figures (${(data.figure_captions || []).length} found)</h2><div class="figure-grid">${figCards || '<em style="color:#718096">None found</em>'}</div></div>`;
-
-  const tableCards = (data.tables || []).map(t => {
-    let tableHtml = '';
-    if (t.headers?.length || t.data?.length) {
-      const headerRow = t.headers?.length ? `<thead><tr>${t.headers.map(h => `<th>${esc(h)}</th>`).join('')}</tr></thead>` : '';
-      const bodyRows = (t.data || []).map(row => `<tr>${row.map(cell => `<td>${esc(cell)}</td>`).join('')}</tr>`).join('');
-      tableHtml = `<div class="table-scroll"><table class="data-table">${headerRow}<tbody>${bodyRows}</tbody></table></div>`;
-    }
-    return `<div class="table-card"><div class="table-label">${esc(t.label)}</div><div class="table-caption">${esc(t.caption)}</div>${tableHtml}${t.note ? `<div class="table-caption" style="margin-top:8px;color:#718096;font-size:12px">${esc(t.note)}</div>` : ''}</div>`;
-  }).join('');
-  const tableBlock = `<div class="section-card"><h2>Tables (${(data.tables || []).length} found)</h2><div class="table-grid">${tableCards || '<em style="color:#718096">None found</em>'}</div></div>`;
-
-  const refs = data.references || [];
-  const refItems = refs.slice(0, 10).map(r => `<li class="ref-item">${r.pmid ? `<span class="pmid-badge">PMID ${esc(r.pmid)}</span>` : ''}${esc(r.citation_text)}</li>`).join('');
-  const refMore = refs.length > 10 ? `<p class="ref-more">${refs.length - 10} more references stored in full JSON</p>` : '';
-  const refsBlock = `<div class="section-card"><h2>References (${refs.length} total)</h2><ul class="ref-list">${refItems}</ul>${refMore}</div>`;
-
-  const fs = data.fetch_sources || {};
-  const statusGrid = `<div class="section-card"><h2>Source Status</h2><div class="status-grid">
-    <div class="status-item ${fs.pmc_full_text === 'ok' ? '' : 'fail'}"><div class="stat-value">${fs.pmc_full_text === 'ok' ? '✓' : '✗'}</div><div class="stat-label">PMC Full Text</div></div>
-    <div class="status-item"><div class="stat-value">${fs.sections_found?.length || 0}</div><div class="stat-label">Sections Classified</div></div>
-    <div class="status-item"><div class="stat-value">${fs.figures_found || 0}</div><div class="stat-label">Figures</div></div>
-    <div class="status-item"><div class="stat-value">${fs.tables_found || 0}</div><div class="stat-label">Tables</div></div>
-    <div class="status-item"><div class="stat-value">${fs.references_found || 0}</div><div class="stat-label">References</div></div>
-    <div class="status-item"><div class="stat-value">${(data.mesh_terms || []).length || 0}</div><div class="stat-label">MeSH Terms</div></div>
-  </div></div>`;
-
-  const rawBlock = `<div class="section-card"><h2>Raw JSON</h2><button class="raw-json-toggle" onclick="toggleRaw()">Show / Hide</button><pre id="rawJson">${esc(JSON.stringify(data, null, 2))}</pre></div>`;
-
-  el.innerHTML = warnBlock + header + kwBlock + abstractBlock + sectionsBlock + figBlock + tableBlock + refsBlock + statusGrid + rawBlock;
+    renderPaperMeta(data);
+    startAnalysis(data);
+  } catch (err) {
+    setStatus(`Could not reach backend (${err.message}). Is it running?`, 'error');
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Analyze →';
+  }
 }
 
-function toggleSection(i) {
+// ── Paper metadata ────────────────────────────────────────────────────────────
+function renderPaperMeta(data) {
+  document.getElementById('paper-meta-section').style.display = 'flex';
+  const authors  = (data.authors || []).map(a => esc(a.name)).join(', ');
+  const keywords = (data.keywords || []);
+  const fs       = data.fetch_sources || {};
+
+  const kwHtml = keywords.length
+    ? `<div class="keyword-row">${keywords.map(k => `<span class="keyword-chip">${esc(k)}</span>`).join('')}</div>`
+    : '';
+  const abstractHtml = data.abstract
+    ? `<hr class="divider" style="margin:20px 0">
+       <p style="font-size:var(--t-sm);color:var(--fg);opacity:0.7;line-height:1.7">${esc(data.abstract)}</p>`
+    : '';
+
+  document.getElementById('paper-card-slot').innerHTML = `
+    <div class="card">
+      <div class="section-label">Paper</div>
+      <p class="paper-title-text">${esc(data.title) || '<em>Title not found</em>'}</p>
+      <div class="paper-meta-row">
+        ${authors ? `<span><strong>Authors</strong>${authors}</span>` : ''}
+        ${data.journal ? `<span><strong>Journal</strong>${esc(data.journal)}</span>` : ''}
+        ${data.year    ? `<span><strong>Year</strong>${esc(data.year)}</span>` : ''}
+        ${data.pmid    ? `<span><strong>PMID</strong><a href="https://pubmed.ncbi.nlm.nih.gov/${esc(data.pmid)}/" target="_blank" style="color:var(--blue);text-decoration:none">${esc(data.pmid)}</a></span>` : ''}
+        ${data.pmcid   ? `<span><strong>PMCID</strong>${esc(data.pmcid)}</span>` : ''}
+      </div>
+      ${kwHtml}${abstractHtml}
+    </div>`;
+
+  const secItems = (data.full_body_sections || []).map((s, i) => `
+    <li class="section-item">
+      <div class="section-toggle" id="stog-${i}" onclick="toggleSec(${i})">
+        <span>${esc(s.heading)}</span><span class="section-chevron">▶</span>
+      </div>
+      <div class="section-body" id="sbod-${i}">${esc(s.text)}</div>
+    </li>`).join('');
+
+  document.getElementById('sections-card-slot').innerHTML = `
+    <div class="card">
+      <div class="section-label">Source &amp; Sections</div>
+      <div class="source-grid">
+        <div class="source-item">
+          <div class="source-val ${fs.pmc_full_text === 'ok' ? '' : 'fail'}">${fs.pmc_full_text === 'ok' ? '✓' : '✗'}</div>
+          <div class="source-label">PMC Full Text</div>
+        </div>
+        <div class="source-item"><div class="source-val">${fs.sections_found?.length || 0}</div><div class="source-label">Sections</div></div>
+        <div class="source-item"><div class="source-val">${fs.figures_found || 0}</div><div class="source-label">Figures</div></div>
+        <div class="source-item"><div class="source-val">${fs.tables_found || 0}</div><div class="source-label">Tables</div></div>
+        <div class="source-item"><div class="source-val">${fs.references_found || 0}</div><div class="source-label">References</div></div>
+      </div>
+      ${secItems ? `<ul class="section-list">${secItems}</ul>` : '<p style="font-size:var(--t-sm);color:var(--fg);opacity:0.4">No body sections found.</p>'}
+    </div>`;
+}
+
+function toggleSec(i) {
   const tog = document.getElementById(`stog-${i}`);
   const bod = document.getElementById(`sbod-${i}`);
   const open = bod.style.display === 'block';
@@ -324,15 +556,232 @@ function toggleSection(i) {
   tog.classList.toggle('open', !open);
 }
 
-function toggleRaw() {
-  const el = document.getElementById('rawJson');
-  el.style.display = el.style.display === 'block' ? 'none' : 'block';
+// ── Analysis streaming ────────────────────────────────────────────────────────
+async function startAnalysis(paperData) {
+  document.getElementById('analysis-section').style.display = 'block';
+  document.getElementById('profile-slot').innerHTML = '';
+  document.getElementById('exp-grid').innerHTML = '';
+  document.getElementById('exp-header').style.display = 'none';
+  document.getElementById('exp-counter').textContent = '0';
+  document.getElementById('done-row').style.display = 'none';
+  document.getElementById('analysisSpinner').style.display = 'inline-block';
+  document.getElementById('analysisStatus').textContent = 'Profiling compound…';
+  updatePipelineStep(2);
+
+  let expCount = 0, capturedProfile = null;
+  const capturedExps = [];
+
+  try {
+    const resp = await fetch(`${API}/api/stream-analysis`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(paperData),
+    });
+
+    const reader = resp.body.getReader();
+    const decoder = new TextDecoder();
+    let buf = '';
+
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      buf += decoder.decode(value, { stream: true });
+      const lines = buf.split('\n');
+      buf = lines.pop();
+
+      for (const line of lines) {
+        if (!line.startsWith('data: ')) continue;
+        let event;
+        try { event = JSON.parse(line.slice(6)); } catch { continue; }
+
+        if (event.type === 'profile') {
+          capturedProfile = event.data;
+          renderProfile(event.data);
+          document.getElementById('analysisStatus').textContent = 'Extracting experiments…';
+          document.getElementById('exp-header').style.display = 'flex';
+          updatePipelineStep(3);
+        } else if (event.type === 'experiment') {
+          expCount++;
+          capturedExps.push(event.data);
+          document.getElementById('exp-counter').textContent = expCount;
+          renderExpCard(event.data);
+        } else if (event.type === 'done') {
+          document.getElementById('analysisSpinner').style.display = 'none';
+          document.getElementById('analysisStatus').textContent = '';
+          const row = document.getElementById('done-row');
+          row.style.display = 'flex';
+          document.getElementById('done-title').textContent = 'Analysis complete';
+          document.getElementById('done-subtitle').textContent =
+            `${expCount} experiment${expCount !== 1 ? 's' : ''} extracted. Ready to map IND gaps.`;
+          updatePipelineStep(3, true);
+          try {
+            sessionStorage.setItem('cache_index', JSON.stringify({
+              paperData, profile: capturedProfile, experiments: capturedExps,
+              paperInput: document.getElementById('paperInput').value.trim(),
+            }));
+          } catch (_) {}
+        } else if (event.type === 'error') {
+          document.getElementById('analysisStatus').textContent = `Error: ${event.message}`;
+          document.getElementById('analysisSpinner').style.display = 'none';
+        }
+      }
+    }
+  } catch (err) {
+    document.getElementById('analysisStatus').textContent = `Network error: ${err.message}`;
+    document.getElementById('analysisSpinner').style.display = 'none';
+  }
 }
 
-function goStage2() {
-  alert('Stage 2 not yet implemented.');
+// ── Render: compound profile ──────────────────────────────────────────────────
+function renderProfile(p) {
+  // Build MOA flow nodes
+  const nodes = [];
+  if (p.compound) nodes.push({ label: p.compound, cls: 'moa-node-compound' });
+  if (p.mechanism_of_action) nodes.push({ label: trunc(p.mechanism_of_action, 45), cls: 'moa-node-mechanism' });
+  if (p.primary_target)      nodes.push({ label: p.primary_target, cls: 'moa-node-target' });
+  if (p.recommended_indication) nodes.push({ label: p.recommended_indication, cls: 'moa-node-indication' });
+
+  const moaHtml = nodes.length >= 2 ? `
+    <div class="moa-section">
+      <div class="moa-label">Mechanism of Action</div>
+      <div class="moa-flow">
+        ${nodes.map((n, i) => `
+          <div class="moa-node ${esc(n.cls)}">${esc(n.label)}</div>
+          ${i < nodes.length - 1 ? '<div class="moa-arrow">→</div>' : ''}
+        `).join('')}
+      </div>
+    </div>` : '';
+
+  // Evidence fill class
+  const evidLow = (p.evidence_strength || '').toLowerCase();
+  const evidFill = evidLow === 'strong' ? 'evidence-fill-strong'
+                 : evidLow === 'moderate' ? 'evidence-fill-moderate'
+                 : 'evidence-fill-weak';
+  const evidLabel = evidLow ? (evidLow.charAt(0).toUpperCase() + evidLow.slice(1)) : 'Unknown';
+
+  // Stage label
+  const stageRaw = (p.development_stage || 'preclinical').replace(/_/g, ' ');
+  const stageLabel = stageRaw.charAt(0).toUpperCase() + stageRaw.slice(1);
+
+  // Alts
+  const alts = (p.alternative_indications || [])
+    .map(a => `<span class="alt-chip" title="${esc(a.rationale)}">${esc(a.indication)}</span>`)
+    .join('');
+
+  document.getElementById('profile-slot').innerHTML = `
+    <div class="profile-doc">
+      <div class="profile-card">
+        <div class="profile-card-header">
+          <div>
+            <div class="profile-name">${esc(p.compound || 'Unknown Compound')}</div>
+            <div class="profile-meta">
+              <span>${esc(p.drug_class || '')}</span>
+              ${p.primary_target ? `<span>Target: ${esc(p.primary_target)}</span>` : ''}
+            </div>
+          </div>
+          <div class="profile-stage-badge">${esc(stageLabel)}</div>
+        </div>
+        ${moaHtml}
+        <div class="profile-body">
+          <div class="profile-body-cell">
+            <div class="pbc-label">Recommended Indication</div>
+            <div class="pbc-value">${esc(p.recommended_indication || 'N/A')}</div>
+            <div class="pbc-sub">${esc(p.recommendation_rationale || '')}</div>
+          </div>
+          <div class="profile-body-cell">
+            <div class="pbc-label">Evidence Strength</div>
+            <div class="pbc-value">${evidLabel}</div>
+            <div class="evidence-meter">
+              <div class="evidence-meter-fill ${evidFill}"></div>
+            </div>
+          </div>
+        </div>
+        ${alts ? `<div class="profile-alts-row">
+          <span class="pbc-label-inline">Alternatives</span>${alts}
+        </div>` : ''}
+      </div>
+    </div>`;
 }
+
+// ── Render: experiment card ───────────────────────────────────────────────────
+function renderExpCard(exp) {
+  const cls = typeClass(exp.type);
+  const typeLabel = (exp.type || 'Unknown')
+    .replace('in vitro','In Vitro').replace('in vivo','In Vivo')
+    .replace('ex vivo','Ex Vivo').replace('in silico','In Silico');
+
+  const pills = [
+    exp.species && `<span class="pill">${esc(exp.species)}</span>`,
+    exp.route   && `<span class="pill">${esc(exp.route)}</span>`,
+    exp.dose    && `<span class="pill">${esc(trunc(exp.dose, 22))}</span>`,
+    exp.n       && `<span class="pill">n=${esc(exp.n)}</span>`,
+  ].filter(Boolean).join('');
+
+  const div = document.createElement('div');
+  div.className = `exp-card type-${cls}`;
+  div.innerHTML = `
+    <div class="exp-card-inner">
+      <div class="exp-card-top">
+        <span class="exp-id">${esc(exp.id)}</span>
+        <span class="exp-type-badge type-${cls}">${typeLabel}</span>
+        ${exp.glp_status === 'GLP' ? '<span class="exp-glp">GLP</span>' : ''}
+      </div>
+      <div class="exp-model">${esc(exp.model || '')}</div>
+      <div class="exp-result">${esc(exp.results || '')}</div>
+      ${pills ? `<div class="exp-pills">${pills}</div>` : ''}
+      <div class="exp-expanded-body">
+        ${exp.endpoints ? `<div class="exp-detail-block">
+          <div class="exp-detail-label">Endpoints</div>
+          <div class="exp-detail-val">${esc(exp.endpoints)}</div>
+        </div>` : ''}
+        ${exp.limitations ? `<div class="exp-detail-block">
+          <div class="exp-detail-label">Limitations</div>
+          <div class="exp-detail-val limitation">${esc(exp.limitations)}</div>
+        </div>` : ''}
+      </div>
+    </div>`;
+
+  div.addEventListener('click', () => {
+    const expanded = div.classList.contains('expanded');
+    document.querySelectorAll('.exp-card.expanded').forEach(c => c.classList.remove('expanded'));
+    if (!expanded) div.classList.add('expanded');
+  });
+
+  document.getElementById('exp-grid').appendChild(div);
+}
+
+// ── DOMContentLoaded + cache restore ─────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('paperInput').addEventListener('keydown', e => {
+    if (e.key === 'Enter') fetchPaper();
+  });
+
+  const cached = sessionStorage.getItem('cache_index');
+  if (!cached) return;
+  try {
+    const { paperData, profile, experiments, paperInput } = JSON.parse(cached);
+    if (paperInput) document.getElementById('paperInput').value = paperInput;
+    lastData = paperData;
+    if (paperData?.title) document.getElementById('headerMeta').textContent = trunc(paperData.title, 90);
+    renderPaperMeta(paperData);
+    document.getElementById('analysis-section').style.display = 'block';
+    if (profile) renderProfile(profile);
+    if (experiments?.length) {
+      document.getElementById('exp-header').style.display = 'flex';
+      experiments.forEach(renderExpCard);
+      document.getElementById('exp-counter').textContent = experiments.length;
+    }
+    document.getElementById('analysisSpinner').style.display = 'none';
+    document.getElementById('analysisStatus').textContent = '';
+    const row = document.getElementById('done-row');
+    row.style.display = 'flex';
+    document.getElementById('done-title').textContent = 'Analysis complete';
+    const n = experiments?.length || 0;
+    document.getElementById('done-subtitle').textContent =
+      `${n} experiment${n !== 1 ? 's' : ''} extracted. Ready to map IND gaps.`;
+    updatePipelineStep(3, true);
+  } catch (_) {}
+});
 </script>
-
 </body>
 </html>

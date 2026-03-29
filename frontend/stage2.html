@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>INDAccelerator: Experiment Map</title>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: #0f1117;
+      color: #e2e8f0;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    /* ── Header ── */
+    header {
+      flex-shrink: 0;
+      background: #1a1d2e;
+      border-bottom: 1px solid #2d3748;
+      padding: 12px 24px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    header h1 { font-size: 18px; font-weight: 700; color: #63b3ed; }
+    #paperTitle {
+      font-size: 13px;
+      color: #a0aec0;
+      flex: 1;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .back-btn {
+      cursor: pointer;
+      border: 1px solid #4a5568;
+      border-radius: 7px;
+      background: transparent;
+      color: #a0aec0;
+      font-size: 13px;
+      font-weight: 500;
+      padding: 6px 14px;
+      flex-shrink: 0;
+    }
+    .back-btn:hover { background: #2d3748; color: #e2e8f0; }
+
+    /* ── Stats bar ── */
+    #statsBar {
+      flex-shrink: 0;
+      background: #13151f;
+      border-bottom: 1px solid #2d3748;
+      padding: 8px 24px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      min-height: 40px;
+    }
+    .stat-pill {
+      background: #1a1d2e;
+      border: 1px solid #2d3748;
+      border-radius: 20px;
+      padding: 3px 12px;
+      font-size: 12px;
+      color: #718096;
+    }
+    .stat-pill b { font-weight: 700; }
+    .stat-pill.pharm b { color: #90cdf4; }
+    .stat-pill.tox   b { color: #fca5a5; }
+    .stat-pill.pk    b { color: #5eead4; }
+    .stat-pill.cmc   b { color: #fbbf24; }
+    .stat-pill.strong b  { color: #68d391; }
+    .stat-pill.moderate b{ color: #f6ad55; }
+    .stat-pill.weak b    { color: #fc8181; }
+    .stat-pill.glp b     { color: #63b3ed; }
+
+    /* ── Loading overlay ── */
+    #loadingOverlay {
+      position: fixed;
+      inset: 0;
+      background: #0f1117;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 20px;
+      z-index: 100;
+    }
+    .spinner {
+      width: 40px; height: 40px;
+      border: 3px solid #2d3748;
+      border-top-color: #63b3ed;
+      border-radius: 50%;
+      animation: spin 0.9s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    #loadingMsg { font-size: 14px; color: #90cdf4; }
+    #loadingDetail { font-size: 12px; color: #4a5568; max-width: 380px; text-align: center; line-height: 1.6; }
+    #loadingTimer { font-size: 12px; color: #4a5568; font-variant-numeric: tabular-nums; }
+
+    /* ── Main split ── */
+    #main {
+      flex: 1;
+      display: flex;
+      overflow: hidden;
+    }
+
+    /* Diagram */
+    #diagramCol {
+      flex: 1;
+      overflow: auto;
+      padding: 24px;
+      background: #0b0d14;
+    }
+    #diagramCol::-webkit-scrollbar { width: 6px; height: 6px; }
+    #diagramCol::-webkit-scrollbar-track { background: #0b0d14; }
+    #diagramCol::-webkit-scrollbar-thumb { background: #2d3748; border-radius: 4px; }
+    #diagramContainer { min-width: 500px; }
+    #diagramContainer svg { max-width: none !important; }
+
+    /* Legend */
+    .legend {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin-bottom: 16px;
+      padding: 10px 14px;
+      background: #1a1d2e;
+      border: 1px solid #2d3748;
+      border-radius: 8px;
+      width: fit-content;
+    }
+    .legend-item { display: flex; align-items: center; gap: 6px; font-size: 11px; color: #718096; }
+    .legend-dot { width: 10px; height: 10px; border-radius: 3px; flex-shrink: 0; }
+    .legend-dot.pharm { background: #1e3a5f; border: 1px solid #4f7ef0; }
+    .legend-dot.tox   { background: #3b1010; border: 1px solid #e53e3e; }
+    .legend-dot.pk    { background: #0e2a2a; border: 1px solid #2dd4bf; }
+    .legend-dot.cmc   { background: #2a1f00; border: 1px solid #f59e0b; }
+
+    /* Detail panel */
+    #panelCol {
+      flex: 0 0 400px;
+      border-left: 1px solid #2d3748;
+      overflow-y: auto;
+      background: #1a1d2e;
+      display: flex;
+      flex-direction: column;
+    }
+    #panelCol::-webkit-scrollbar { width: 4px; }
+    #panelCol::-webkit-scrollbar-thumb { background: #4a5568; border-radius: 4px; }
+
+    #panelEmpty {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      color: #4a5568;
+      font-size: 13px;
+      text-align: center;
+      padding: 40px;
+    }
+    #panelEmpty svg { opacity: 0.25; }
+
+    #panelContent { display: none; padding: 20px; }
+
+    /* Panel typography */
+    .p-badges { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 12px; }
+    .p-badge {
+      font-size: 10px; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.5px; border-radius: 4px; padding: 2px 8px;
+    }
+    .p-badge.pharm { background:#1e3a5f; color:#90cdf4; border:1px solid #4f7ef0; }
+    .p-badge.tox   { background:#3b1010; color:#fca5a5; border:1px solid #e53e3e; }
+    .p-badge.pk    { background:#0e2a2a; color:#5eead4; border:1px solid #2dd4bf; }
+    .p-badge.cmc   { background:#2a1f00; color:#fbbf24; border:1px solid #f59e0b; }
+    .p-badge.strong   { background:#276749; color:#e2e8f0; border:1px solid #48bb78; }
+    .p-badge.moderate { background:#744210; color:#e2e8f0; border:1px solid #f6ad55; }
+    .p-badge.weak     { background:#742a2a; color:#e2e8f0; border:1px solid #fc8181; }
+    .p-badge.glp  { background:#1a2744; color:#63b3ed; border:1px solid #3182ce; }
+    .p-badge.cat  { background:#2d3748; color:#a0aec0; border:1px solid #4a5568; }
+
+    .p-name { font-size: 15px; font-weight: 700; color: #e2e8f0; line-height: 1.4; margin-bottom: 16px; }
+
+    .p-block { margin-bottom: 14px; }
+    .p-label {
+      font-size: 10px; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.8px; color: #718096; margin-bottom: 5px;
+    }
+    .p-text { font-size: 12px; color: #a0aec0; line-height: 1.65; }
+
+    .p-list { list-style: none; margin: 0; padding: 0; }
+    .p-list li {
+      font-size: 12px; color: #a0aec0; line-height: 1.55;
+      padding: 4px 0 4px 16px;
+      border-bottom: 1px solid #1a2035;
+      position: relative;
+    }
+    .p-list li:last-child { border-bottom: none; }
+    .p-list.findings li::before { content: "✓"; position:absolute; left:0; color:#48bb78; font-size:10px; top:5px; }
+    .p-list.limits  li::before { content: "!"; position:absolute; left:2px; color:#e53e3e; font-size:10px; font-weight:700; top:5px; }
+    .p-list.generic li::before { content: "›"; position:absolute; left:2px; color:#4a5568; top:5px; }
+
+    .p-chips { display: flex; flex-wrap: wrap; gap: 4px; }
+    .p-chip {
+      background: #0f1117; border: 1px solid #2d3748; border-radius: 4px;
+      padding: 2px 7px; font-size: 11px;
+      font-family: "SF Mono", "Fira Code", monospace; color: #68d391;
+    }
+
+    .p-divider { border: none; border-top: 1px solid #2d3748; margin: 14px 0; }
+
+    .p-footer {
+      font-size: 11px; color: #4a5568; margin-top: 14px;
+      padding-top: 12px; border-top: 1px solid #2d3748;
+      display: flex; flex-direction: column; gap: 3px;
+    }
+    .p-footer span { color: #718096; }
+  </style>
+</head>
+<body>
+
+<!-- Loading overlay -->
+<div id="loadingOverlay">
+  <div class="spinner"></div>
+  <div id="loadingMsg">Analyzing paper with Claude Opus…</div>
+  <div id="loadingDetail">Reading results &amp; methods sections, matching experiments, building hierarchy.</div>
+  <div id="loadingTimer">0s elapsed</div>
+</div>
+
+<header>
+  <h1>INDAccelerator</h1>
+  <div id="paperTitle">Stage 2: Experiment Map</div>
+  <button class="back-btn" onclick="history.back()">← Back to Paper</button>
+</header>
+
+<div id="statsBar"></div>
+
+<div id="main">
+  <div id="diagramCol">
+    <div class="legend">
+      <div class="legend-item"><div class="legend-dot pharm"></div>Pharmacology</div>
+      <div class="legend-item"><div class="legend-dot tox"></div>Toxicology</div>
+      <div class="legend-item"><div class="legend-dot pk"></div>Pharmacokinetics</div>
+      <div class="legend-item"><div class="legend-dot cmc"></div>CMC</div>
+      <div class="legend-item" style="margin-left:8px;color:#a0aec0">★ = GLP study &nbsp;·&nbsp; arrows = experimental dependency</div>
+    </div>
+    <div id="diagramContainer"></div>
+  </div>
+
+  <div id="panelCol">
+    <div id="panelEmpty">
+      <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <rect x="3" y="3" width="18" height="18" rx="2"/>
+        <path d="M9 9h6M9 12h6M9 15h4"/>
+      </svg>
+      Click any experiment node<br>to see details
+    </div>
+    <div id="panelContent"></div>
+  </div>
+</div>
+
+<script>
+mermaid.initialize({
+  startOnLoad: false,
+  securityLevel: 'loose',
+  theme: 'dark',
+  flowchart: { useMaxWidth: false, htmlLabels: true, curve: 'basis' },
+});
+
+// ── Globals ──────────────────────────────────────────────────────────────────
+const params = new URLSearchParams(location.search);
+const PMID = params.get('pmid');
+const API = 'http://localhost:8000';
+window._nodeMap = {};
+
+// ── Timer ────────────────────────────────────────────────────────────────────
+let _timerStart = Date.now();
+let _timerInterval = setInterval(() => {
+  const s = Math.round((Date.now() - _timerStart) / 1000);
+  const el = document.getElementById('loadingTimer');
+  if (el) el.textContent = `${s}s elapsed`;
+}, 1000);
+
+function stopTimer() {
+  clearInterval(_timerInterval);
+  const el = document.getElementById('loadingTimer');
+  if (el) el.textContent = '';
+}
+
+function hideLoading() {
+  stopTimer();
+  document.getElementById('loadingOverlay').style.display = 'none';
+}
+
+function showError(msg) {
+  stopTimer();
+  document.getElementById('loadingMsg').textContent = msg;
+  document.getElementById('loadingMsg').style.color = '#fc8181';
+  document.getElementById('loadingDetail').textContent = '';
+  document.querySelector('.spinner').style.display = 'none';
+  document.getElementById('loadingTimer').textContent = '';
+}
+
+// ── Helpers ──────────────────────────────────────────────────────────────────
+function esc(s) {
+  if (!s) return '';
+  return String(s)
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// ── Load ─────────────────────────────────────────────────────────────────────
+async function load() {
+  if (!PMID) { showError('No PMID in URL. Go back and fetch a paper first.'); return; }
+
+  try {
+    const resp = await fetch(`${API}/api/experiments?pmid=${encodeURIComponent(PMID)}`);
+    if (!resp.ok) {
+      const err = await resp.json().catch(() => ({ detail: resp.statusText }));
+      showError(`Error: ${err.detail}`);
+      return;
+    }
+    const data = await resp.json();
+
+    window._nodeMap = data.node_map || {};
+
+    // Populate paper title
+    const firstExp = (data.experiments || [])[0];
+    if (firstExp) {
+      document.getElementById('paperTitle').textContent =
+        `PMID ${PMID}: ${data.stats?.total || 0} experiments extracted`;
+    }
+
+    renderStats(data.stats || {});
+    await renderDiagram(data.mermaid || '');
+    hideLoading();
+
+  } catch (err) {
+    showError(`Network error: ${err.message}. Is the backend running on localhost:8000?`);
+  }
+}
+
+// ── Stats bar ─────────────────────────────────────────────────────────────────
+function renderStats(stats) {
+  const byStr = stats.by_strength || {};
+  const bySection = stats.by_section || {};
+  const secMap = {
+    'Section 3: Pharmacology': ['pharm', 'Pharmacology'],
+    'Section 4: Toxicology':   ['tox',   'Toxicology'],
+    'Section 5: Pharmacokinetics': ['pk','PK'],
+    'Section 7: CMC':          ['cmc',   'CMC'],
+  };
+
+  let html = `<div class="stat-pill"><b>${stats.total || 0}</b> experiments</div>`;
+  if (byStr.strong)   html += `<div class="stat-pill strong"><b>${byStr.strong}</b> strong evidence</div>`;
+  if (byStr.moderate) html += `<div class="stat-pill moderate"><b>${byStr.moderate}</b> moderate</div>`;
+  if (byStr.weak)     html += `<div class="stat-pill weak"><b>${byStr.weak}</b> weak</div>`;
+  if (stats.glp_count) html += `<div class="stat-pill glp"><b>${stats.glp_count}</b> GLP</div>`;
+
+  for (const [sec, n] of Object.entries(bySection)) {
+    const [cls, label] = secMap[sec] || ['', sec];
+    html += `<div class="stat-pill ${cls}"><b>${n}</b> ${label}</div>`;
+  }
+
+  document.getElementById('statsBar').innerHTML = html;
+}
+
+// ── Diagram ───────────────────────────────────────────────────────────────────
+let _renderCount = 0;
+async function renderDiagram(code) {
+  const container = document.getElementById('diagramContainer');
+  if (!code) {
+    container.innerHTML = '<p style="color:#fc8181;padding:20px">No diagram generated.</p>';
+    return;
+  }
+  try {
+    const id = `mermaid-${++_renderCount}`;
+    const { svg } = await mermaid.render(id, code);
+    container.innerHTML = svg;
+  } catch (err) {
+    container.innerHTML = `<p style="color:#fc8181;padding:20px">Diagram error: ${esc(err.message)}</p>`;
+  }
+}
+
+// ── Detail panel ──────────────────────────────────────────────────────────────
+window.showDetail = function(nodeId) {
+  const exp = window._nodeMap[nodeId];
+  if (!exp) return;
+
+  document.getElementById('panelEmpty').style.display = 'none';
+  const panel = document.getElementById('panelContent');
+  panel.style.display = 'block';
+
+  const secCls = {
+    'Section 3: Pharmacology': 'pharm',
+    'Section 4: Toxicology': 'tox',
+    'Section 5: Pharmacokinetics': 'pk',
+    'Section 7: CMC': 'cmc',
+  }[exp.ind_section] || 'pharm';
+
+  const secLabel = (exp.ind_section || '').replace('Section ', 'Sec ').replace(' : ', ': ');
+  const catLabel = (exp.category || '').replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+  const strength = exp.evidence_strength || 'moderate';
+
+  let badges = `
+    <span class="p-badge ${secCls}">${esc(secLabel)}</span>
+    <span class="p-badge ${strength}">${strength.charAt(0).toUpperCase() + strength.slice(1)} evidence</span>
+    <span class="p-badge cat">${esc(catLabel)}</span>
+  `;
+  if (exp.glp) badges += `<span class="p-badge glp">GLP ★</span>`;
+  if (exp.species) badges += `<span class="p-badge cat">${esc(exp.species)}</span>`;
+
+  // Key findings list
+  const findings = (exp.key_findings || []);
+  const findingsHtml = findings.length
+    ? `<ul class="p-list findings">${findings.map(f => `<li>${esc(f)}</li>`).join('')}</ul>`
+    : '<span class="p-text" style="color:#4a5568">None recorded</span>';
+
+  // Quantitative chips
+  const quant = (exp.quantitative_results || []);
+  const quantHtml = quant.length
+    ? `<div class="p-chips">${quant.map(q => `<span class="p-chip">${esc(q)}</span>`).join('')}</div>`
+    : '<span class="p-text" style="color:#4a5568">None recorded</span>';
+
+  // Limitations
+  const lims = (exp.limitations || []);
+  const limsHtml = lims.length
+    ? `<ul class="p-list limits">${lims.map(l => `<li>${esc(l)}</li>`).join('')}</ul>`
+    : '<span class="p-text" style="color:#4a5568">None recorded</span>';
+
+  // Parent experiment name
+  let parentInfo = ':';
+  if (exp.parent_id) {
+    const parentEntry = Object.values(window._nodeMap).find(e => e.id === exp.parent_id);
+    parentInfo = parentEntry ? esc(parentEntry.name) : esc(exp.parent_id);
+  }
+
+  panel.innerHTML = `
+    <div class="p-badges">${badges}</div>
+    <div class="p-name">${esc(exp.name)}</div>
+
+    <div class="p-block">
+      <div class="p-label">What was the goal?</div>
+      <div class="p-text">${esc(exp.purpose || '')}</div>
+    </div>
+
+    <div class="p-block">
+      <div class="p-label">How it was run</div>
+      <div class="p-text">${esc(exp.method_summary || '')}</div>
+    </div>
+
+    <hr class="p-divider">
+
+    <div class="p-block">
+      <div class="p-label">What was found</div>
+      ${findingsHtml}
+    </div>
+
+    <div class="p-block">
+      <div class="p-label">Numbers</div>
+      ${quantHtml}
+    </div>
+
+    <hr class="p-divider">
+
+    <div class="p-block">
+      <div class="p-label">What this establishes for IND</div>
+      <div class="p-text">${esc(exp.ind_relevance || '')}</div>
+    </div>
+
+    <div class="p-block">
+      <div class="p-label">Gaps &amp; limitations</div>
+      ${limsHtml}
+    </div>
+
+    <div class="p-footer">
+      <div><span>Builds on:</span> ${parentInfo}</div>
+      <div><span>Figures:</span> ${esc((exp.source_figures || []).join(', ') || '')}</div>
+      <div><span>Sections:</span> ${esc((exp.source_sections || []).join(', ') || '')}</div>
+    </div>
+  `;
+};
+
+// ── Init ──────────────────────────────────────────────────────────────────────
+load();
+</script>
+</body>
+</html>

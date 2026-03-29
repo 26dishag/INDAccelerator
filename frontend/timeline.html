@@ -1,0 +1,911 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>INDAccelerator: Development Timeline</title>
+  <link rel="stylesheet" href="shared.css" />
+  <style>
+    /* ── Page layout ───────────────────────────────────────────────── */
+    #page { display: none; padding: 28px 24px; }
+    .tl-inner { max-width: 1400px; margin: 0 auto; display: flex; flex-direction: column; gap: 24px; }
+
+    /* ── Page heading ──────────────────────────────────────────────── */
+    .tl-heading {
+      font-size: var(--t-lg);
+      font-weight: 600;
+      color: var(--fg);
+      line-height: 1.05;
+      padding-bottom: 16px;
+    }
+
+    /* ── Summary bar ───────────────────────────────────────────────── */
+    #summaryBar {
+      border-bottom: var(--line-ui);
+      display: flex;
+      gap: 0;
+      flex-wrap: wrap;
+      align-items: stretch;
+      padding-bottom: 24px;
+      margin-bottom: 4px;
+    }
+    .sum-stat {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      padding: 0 32px 0 0;
+      margin-right: 32px;
+      border-right: var(--line-ui);
+    }
+    .sum-stat:last-of-type { border-right: none; }
+    .sum-label {
+      font-size: var(--t-xs);
+      font-weight: 600;
+      color: var(--fg);
+      text-transform: uppercase;
+      opacity: 0.4;
+    }
+    .sum-value {
+      font-size: var(--t-lg);
+      font-weight: 600;
+      color: var(--fg);
+      line-height: 1.2;
+    }
+
+    /* ── Legend bar ────────────────────────────────────────────────── */
+    .legend-bar {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      flex-wrap: wrap;
+      padding: 4px 0;
+    }
+    .legend-group {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .legend-divider {
+      width: 1px;
+      height: 16px;
+      background: var(--fg);
+      opacity: 0.2;
+    }
+    .leg {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: var(--t-xs);
+      font-weight: 600;
+      color: var(--fg);
+    }
+    /* Failure risk: shown as left bar sample */
+    .leg-bar { width: 4px; height: 14px; flex-shrink: 0; }
+    .leg-bar.low    { background: var(--green); }
+    .leg-bar.medium { background: var(--amber); }
+    .leg-bar.high   { background: var(--red); }
+
+    /* ── Chart container ───────────────────────────────────────────── */
+    #chart-wrap { overflow-x: auto; overflow-y: visible; padding-bottom: 4px; }
+    #chart {
+      position: relative;
+      background: var(--bg);
+    }
+
+    /* ── Ruler ─────────────────────────────────────────────────────── */
+    #ruler {
+      position: relative; height: 32px;
+      background: var(--bg);
+      z-index: 2; overflow: hidden;
+    }
+    .ruler-tick {
+      position: absolute; top: 0; bottom: 0;
+      border-left: var(--line-ui);
+      font-size: var(--t-xs); color: var(--fg);
+      padding: 8px 0 0 5px; white-space: nowrap;
+    }
+    .ruler-label {
+      position: absolute; left: 0; top: 0; bottom: 0; width: 130px;
+      background: var(--bg); z-index: 1;
+    }
+
+    /* ── Track rows ────────────────────────────────────────────────── */
+    .track-row {
+      position: relative;
+      background: var(--bg);
+    }
+
+    .track-label {
+      position: absolute; left: 0; top: 0; bottom: 0;
+      width: 130px;
+      display: flex; align-items: center; justify-content: center;
+      padding: 8px;
+      font-size: var(--t-xs);
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--fg);
+      text-align: center;
+      line-height: 1.4;
+      z-index: 3;
+      background: #f7f7f7;
+    }
+
+    /* ── SVG overlay ───────────────────────────────────────────────── */
+    #arrows-svg {
+      position: absolute; top: 0; left: 0;
+      pointer-events: none; overflow: visible; z-index: 4;
+    }
+
+    /* ── Study cards ───────────────────────────────────────────────── */
+    .study-card {
+      position: absolute; z-index: 5;
+      background: var(--bg);
+      border: 1px solid #e8e8e8;
+      cursor: pointer;
+      transition: box-shadow 0.1s;
+      overflow: hidden;
+      min-width: 110px;
+    }
+    .study-card:hover { box-shadow: 3px 3px 0 var(--fg); z-index: 20; }
+    .study-card.expanded { z-index: 20; overflow: visible; }
+    .study-card.phase2 { opacity: 0.4; }
+    /* When popup is open, restore full opacity so it's readable */
+    .study-card.phase2.expanded { opacity: 1; }
+
+    /* Left bar — failure risk color */
+    .card-bar { width: 5px; position: absolute; left: 0; top: 0; bottom: 0; }
+    .card-bar.low    { background: var(--green); }
+    .card-bar.medium { background: var(--amber); }
+    .card-bar.high   { background: var(--red); }
+
+    /* Fixed 74px collapsed height — must match CARD_H constant in JS */
+    .card-collapsed {
+      height: 74px; padding: 7px 8px 6px 14px;
+      display: flex; flex-direction: column; justify-content: space-between;
+      overflow: hidden;
+    }
+    .card-name {
+      font-size: 12px; font-weight: 700; color: var(--fg);
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+      line-height: 1.3;
+    }
+    .card-row1 { display: flex; justify-content: space-between; align-items: center; gap: 4px; }
+    .card-cost { font-size: 10px; color: var(--fg); white-space: nowrap; }
+    .card-fail {
+      font-size: 10px; font-weight: 600;
+      border: 1px solid #ccc;
+      padding: 1px 5px; white-space: nowrap;
+      color: var(--fg);
+    }
+
+    .card-row2 { display: flex; gap: 3px; align-items: center; flex-wrap: nowrap; overflow: hidden; }
+    .cbadge {
+      font-size: 9px; font-weight: 700;
+      padding: 1px 5px; text-transform: uppercase; letter-spacing: 0.3px;
+      white-space: nowrap; flex-shrink: 0; border: 1px solid var(--fg);
+      color: var(--fg);
+    }
+    .cbadge.p1   { background: var(--fg); color: var(--bg); }
+    .cbadge.p2   { border-style: dashed; }
+    .cbadge.cond { border-style: dashed; }
+    .cbadge.wk   { border-color: #ccc; color: var(--fg); opacity: 0.6; }
+
+    /* ── Expanded popup — full width of the card ───────────────────── */
+    .card-detail {
+      display: none;
+      position: absolute; top: 74px; left: -1px; right: -1px;
+      background: var(--bg);
+      border: 1px solid #000; border-top: none;
+      box-shadow: 4px 4px 0 #000;
+      z-index: 30;
+      min-width: 260px;
+      font-size: 11px;
+    }
+    .card-detail.open { display: block; }
+
+    /* Close strip */
+    .cd-close-strip {
+      background: #111; display: flex;
+      justify-content: space-between; align-items: center;
+      padding: 4px 8px 4px 10px;
+    }
+    .cd-close-strip-meta { font-size: 9px; color: #fff; font-weight: 600; letter-spacing: 0.3px; }
+    .cd-close {
+      background: none; border: none; color: #fff;
+      font-size: 14px; cursor: pointer; line-height: 1; padding: 0;
+    }
+    .cd-close:hover { color: #ccc; }
+
+    /* Why needed */
+    .cd-why {
+      padding: 6px 10px;
+      border-bottom: 1px solid #f0f0f0;
+      line-height: 1.45;
+    }
+    .cd-why-reg {
+      font-size: 9px; font-weight: 800; letter-spacing: 0.5px;
+      color: #2563eb; font-family: monospace;
+      display: block; margin-bottom: 2px;
+    }
+    .cd-why-gap { font-size: 11px; color: var(--fg); font-weight: 500; }
+
+    /* Dependency chain */
+    .cd-chain {
+      padding: 5px 10px;
+      border-bottom: 1px solid #f0f0f0;
+      font-size: 10px; color: var(--fg);
+      display: flex; align-items: center; flex-wrap: wrap; gap: 3px;
+      line-height: 1.5;
+    }
+    .ch-label { font-size: 8px; font-weight: 800; text-transform: uppercase;
+                letter-spacing: 0.5px; color: var(--fg); opacity: 0.3;
+                margin-right: 2px; }
+    .ch-node {
+      padding: 1px 6px; border: 1px solid #ddd;
+      background: #f5f5f5; white-space: nowrap;
+      max-width: 140px; overflow: hidden; text-overflow: ellipsis;
+    }
+    .ch-node.ch-this {
+      background: var(--fg); color: var(--bg);
+      border-color: var(--fg); font-weight: 700; max-width: none;
+    }
+    .ch-arrow { color: var(--fg); opacity: 0.3; font-size: 9px; }
+
+    /* Risk + Cost row */
+    .cd-metrics { display: flex; border-bottom: 1px solid #f0f0f0; }
+    .cd-m-risk {
+      flex: 1; padding: 6px 10px;
+      border-right: 1px solid #f0f0f0;
+      display: flex; align-items: flex-start; gap: 5px;
+    }
+    .cd-risk-pct {
+      font-size: 17px; font-weight: 800; line-height: 1; flex-shrink: 0; margin-top: 1px;
+    }
+    .cd-risk-pct.low    { color: #16a34a; }
+    .cd-risk-pct.medium { color: #b45309; }
+    .cd-risk-pct.high   { color: #dc2626; }
+    .cd-risk-why { font-size: 10px; color: var(--fg); opacity: 0.65; line-height: 1.4; }
+    .cd-m-cost {
+      padding: 6px 10px; min-width: 100px;
+      display: flex; flex-direction: column; gap: 4px; justify-content: center;
+    }
+    .cd-cost-val { font-size: 12px; font-weight: 800; color: var(--fg); white-space: nowrap; }
+    .cd-tier-pill {
+      font-size: 8px; font-weight: 800; letter-spacing: 0.4px; text-transform: uppercase;
+      padding: 1px 5px; white-space: nowrap; align-self: flex-start;
+    }
+    .tier-p1   { background: #000; color: #fff; }
+    .tier-cond { border: 1px dashed #b45309; color: #b45309; }
+    .tier-p2   { border: 1px dashed #9ca3af; color: #6b7280; }
+
+    /* Class liability / design warning */
+    .cd-warn {
+      padding: 5px 10px; border-bottom: 1px solid #fde68a;
+      background: #fffbeb; font-size: 10px; color: #78350f; line-height: 1.4;
+    }
+    .cd-warn::before { content: '⚠ '; font-weight: 700; }
+
+    /* Cost saving */
+    .cd-saving {
+      padding: 5px 10px; border-bottom: 1px solid #dcfce7;
+      background: #f0fdf4; font-size: 10px; color: #166534; line-height: 1.4;
+    }
+    .cd-saving::before { content: '💰 '; }
+
+    /* Footer */
+    .cd-foot { padding: 5px 10px; display: flex; gap: 8px; align-items: center; }
+    .cd-foot a {
+      font-size: 10px; font-weight: 700; color: #2563eb;
+      text-decoration: none; border-bottom: 1px solid #bfdbfe;
+    }
+    .cd-foot a:hover { border-bottom-color: #2563eb; }
+
+    /* ── Spend optimizer ───────────────────────────────────────────── */
+    .spend-bar {
+      border: 1px solid #e8e8e8;
+      padding: 12px 16px;
+      display: flex; align-items: center; gap: 16px; flex-wrap: wrap;
+      background: #fafafa;
+    }
+    .spend-label {
+      font-size: var(--t-xs); font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.5px; color: var(--fg); opacity: 0.5; white-space: nowrap;
+    }
+    .spend-scenarios { display: flex; gap: 6px; }
+    .spend-btn {
+      font-size: 10px; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.5px; padding: 4px 12px; cursor: pointer;
+      border: 1px solid var(--fg); background: none; color: var(--fg);
+    }
+    .spend-btn:hover { background: var(--fg); color: var(--bg); }
+    .spend-btn.active { background: var(--fg); color: var(--bg); }
+    .spend-budget-wrap { display: flex; align-items: center; gap: 8px; }
+    .spend-budget-input {
+      font-size: var(--t-sm); font-weight: 700; font-family: var(--font);
+      width: 100px; padding: 3px 8px; border: 1px solid #ccc;
+      background: var(--bg); color: var(--fg);
+    }
+    .spend-result {
+      margin-left: auto; font-size: var(--t-xs); color: var(--fg);
+      display: flex; gap: 16px;
+    }
+    .spend-result-item { display: flex; flex-direction: column; gap: 1px; }
+    .spend-result-val  { font-size: var(--t-sm); font-weight: 700; }
+    .spend-result-lbl  { opacity: 0.4; font-weight: 600; text-transform: uppercase; letter-spacing: 0.4px; }
+    .study-card.deferred-opt { opacity: 0.25; }
+
+    /* ── Phase 1 gate ──────────────────────────────────────────────── */
+    .gate-line {
+      position: absolute; width: 1px;
+      background: repeating-linear-gradient(
+        to bottom, var(--fg) 0px, var(--fg) 6px,
+        transparent 6px, transparent 11px
+      );
+      z-index: 6;
+    }
+    .gate-badge {
+      position: absolute; top: -26px;
+      transform: translateX(-50%);
+      background: var(--fg); color: var(--bg);
+      font-size: var(--t-xs); font-weight: 700;
+      padding: 3px 10px;
+      white-space: nowrap; z-index: 7;
+      letter-spacing: 0.3px;
+    }
+
+  </style>
+</head>
+<body>
+
+<header class="app-header">
+  <a class="app-logo" href="index.html">
+    <span class="app-logo-name">INDAccelerator</span>
+  </a>
+  <span class="app-header-context" id="headerSub">Development Timeline · Phase 1 Roadmap</span>
+  <div class="app-header-actions">
+    <button class="btn btn-sm" onclick="history.back()">← Back</button>
+    <button class="btn btn-sm" onclick="sessionStorage.removeItem('cache_timeline');location.reload()">Regenerate</button>
+  </div>
+</header>
+
+<div id="loading" class="loading-state">
+  <div class="spinner"></div>
+  <div class="loading-label" id="loadingMsg">Generating development timeline…</div>
+</div>
+
+<div id="page">
+<div class="tl-inner">
+
+  <h1 class="tl-heading">Development Plan</h1>
+
+  <!-- Summary bar -->
+  <div id="summaryBar">
+    <div class="sum-stat">
+      <div class="sum-label">Compound</div>
+      <div class="sum-value" id="sumCompound"></div>
+    </div>
+    <div class="sum-stat">
+      <div class="sum-label">Weeks to Phase 1</div>
+      <div class="sum-value" id="sumWeeks"></div>
+    </div>
+    <div class="sum-stat">
+      <div class="sum-label">Estimated Cost</div>
+      <div class="sum-value" id="sumCost"></div>
+    </div>
+    <div class="sum-stat">
+      <div class="sum-label">Phase 1 Studies</div>
+      <div class="sum-value" id="sumCount"></div>
+    </div>
+  </div>
+
+  <!-- Spend optimizer -->
+  <div class="spend-bar" id="spendBar">
+    <span class="spend-label">Scenario</span>
+    <div class="spend-scenarios">
+      <button class="spend-btn active" id="btnFastest" onclick="applyScenario('fastest',this)">Fastest</button>
+      <button class="spend-btn" id="btnCheapest" onclick="applyScenario('cheapest',this)">Cheapest</button>
+      <button class="spend-btn" id="btnBalanced" onclick="applyScenario('balanced',this)">Balanced</button>
+    </div>
+    <div class="spend-budget-wrap">
+      <span class="spend-label">Budget</span>
+      <input class="spend-budget-input" type="text" id="budgetInput" placeholder="e.g. $800k" oninput="onBudgetInput(this.value)" />
+    </div>
+    <div class="spend-result" id="spendResult" style="display:none">
+      <div class="spend-result-item"><span class="spend-result-val" id="srWeeks">—</span><span class="spend-result-lbl">Weeks</span></div>
+      <div class="spend-result-item"><span class="spend-result-val" id="srCost">—</span><span class="spend-result-lbl">Est. Cost</span></div>
+      <div class="spend-result-item"><span class="spend-result-val" id="srStudies">—</span><span class="spend-result-lbl">Studies</span></div>
+    </div>
+  </div>
+
+  <!-- Legend -->
+  <div class="legend-bar">
+    <div class="legend-group">
+      <div class="leg"><div class="leg-bar low"></div>Low risk</div>
+      <div class="leg"><div class="leg-bar medium"></div>Medium risk</div>
+      <div class="leg"><div class="leg-bar high"></div>High risk</div>
+    </div>
+    <div class="legend-divider"></div>
+    <div class="legend-group">
+      <div class="leg"><span class="cbadge p1">P1</span>&nbsp;Phase 1 required</div>
+      <div class="leg"><span class="cbadge cond">Cond</span>&nbsp;Conditional</div>
+      <div class="leg"><span class="cbadge p2">P2</span>&nbsp;Defer to Phase 2</div>
+    </div>
+  </div>
+
+  <!-- Chart -->
+  <div id="chart-wrap">
+    <div id="chart">
+      <div id="ruler"></div>
+      <div id="track-A" class="track-row track-a">
+        <div class="track-label">Track A<br>In Vitro &<br>Assays</div>
+      </div>
+      <div id="track-B" class="track-row track-b">
+        <div class="track-label">Track B<br>Safety<br>Pharm</div>
+      </div>
+      <div id="track-C" class="track-row track-c">
+        <div class="track-label">Track C<br>GLP<br>Toxicology</div>
+      </div>
+      <svg id="arrows-svg">
+        <defs>
+          <marker id="arr-low" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+            <path d="M0,0 L0,6 L8,3 z" fill="#16a34a"/>
+          </marker>
+          <marker id="arr-medium" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+            <path d="M0,0 L0,6 L8,3 z" fill="#b45309"/>
+          </marker>
+          <marker id="arr-high" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+            <path d="M0,0 L0,6 L8,3 z" fill="#dc2626"/>
+          </marker>
+        </defs>
+      </svg>
+    </div>
+  </div>
+
+
+</div>
+</div>
+
+<script>
+const API = 'http://localhost:8000';
+const studies = {};
+let summaryData = null;
+let totalWeeks = 36;
+
+// ── Layout constants — fixed pixels, no percentages ───────────────────────────
+const LEFT_PAD = 130;   // track label width
+const WEEK_W   = 44;    // px per week — chart scrolls horizontally
+const CARD_H   = 74;    // collapsed card height — must match .card-collapsed height in CSS
+const LANE_GAP = 10;    // vertical gap between lanes in same track
+const TRACK_PAD = 12;   // top/bottom padding within each track row
+
+function esc(s) {
+  return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+function fmt$k(n) {
+  if (n >= 1000000) return '$' + (n/1000000).toFixed(1) + 'M';
+  if (n >= 1000)    return '$' + Math.round(n/1000) + 'k';
+  return '$' + n;
+}
+function chartTotalW() { return LEFT_PAD + totalWeeks * WEEK_W; }
+function weekToX(w)    { return LEFT_PAD + w * WEEK_W; }
+
+// ── Lane assignment ───────────────────────────────────────────────────────────
+function assignLanes() {
+  const tracks = { A: [], B: [], C: [] };
+  for (const s of Object.values(studies)) {
+    if (tracks[s.track]) tracks[s.track].push(s);
+  }
+  for (const list of Object.values(tracks)) {
+    list.sort((a, b) => a.week_start - b.week_start);
+    const laneEnd = [];
+    for (const s of list) {
+      let lane = laneEnd.findIndex(e => e <= s.week_start);
+      if (lane === -1) lane = laneEnd.length;
+      s._lane = lane;
+      laneEnd[lane] = s.week_end;
+    }
+  }
+}
+
+// ── Layout all cards (exact integer math, no DOM measurement needed) ──────────
+function positionAllCards() {
+  assignLanes();
+
+  // 1. Count lanes per track
+  const lanesPerTrack = { A: 1, B: 1, C: 1 };
+  for (const s of Object.values(studies)) {
+    lanesPerTrack[s.track] = Math.max(lanesPerTrack[s.track], (s._lane || 0) + 1);
+  }
+
+  // 2. Set explicit track row heights
+  for (const [t, lanes] of Object.entries(lanesPerTrack)) {
+    const row = document.getElementById(`track-${t}`);
+    if (row) row.style.height = (TRACK_PAD + lanes * CARD_H + (lanes - 1) * LANE_GAP + TRACK_PAD) + 'px';
+  }
+
+  // 3. Set chart width
+  const cw = chartTotalW();
+  document.getElementById('chart').style.width = cw + 'px';
+
+  // 4. Position each card
+  for (const s of Object.values(studies)) {
+    const card = document.getElementById(`card-${s.id}`);
+    if (!card) continue;
+    const x = weekToX(s.week_start);
+    const w = Math.max(110, (s.week_end - s.week_start) * WEEK_W - 6);
+    const y = TRACK_PAD + (s._lane || 0) * (CARD_H + LANE_GAP);
+    card.style.left  = x + 'px';
+    card.style.top   = y + 'px';
+    card.style.width = w + 'px';
+  }
+
+  buildRuler();
+  positionGate();
+  drawArrows();
+}
+
+// ── Week ruler ────────────────────────────────────────────────────────────────
+function buildRuler() {
+  const ruler = document.getElementById('ruler');
+  ruler.querySelectorAll('.ruler-tick').forEach(t => t.remove());
+  const step = totalWeeks <= 24 ? 2 : 4;
+  for (let w = 0; w <= totalWeeks; w += step) {
+    const tick = document.createElement('div');
+    tick.className = 'ruler-tick';
+    tick.textContent = `Wk ${w}`;
+    tick.style.left = weekToX(w) + 'px';
+    ruler.appendChild(tick);
+  }
+}
+
+// ── Phase 1 gate line ─────────────────────────────────────────────────────────
+function positionGate() {
+  if (!summaryData) return;
+  let gate = document.getElementById('gate-line');
+  if (!gate) {
+    gate = document.createElement('div');
+    gate.id = 'gate-line'; gate.className = 'gate-line';
+    const badge = document.createElement('div');
+    badge.className = 'gate-badge'; badge.textContent = '★ Phase 1 IND';
+    gate.appendChild(badge);
+    document.getElementById('chart').appendChild(gate);
+  }
+  const gw = summaryData.phase1_gate_week || summaryData.total_weeks_to_phase1;
+  gate.style.left   = weekToX(gw) + 'px';
+  gate.style.top    = '32px';
+  gate.style.height = (document.getElementById('chart').offsetHeight - 32) + 'px';
+}
+
+// ── Dependency arrows ─────────────────────────────────────────────────────────
+function drawArrows() {
+  const svg = document.getElementById('arrows-svg');
+  svg.querySelectorAll('path.arrow').forEach(p => p.remove());
+  const chart = document.getElementById('chart');
+  svg.setAttribute('width',  chart.offsetWidth);
+  svg.setAttribute('height', chart.offsetHeight);
+  const chartRect = chart.getBoundingClientRect();
+
+  for (const s of Object.values(studies)) {
+    for (const depId of (s.depends_on || [])) {
+      const fromCard = document.getElementById(`card-${depId}`);
+      const toCard   = document.getElementById(`card-${s.id}`);
+      if (!fromCard || !toCard) continue;
+      const fR = fromCard.getBoundingClientRect();
+      const tR = toCard.getBoundingClientRect();
+      const x1 = fR.right  - chartRect.left;
+      const y1 = fR.top    + CARD_H / 2 - chartRect.top;
+      const x2 = tR.left   - chartRect.left;
+      const y2 = tR.top    + CARD_H / 2 - chartRect.top;
+      const dep = studies[depId];
+      const risk = dep?.failure_likelihood || 'low';
+      const color = risk === 'high' ? '#dc2626' : risk === 'medium' ? '#b45309' : '#16a34a';
+      const cp = Math.max(30, Math.abs(x2 - x1) * 0.4);
+      const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+      path.setAttribute('class', 'arrow');
+      path.setAttribute('d', `M ${x1} ${y1} C ${x1+cp} ${y1} ${x2-cp} ${y2} ${x2} ${y2}`);
+      path.setAttribute('stroke', color);
+      path.setAttribute('stroke-width', '1.5');
+      path.setAttribute('fill', 'none');
+      path.setAttribute('stroke-dasharray', '4 3');
+      path.setAttribute('marker-end', `url(#arr-${risk})`);
+      path.setAttribute('opacity', '0.65');
+      svg.appendChild(path);
+    }
+  }
+}
+
+// ── Truncate to first sentence only ───────────────────────────────────────────
+function firstSentence(s) {
+  if (!s) return '';
+  const m = s.match(/^.+?[.!?](?:\s|$)/);
+  return m ? m[0].trim() : s;
+}
+
+// ── Render a study card ────────────────────────────────────────────────────────
+function renderCard(s) {
+  const risk = s.failure_likelihood || 'low';
+  const tier = s.fda_tier || 'phase1_blocking';
+  const tierLabel = tier === 'phase1_blocking' ? 'Phase 1 Blocking'
+    : tier === 'conditional' ? 'Conditional' : 'Defer to Phase 2';
+  const tierBadge = tier === 'phase1_blocking' ? '<span class="cbadge p1">P1</span>'
+    : tier === 'conditional'  ? '<span class="cbadge cond">COND</span>'
+    : '<span class="cbadge p2">P2</span>';
+
+  const tip = (s.cost_saving_tips || [])[0] || null;
+  const pubmedQuery = s.pubmed_query || s.name;
+  const pubmedUrl = `https://pubmed.ncbi.nlm.nih.gov/?term=${encodeURIComponent(pubmedQuery)}&sort=relevance`;
+  const tierPill = `tier-${tier === 'phase1_blocking' ? 'p1' : tier === 'conditional' ? 'cond' : 'p2'}`;
+
+  // Dependency chain: what runs before and after this study
+  const depNames  = (s.depends_on || []).map(id => studies[id]?.name || id);
+  const nextStudies = Object.values(studies).filter(x => (x.depends_on || []).includes(s.id));
+  const nextNames = nextStudies.map(x => x.name);
+  let chainHTML = '';
+  if (depNames.length || nextNames.length) {
+    const parts = [];
+    if (depNames.length) {
+      parts.push(depNames.map(n =>
+        `<span class="ch-node" title="${esc(n)}">${esc(n)}</span>`).join('<span class="ch-arrow">+</span>'));
+      parts.push('<span class="ch-arrow">→</span>');
+    }
+    parts.push(`<span class="ch-node ch-this">${esc(s.id)}</span>`);
+    if (nextNames.length) {
+      parts.push('<span class="ch-arrow">→</span>');
+      parts.push(nextNames.map(n =>
+        `<span class="ch-node" title="${esc(n)}">${esc(n)}</span>`).join('<span class="ch-arrow">+</span>'));
+    }
+    chainHTML = `<div class="cd-chain">${parts.join('')}</div>`;
+  }
+
+  const card = document.createElement('div');
+  card.className = `study-card${!s.phase1_required ? ' phase2' : ''}`;
+  card.id = `card-${s.id}`;
+  card.innerHTML = `
+    <div class="card-bar ${risk}"></div>
+    <div class="card-collapsed">
+      <div class="card-name" title="${esc(s.name)}">${esc(s.name)}</div>
+      <div class="card-row1">
+        <span class="card-cost">${fmt$k(s.cost_low)}–${fmt$k(s.cost_high)}</span>
+        <span class="card-fail ${risk}">${s.failure_pct}% risk</span>
+      </div>
+      <div class="card-row2">
+        ${tierBadge}
+        <span class="cbadge wk">W${s.week_start}–${s.week_end}</span>
+      </div>
+    </div>
+    <div class="card-detail">
+      <div class="cd-close-strip">
+        <span class="cd-close-strip-meta">${esc(s.id)} · ${esc(s.track_name || s.track)} · Wk ${s.week_start}–${s.week_end}</span>
+        <button class="cd-close" onclick="closeCard(event,'card-${s.id}')">×</button>
+      </div>
+
+      <div class="cd-why">
+        ${s.regulatory_ref ? `<span class="cd-why-reg">${esc(s.regulatory_ref)}</span>` : ''}
+        <span class="cd-why-gap">${esc(s.context || s.recommendation || s.name)}</span>
+      </div>
+
+      ${chainHTML}
+
+      <div class="cd-metrics">
+        <div class="cd-m-risk">
+          <span class="cd-risk-pct ${risk}">${s.failure_pct}%</span>
+          <span class="cd-risk-why">${esc(firstSentence(s.failure_rationale || ''))}</span>
+        </div>
+        <div class="cd-m-cost">
+          <span class="cd-cost-val">${fmt$k(s.cost_low)}–${fmt$k(s.cost_high)}</span>
+          <span class="cd-tier-pill ${tierPill}">${tierLabel}</span>
+        </div>
+      </div>
+
+      ${s.compound_flag ? `<div class="cd-warn">${esc(s.compound_flag)}</div>` : ''}
+      ${tip            ? `<div class="cd-saving">${esc(tip)}</div>` : ''}
+
+      <div class="cd-foot">
+        <a href="${pubmedUrl}" target="_blank" rel="noopener">→ PubMed precedents</a>
+      </div>
+    </div>
+  `;
+
+  card.querySelector('.card-collapsed').addEventListener('click', e => {
+    e.stopPropagation();
+    // Close any other open popups first
+    document.querySelectorAll('.card-detail.open').forEach(d => {
+      if (d !== card.querySelector('.card-detail')) {
+        d.classList.remove('open');
+        d.closest('.study-card')?.classList.remove('expanded');
+      }
+    });
+    const detail = card.querySelector('.card-detail');
+    const isOpen = detail.classList.toggle('open');
+    card.classList.toggle('expanded', isOpen);
+  });
+
+  document.getElementById(`track-${s.track}`).appendChild(card);
+}
+
+function closeCard(e, cardId) {
+  e.stopPropagation();
+  const card = document.getElementById(cardId);
+  card?.querySelector('.card-detail')?.classList.remove('open');
+  card?.classList.remove('expanded');
+}
+
+// ── Spend Optimizer ────────────────────────────────────────────────────────────
+let _activeScenario = 'fastest';
+let _budgetCap = Infinity;
+
+function parseBudget(val) {
+  if (!val || !val.trim()) return Infinity;
+  const s = val.replace(/[$,\s]/g, '').toLowerCase();
+  if (s.endsWith('m')) return parseFloat(s) * 1000000;
+  if (s.endsWith('k')) return parseFloat(s) * 1000;
+  return parseFloat(s) || Infinity;
+}
+
+function onBudgetInput(val) {
+  _budgetCap = parseBudget(val);
+  applyScenario(_activeScenario, null);
+}
+
+function applyScenario(scenario, btn) {
+  _activeScenario = scenario;
+  document.querySelectorAll('.spend-btn').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  else {
+    const map = { fastest: 'btnFastest', cheapest: 'btnCheapest', balanced: 'btnBalanced' };
+    document.getElementById(map[scenario])?.classList.add('active');
+  }
+
+  const allStudies = Object.values(studies);
+  if (!allStudies.length) return;
+
+  // Decide which studies to include based on scenario
+  let included = [];
+  if (scenario === 'fastest') {
+    // All phase1_required first, then conditionals sorted by failure risk (high first = fail-fast)
+    const required = allStudies.filter(s => s.phase1_required);
+    const optional = allStudies.filter(s => !s.phase1_required);
+    included = [...required, ...optional];
+  } else if (scenario === 'cheapest') {
+    // Only phase1_required; sort by cost_low ascending (cheapest first)
+    included = allStudies
+      .filter(s => s.phase1_required)
+      .sort((a, b) => (a.cost_low || 0) - (b.cost_low || 0));
+  } else {
+    // balanced: phase1_required + conditional studies; skip phase2_defer
+    included = allStudies.filter(s => s.phase1_required || s.fda_tier === 'conditional');
+  }
+
+  // Apply budget cap: accumulate cost_low until budget exhausted
+  if (_budgetCap < Infinity) {
+    let spent = 0;
+    const withinBudget = [];
+    for (const s of included) {
+      const cost = scenario === 'cheapest' ? (s.cost_low || 0) : (s.cost_high || 0);
+      if (spent + cost <= _budgetCap) { withinBudget.push(s); spent += cost; }
+    }
+    included = withinBudget;
+  }
+
+  const includedIds = new Set(included.map(s => s.id));
+
+  // Update card visibility
+  for (const s of allStudies) {
+    const card = document.getElementById(`card-${s.id}`);
+    if (!card) continue;
+    if (includedIds.has(s.id)) {
+      card.classList.remove('deferred-opt');
+    } else {
+      card.classList.add('deferred-opt');
+    }
+  }
+
+  // Compute totals
+  const costField = scenario === 'cheapest' ? 'cost_low' : 'cost_high';
+  const totalCost = included.reduce((sum, s) => sum + (s[costField] || 0), 0);
+  const maxWeek = included.reduce((max, s) => Math.max(max, s.week_end || 0), 0);
+
+  document.getElementById('spendResult').style.display = 'flex';
+  document.getElementById('srWeeks').textContent = maxWeek + ' wks';
+  document.getElementById('srCost').textContent = fmt$k(totalCost);
+  document.getElementById('srStudies').textContent = included.filter(s => s.phase1_required).length + ' P1 req';
+}
+
+// ── Priority table ─────────────────────────────────────────────────────────────
+// ── Update summary bar ─────────────────────────────────────────────────────────
+function updateSummary() {
+  if (!summaryData) return;
+  totalWeeks = (summaryData.total_weeks_to_phase1 || 28) + 4;
+
+  document.getElementById('sumWeeks').textContent = summaryData.total_weeks_to_phase1 + ' wks';
+  document.getElementById('sumCost').textContent =
+    fmt$k(summaryData.cost_low) + ' – ' + fmt$k(summaryData.cost_high);
+  document.getElementById('sumCount').textContent =
+    Object.values(studies).filter(s => s.phase1_required).length + ' required';
+}
+
+// ── Load ───────────────────────────────────────────────────────────────────────
+async function load() {
+  try {
+    const pr = await fetch(`${API}/api/paper-data`);
+    if (pr.ok) {
+      const pd = await pr.json();
+      document.getElementById('sumCompound').textContent = pd.compound || 'Unknown';
+    }
+  } catch (_) {}
+
+  // Restore from cache if available
+  const cached = sessionStorage.getItem('cache_timeline');
+  if (cached) {
+    try {
+      const { studiesList, summary } = JSON.parse(cached);
+      document.getElementById('loading').style.display = 'none';
+      document.getElementById('page').style.display = 'block';
+      for (const s of studiesList) { studies[s.id] = s; renderCard(s); }
+      summaryData = summary;
+      updateSummary();
+      applyScenario('fastest', null);
+      positionAllCards();
+      return;
+    } catch (_) {}
+  }
+
+  document.getElementById('loading').style.display = 'none';
+  document.getElementById('page').style.display = 'block';
+
+  const resp = await fetch(`${API}/api/build-timeline`, { method: 'POST' });
+  if (!resp.ok) {
+    const err = await resp.json().catch(() => ({ detail: resp.statusText }));
+    document.getElementById('loadingMsg').textContent = 'Error: ' + err.detail;
+    return;
+  }
+
+  const reader = resp.body.getReader();
+  const decoder = new TextDecoder();
+  let buf = '';
+
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    buf += decoder.decode(value, { stream: true });
+    const lines = buf.split('\n');
+    buf = lines.pop();
+    for (const line of lines) {
+      if (!line.startsWith('data: ')) continue;
+      let event;
+      try { event = JSON.parse(line.slice(6)); } catch { continue; }
+
+      if (event.type === 'study') {
+        const s = event.data;
+        studies[s.id] = s;
+        renderCard(s);
+        positionAllCards();
+      } else if (event.type === 'summary') {
+        summaryData = event.data;
+        updateSummary();
+        applyScenario('fastest', null);
+        positionAllCards();
+        try {
+          sessionStorage.setItem('cache_timeline', JSON.stringify({
+            studiesList: Object.values(studies),
+            summary: summaryData,
+          }));
+        } catch (_) {}
+      }
+    }
+  }
+}
+
+document.addEventListener('click', () => {
+  document.querySelectorAll('.card-detail.open').forEach(d => {
+    d.classList.remove('open');
+    d.closest('.study-card').classList.remove('expanded');
+  });
+});
+
+window.addEventListener('resize', () => positionAllCards());
+load();
+</script>
+</body>
+</html>
