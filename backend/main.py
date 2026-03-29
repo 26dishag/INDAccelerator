@@ -1,9 +1,14 @@
 import json
+import os
 from pathlib import Path
 
-from fastapi import FastAPI, Query, HTTPException
-from fastapi.responses import StreamingResponse
+import anthropic
+from dotenv import load_dotenv
+from fastapi import FastAPI, Query, HTTPException, Request
+from fastapi.responses import StreamingResponse, JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
+
+load_dotenv()
 
 from stage1_ingest import fetch_and_parse
 from stage2_extract import extract_experiments, PIPELINE_STATE_DIR
@@ -233,6 +238,69 @@ async def get_ind_draft(section: int):
         media_type="text/event-stream",
         headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"},
     )
+
+
+@app.post("/api/flowchart")
+async def generate_flowchart(request: Request):
+    """Extract a flowchart (nodes + edges) from a selected passage of paper text."""
+    body = await request.json()
+    text = (body.get("text") or "").strip()
+    compound = (body.get("compound") or "").strip()
+    if not text:
+        raise HTTPException(status_code=400, detail="No text provided.")
+
+    client = anthropic.AsyncAnthropic(api_key=os.environ["ANTHROPIC_API_KEY"])
+
+    prompt = f"""You are extracting a flowchart from a passage of a scientific paper.
+
+COMPOUND: {compound or "unknown"}
+
+SELECTED TEXT:
+{text}
+
+Identify the key steps, mechanisms, causes, effects, or experimental sequence in this passage.
+Return ONLY a JSON object (no markdown, no commentary):
+
+{{
+  "title": "<5-8 word title for this flowchart>",
+  "nodes": [
+    {{"id": "n1", "label": "<concise label, max 6 words>", "type": "<compound|mechanism|signal|outcome|method|observation>"}}
+  ],
+  "edges": [
+    {{"from": "n1", "to": "n2", "label": "<optional short relationship word, e.g. inhibits/activates/leads to/produces>"}}
+  ]
+}}
+
+Node type guide:
+- compound: the drug or chemical entity
+- mechanism: a molecular mechanism or pathway step
+- signal: a measurable signal, biomarker, or intermediate
+- outcome: a functional or phenotypic outcome
+- method: an experimental procedure or assay
+- observation: an empirical observation or result
+
+Rules:
+- 3-8 nodes total — be selective, not exhaustive
+- Edges must only reference node IDs that exist
+- Prefer a linear or branching chain over a web — readability matters
+- If the text describes an experiment: compound → treatment → measurement → result
+- If the text describes a mechanism: target → pathway → downstream effect → outcome"""
+
+    msg = await client.messages.create(
+        model="claude-sonnet-4-6",
+        max_tokens=1024,
+        messages=[{"role": "user", "content": prompt}],
+    )
+    raw = msg.content[0].text.strip()
+    if raw.startswith("```"):
+        raw = raw.split("```")[1].lstrip("json").strip()
+        if raw.endswith("```"):
+            raw = raw[:-3].strip()
+    try:
+        data = json.loads(raw)
+        return JSONResponse(data)
+    except json.JSONDecodeError:
+        raise HTTPException(status_code=500, detail="Failed to parse flowchart JSON.")
 
 
 @app.get("/health")
