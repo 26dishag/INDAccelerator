@@ -4,6 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>INDAccelerator: IND Readiness Map</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="stylesheet" href="shared.css" />
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
   <style>
@@ -13,22 +15,22 @@
     /* ── Overview row (charts + stats) ──────────────────────────── */
     .overview-row {
       display: grid;
-      grid-template-columns: 340px 1fr;
-      gap: 24px;
+      grid-template-columns: 320px 1fr;
+      gap: 20px;
       align-items: start;
       margin-bottom: 40px;
     }
     @media (max-width: 820px) { .overview-row { grid-template-columns: 1fr; } }
 
     .radar-box {
-      border: 1px solid #e8e8e8;
+      background: var(--surface);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-sm);
       padding: 20px;
-      background: #fafafa;
     }
     .radar-box-label {
-      font-size: 10px; font-weight: 700;
-      letter-spacing: 1px; text-transform: uppercase;
-      color: var(--fg); opacity: 0.4; margin-bottom: 12px;
+      font-size: var(--t-sm); font-weight: 600;
+      color: var(--fg-2); margin-bottom: 12px;
     }
     .radar-canvas-wrap { position: relative; height: 260px; }
 
@@ -36,255 +38,308 @@
     .stats-col {
       display: flex;
       flex-direction: column;
-      gap: 12px;
+      gap: 10px;
     }
     .stat-tile {
-      padding: 18px 20px;
+      background: var(--surface);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-sm);
+      padding: 16px 20px;
       display: flex;
       align-items: center;
       gap: 16px;
-      border: 1px solid #e8e8e8;
     }
-    .stat-tile.complete { border-left: 5px solid #16a34a; background: #f0fdf4; }
-    .stat-tile.partial  { border-left: 5px solid #b45309; background: #fffbeb; }
-    .stat-tile.missing  { border-left: 5px solid #dc2626; background: #fef2f2; }
 
     .stat-num {
-      font-size: 42px; font-weight: 700;
+      font-size: 32px; font-weight: 700;
       line-height: 1;
       flex-shrink: 0;
-      width: 64px;
+      width: 48px;
       text-align: right;
     }
-    .stat-tile.complete .stat-num { color: #16a34a; }
-    .stat-tile.partial  .stat-num { color: #b45309; }
-    .stat-tile.missing  .stat-num { color: #dc2626; }
+    .stat-tile.complete .stat-num { color: var(--green); }
+    .stat-tile.partial  .stat-num { color: var(--accent); }
+    .stat-tile.missing  .stat-num { color: var(--red); }
 
     .stat-text { flex: 1; }
     .stat-label {
-      font-size: var(--t-sm); font-weight: 700;
-      color: var(--fg); margin-bottom: 3px;
+      font-size: var(--t-sm); font-weight: 600;
+      color: var(--fg); margin-bottom: 2px;
     }
-    .stat-desc { font-size: var(--t-xs); color: var(--fg); opacity: 0.55; line-height: 1.4; }
+    .stat-desc { font-size: var(--t-xs); color: var(--fg-2); line-height: 1.4; }
 
     .stat-bar-track {
-      height: 4px; background: #e8e8e8; margin-top: 8px; overflow: hidden;
+      height: 3px; background: #e7e5e4; margin-top: 8px; border-radius: 2px; overflow: hidden;
     }
-    .stat-bar-fill { height: 100%; transition: width 0.7s ease; }
-    .stat-tile.complete .stat-bar-fill { background: #16a34a; }
-    .stat-tile.partial  .stat-bar-fill { background: #b45309; }
-    .stat-tile.missing  .stat-bar-fill { background: #dc2626; }
+    .stat-bar-fill { height: 100%; border-radius: 2px; transition: width 0.7s ease; }
+    .stat-tile.complete .stat-bar-fill { background: var(--green); }
+    .stat-tile.partial  .stat-bar-fill { background: var(--accent); }
+    .stat-tile.missing  .stat-bar-fill { background: var(--red); }
     .stat-section-list { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 6px; }
     .stat-sec-pill {
-      font-size: 9px; font-weight: 700; padding: 2px 6px;
-      border: 1px solid currentColor; opacity: 0.7; white-space: nowrap;
+      font-size: 10px; font-weight: 600; padding: 1px 7px;
+      background: #f5f5f4; color: var(--fg-2);
+      border-radius: 20px; white-space: nowrap;
     }
 
     /* ── Section 8 panel ─────────────────────────────────────── */
-    .sec8-panel { overflow: hidden; margin-bottom: 48px; }
+    .sec8-panel {
+      background: var(--surface);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-sm);
+      padding: 24px;
+      margin-bottom: 32px;
+    }
     .sec8-panel-header {
-      padding: 0 0 20px;
+      padding: 0 0 18px;
       display: flex; align-items: flex-start;
       justify-content: space-between;
       gap: 24px; flex-wrap: wrap;
     }
     .sec8-eyebrow {
-      font-size: var(--t-xs); font-weight: 700;
-      letter-spacing: 1.5px; text-transform: uppercase;
-      color: var(--fg); opacity: 0.4; margin-bottom: 8px;
+      font-size: var(--t-xs); font-weight: 600;
+      color: var(--accent); margin-bottom: 6px;
     }
-    .sec8-title { font-size: var(--t-md); font-weight: 600; color: var(--fg); margin-bottom: 6px; }
-    .sec8-ref   { font-size: var(--t-xs); color: var(--fg); opacity: 0.4; margin-bottom: 12px; }
+    .sec8-title { font-size: var(--t-md); font-weight: 600; color: var(--fg); margin-bottom: 4px; }
+    .sec8-ref   { font-size: var(--t-xs); color: var(--fg-3); }
 
     /* ── Subsection rows ─────────────────────────────────────── */
-    .sub-item { margin-bottom: 3px; }
+    .sub-item { margin-bottom: 2px; border-radius: var(--radius-sm); overflow: hidden; }
     .sub-row {
       display: flex; align-items: center; gap: 10px;
-      padding: 9px 14px 9px 0;
+      padding: 10px 14px;
       cursor: pointer; user-select: none;
+      background: #f5f5f4;
+      transition: background 0.12s;
     }
-    .sub-item.complete .sub-row { background: #f0fdf4; }
-    .sub-item.partial  .sub-row { background: #fffbeb; }
-    .sub-item.missing  .sub-row { background: #fef2f2; }
+    .sub-row:hover { background: #ede9e4; }
+    .sub-item.open .sub-row { background: #ede9e4; }
 
-    .sub-bar { width: 4px; align-self: stretch; min-height: 24px; flex-shrink: 0; }
-    .sub-item.complete .sub-bar { background: #16a34a; }
-    .sub-item.partial  .sub-bar { background: #b45309; }
-    .sub-item.missing  .sub-bar { background: #dc2626; }
+    .sub-bar { width: 3px; align-self: stretch; min-height: 20px; flex-shrink: 0; border-radius: 2px; }
+    .sub-item.complete .sub-bar { background: var(--green); }
+    .sub-item.partial  .sub-bar { background: var(--accent); }
+    .sub-item.missing  .sub-bar { background: var(--red); }
 
-    .sub-name        { font-size: var(--t-sm); font-weight: 600; color: var(--fg); flex: 1; }
+    .sub-name        { font-size: var(--t-base); font-weight: 500; color: var(--fg); flex: 1; }
     .sub-exp-ids     { display: flex; gap: 3px; flex-shrink: 0; }
-    .sub-exp-id-chip { font-size: 10px; font-weight: 700; padding: 1px 5px; background: rgba(0,0,0,0.07); }
-    .sub-gap-count   { font-size: var(--t-xs); font-weight: 700; color: #dc2626; white-space: nowrap; flex-shrink: 0; }
-    .sub-chevron     { font-size: 9px; opacity: 0.3; flex-shrink: 0; transition: transform 0.15s; }
-    .sub-item.open .sub-chevron { transform: rotate(90deg); opacity: 0.6; }
+    .sub-exp-id-chip {
+      font-size: 10px; font-weight: 600; padding: 1px 6px;
+      background: rgba(0,0,0,0.06); border-radius: 20px; color: var(--fg-2);
+    }
+    .sub-gap-count   { font-size: var(--t-xs); font-weight: 600; color: var(--red); white-space: nowrap; flex-shrink: 0; }
+    .sub-chevron     { font-size: 10px; color: var(--fg-3); flex-shrink: 0; transition: transform 0.15s; }
+    .sub-item.open .sub-chevron { transform: rotate(90deg); }
 
-    .sub-detail { display: none; padding: 10px 14px 14px 18px; }
-    .sub-item.complete .sub-detail { background: #f0fdf4; }
-    .sub-item.partial  .sub-detail { background: #fffbeb; }
-    .sub-item.missing  .sub-detail { background: #fef2f2; }
+    .sub-detail { display: none; padding: 12px 16px 16px 20px; background: #fafaf9; }
     .sub-item.open .sub-detail { display: block; }
 
     .sub-rationale {
       font-size: var(--t-sm); color: var(--fg); line-height: 1.6;
-      margin-bottom: 10px; padding: 8px 12px; background: rgba(0,0,0,0.04);
+      margin-bottom: 12px;
     }
 
-    .exp-chips { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 10px; }
+    .exp-chips { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 12px; }
     .exp-chip {
       display: inline-flex; align-items: center; gap: 6px;
-      border: var(--line-ui); padding: 4px 10px;
+      background: var(--surface); box-shadow: var(--shadow-sm);
+      padding: 4px 10px; border-radius: var(--radius-sm);
       font-size: var(--t-xs); cursor: pointer;
+      transition: box-shadow 0.12s, transform 0.12s;
     }
-    .exp-chip:hover { border-color: var(--fg); }
+    .exp-chip:hover { box-shadow: var(--shadow-md); transform: translateY(-1px); }
     .exp-chip .eid    { font-weight: 600; color: var(--fg); }
-    .exp-chip .emodel { color: var(--fg); opacity: 0.5; }
-    .exp-chip .etype  { font-size: 10px; font-weight: 600; padding: 1px 5px; border: 1px solid #ccc; color: var(--fg); opacity: 0.6; }
-    .etype.vivo { border-color: #aaa; opacity: 1; }
+    .exp-chip .emodel { color: var(--fg-2); }
+    .exp-chip .etype  { font-size: 10px; font-weight: 600; padding: 1px 5px;
+                        border-radius: 20px; background: #f5f5f4; color: var(--fg-2); }
 
-    .missing-list { display: flex; flex-direction: column; gap: 4px; }
-    .missing-item { display: flex; align-items: flex-start; gap: 8px; padding: 5px 10px; font-size: var(--t-sm); line-height: 1.55; }
-    .missing-item.p-blocking  { background: #fef2f2; border-left: 3px solid #dc2626; }
-    .missing-item.p-recommend { background: #fffbeb; border-left: 3px solid #b45309; }
-    .missing-item.p-phase2    { background: #f9fafb; border-left: 3px solid #9ca3af; }
-    .missing-icon { font-size: 11px; font-weight: 800; flex-shrink: 0; margin-top: 2px; }
-    .missing-item.p-blocking  .missing-icon { color: #dc2626; }
-    .missing-item.p-recommend .missing-icon { color: #b45309; }
-    .missing-item.p-phase2    .missing-icon { color: #9ca3af; }
-    .missing-text { flex: 1; font-weight: 500; }
+    .missing-list { display: flex; flex-direction: column; gap: 6px; }
+    .missing-item {
+      display: flex; align-items: flex-start; gap: 8px;
+      padding: 8px 12px; font-size: var(--t-sm); line-height: 1.55;
+      border-radius: var(--radius-sm);
+    }
+    .missing-item.p-blocking  { background: #fef2f2; }
+    .missing-item.p-recommend { background: #fffbeb; }
+    .missing-item.p-phase2    { background: #f5f5f4; }
+    .missing-icon { font-size: 11px; font-weight: 700; flex-shrink: 0; margin-top: 2px; }
+    .missing-item.p-blocking  .missing-icon { color: var(--red); }
+    .missing-item.p-recommend .missing-icon { color: var(--amber); }
+    .missing-item.p-phase2    .missing-icon { color: var(--fg-3); }
+    .missing-text { flex: 1; font-weight: 500; color: var(--fg); }
     .gap-id-badge {
-      font-size: 10px; font-weight: 800; letter-spacing: 0.3px;
-      padding: 1px 6px; flex-shrink: 0; align-self: center;
-      background: #1e293b; color: #fff;
+      font-size: 10px; font-weight: 700;
+      padding: 1px 7px; flex-shrink: 0; align-self: center;
+      background: var(--fg); color: #fff; border-radius: 20px;
     }
-    .missing-item.p-blocking  .missing-text { color: #991b1b; }
-    .missing-item.p-recommend .missing-text { color: #78350f; }
-    .missing-item.p-phase2    .missing-text { color: #6b7280; }
     .missing-tag {
-      font-size: 9px; font-weight: 800; text-transform: uppercase;
-      letter-spacing: 0.4px; padding: 1px 5px; flex-shrink: 0; align-self: center;
+      font-size: 10px; font-weight: 600; padding: 2px 8px;
+      flex-shrink: 0; align-self: center; border-radius: 20px;
     }
-    .tag-blocking  { background: #dc2626; color: #fff; }
-    .tag-recommend { background: #b45309; color: #fff; }
-    .tag-phase2    { border: 1px solid #9ca3af; color: #9ca3af; }
+    .tag-blocking  { background: var(--red-bg); color: var(--red); }
+    .tag-recommend { background: var(--amber-bg); color: var(--amber); }
+    .tag-phase2    { background: #f5f5f4; color: var(--fg-3); }
 
     /* ── All IND Sections grid ───────────────────────────────── */
     .section-heading-row {
       display: flex; align-items: baseline; gap: 14px;
-      padding-bottom: 16px; margin-bottom: 20px;
+      padding-bottom: 12px; margin-bottom: 16px;
     }
     .section-heading-row h2 { font-size: var(--t-md); font-weight: 600; color: var(--fg); }
-    .section-heading-row span { font-size: var(--t-xs); color: var(--fg); opacity: 0.4; }
+    .section-heading-row span { font-size: var(--t-xs); color: var(--fg-3); }
 
     .sections-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
       gap: 12px;
-      margin-bottom: 48px;
+      margin-bottom: 40px;
     }
 
-    /* Bold colored section tiles */
     .sec-card {
-      padding: 0;
-      border: 1px solid #e8e8e8;
+      background: var(--surface);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-sm);
       overflow: hidden;
-      transition: box-shadow 0.12s;
+      transition: box-shadow 0.15s, transform 0.15s;
     }
-    .sec-card:hover { box-shadow: 0 2px 10px rgba(0,0,0,0.09); }
+    .sec-card:hover { box-shadow: var(--shadow-md); transform: translateY(-2px); }
+    .sec-card.open  { transform: none; box-shadow: var(--shadow-md); }
 
     .sec-card-header {
-      padding: 10px 14px;
+      padding: 14px 14px;
       display: flex;
       align-items: center;
-      justify-content: space-between;
-      gap: 8px;
+      gap: 10px;
+      background: #f5f5f4;
+      cursor: pointer;
+      user-select: none;
     }
-    .sec-card.complete .sec-card-header { background: #16a34a; }
-    .sec-card.partial  .sec-card-header { background: #b45309; }
-    .sec-card.missing  .sec-card-header { background: #dc2626; }
-    .sec-card.not_started .sec-card-header { background: #9ca3af; }
+    .sec-card-header:hover { background: #ede9e4; }
+    .sec-card.open .sec-card-header { background: #ede9e4; }
+
+    /* Left status indicator dot */
+    .sec-card-dot {
+      width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0;
+    }
+    .sec-card.complete .sec-card-dot { background: var(--green); }
+    .sec-card.partial  .sec-card-dot { background: var(--accent); }
+    .sec-card.missing  .sec-card-dot { background: var(--red); }
 
     .sec-card-num {
-      font-size: 11px; font-weight: 800;
-      letter-spacing: 0.5px; color: rgba(255,255,255,0.7);
-      text-transform: uppercase;
-    }
-    .sec-card-status-icon {
-      font-size: 16px; font-weight: 700; color: #fff;
+      font-size: var(--t-xs); font-weight: 700; color: var(--fg-3);
       flex-shrink: 0;
     }
 
-    .sec-card-body { padding: 12px 14px; }
-    .sec-card-title {
-      font-size: var(--t-sm); font-weight: 700;
-      color: var(--fg); line-height: 1.3; margin-bottom: 4px;
+    .sec-card-title-inline {
+      font-size: var(--t-sm); font-weight: 600;
+      color: var(--fg); flex: 1; line-height: 1.3;
     }
+
+    .sec-card-chevron {
+      font-size: 10px; color: var(--fg-3); flex-shrink: 0;
+      transition: transform 0.18s;
+    }
+    .sec-card.open .sec-card-chevron { transform: rotate(90deg); }
+
+    /* Legacy — keep for JS compatibility but hide */
+    .sec-card-status-icon { display: none; }
+
+    .sec-card-body {
+      padding: 0 14px;
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.25s ease, padding 0.25s ease;
+    }
+    .sec-card.open .sec-card-body {
+      padding: 12px 14px 14px;
+      max-height: 600px;
+    }
+
+    .sec-card-title { display: none; } /* title moved to header */
     .sec-card-ref {
-      font-size: 10px; color: var(--fg);
-      opacity: 0.45; margin-bottom: 8px;
-      font-family: monospace;
+      font-size: 11px; color: var(--fg-3);
+      margin-bottom: 10px;
     }
     .sec-card-docs { display: flex; flex-direction: column; gap: 3px; }
-    /* Per-document status bullets — each item carries its own color */
     .sec-card-doc {
-      font-size: 11px;
-      padding: 4px 8px 4px 10px;
-      border-left: 3px solid #e8e8e8;
-      line-height: 1.4;
-      margin-bottom: 2px;
+      font-size: var(--t-xs);
+      padding: 5px 10px 5px 10px;
+      border-radius: var(--radius-sm);
+      line-height: 1.3;
       display: flex;
-      align-items: flex-start;
-      gap: 6px;
+      align-items: center;
+      gap: 7px;
+      cursor: pointer;
+      user-select: none;
     }
-    .sec-card-doc.doc-complete { border-left-color: #16a34a; background: #f0fdf4; color: #166534; }
-    .sec-card-doc.doc-partial  { border-left-color: #b45309; background: #fffbeb; color: #78350f; }
-    .sec-card-doc.doc-missing  { border-left-color: #dc2626; background: #fef2f2; color: #991b1b; }
-    .sec-card-doc-icon { font-size: 9px; flex-shrink: 0; margin-top: 2px; font-weight: 700; }
-    .sec-card-doc-text { flex: 1; }
-    .sec-card-doc-notes { font-size: 10px; opacity: 0.6; display: block; margin-top: 1px; }
+    .sec-card-doc:hover { filter: brightness(0.96); }
+    .sec-card-doc.doc-complete { background: var(--green-bg); }
+    .sec-card-doc.doc-partial  { background: var(--amber-bg); }
+    .sec-card-doc.doc-missing  { background: var(--red-bg); }
+    .sec-card-doc-icon { font-size: 10px; flex-shrink: 0; font-weight: 700; }
+    .sec-card-doc.doc-complete .sec-card-doc-icon { color: var(--green); }
+    .sec-card-doc.doc-partial  .sec-card-doc-icon { color: var(--amber); }
+    .sec-card-doc.doc-missing  .sec-card-doc-icon { color: var(--red); }
+    .sec-card-doc-name { flex: 1; color: var(--fg); font-weight: 500; }
+    .sec-card-doc-chevron { font-size: 9px; color: var(--fg-3); flex-shrink: 0; transition: transform 0.15s; }
+    .sec-card-doc.open .sec-card-doc-chevron { transform: rotate(90deg); }
+    .sec-card-doc-notes {
+      display: none;
+      font-size: 12px; color: var(--fg-2); line-height: 1.5;
+      padding: 5px 10px 7px 27px;
+      border-radius: 0 0 var(--radius-sm) var(--radius-sm);
+      margin-top: -3px;
+    }
+    .sec-card-doc.doc-complete + .sec-card-doc-notes { background: var(--green-bg); }
+    .sec-card-doc.doc-partial  + .sec-card-doc-notes { background: var(--amber-bg); }
+    .sec-card-doc.doc-missing  + .sec-card-doc-notes { background: var(--red-bg); }
+    .sec-card-doc.open + .sec-card-doc-notes { display: block; }
 
     /* ── Legend ──────────────────────────────────────────────── */
-    .legend       { display: flex; gap: 20px; align-items: center; flex-wrap: wrap; flex-shrink: 0; }
+    .legend       { display: flex; gap: 16px; align-items: center; flex-wrap: wrap; flex-shrink: 0; }
     .leg          { display: flex; align-items: center; gap: 6px; font-size: var(--t-xs); color: var(--fg); }
 
     /* ── CTA ──────────────────────────────────────────────────── */
     .cta-section {
-      padding: 28px 0;
+      background: var(--surface);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-sm);
+      padding: 28px 32px;
       display: flex; align-items: center;
       justify-content: space-between;
       gap: 24px; flex-wrap: wrap;
     }
-    .cta-text strong { display: block; font-size: var(--t-base); font-weight: 600; color: var(--fg); margin-bottom: 6px; }
-    .cta-text p      { font-size: var(--t-sm); color: var(--fg); line-height: 1.6; max-width: 520px; opacity: 0.7; }
+    .cta-text strong { display: block; font-size: var(--t-base); font-weight: 600; color: var(--fg); margin-bottom: 4px; }
+    .cta-text p      { font-size: var(--t-sm); color: var(--fg-2); line-height: 1.6; max-width: 480px; }
 
     /* ── Draft slide panel ───────────────────────────────────────────── */
     .draft-panel {
-      position: fixed; top: 0; right: -640px; bottom: 0;
-      width: 620px; background: var(--bg);
-      border-left: 2px solid var(--fg);
-      box-shadow: -4px 0 24px rgba(0,0,0,0.12);
+      position: fixed; top: 0; right: 0; bottom: 0;
+      width: 620px; background: var(--surface);
+      box-shadow: -8px 0 40px rgba(0,0,0,0.12);
       display: flex; flex-direction: column;
-      transition: right 0.25s ease;
+      transform: translateX(100%);
+      transition: transform 0.25s ease;
       z-index: 200;
     }
-    .draft-panel.open { right: 0; }
+    .draft-panel.open { transform: translateX(0); }
     .draft-panel-header {
-      background: var(--fg); color: var(--bg);
-      padding: 14px 20px;
+      background: var(--surface);
+      padding: 16px 20px;
       display: flex; align-items: center; justify-content: space-between;
       flex-shrink: 0;
+      box-shadow: 0 1px 0 rgba(0,0,0,0.06);
     }
-    .draft-panel-title { font-size: var(--t-sm); font-weight: 700; }
-    .draft-panel-meta  { font-size: var(--t-xs); opacity: 0.5; margin-top: 2px; }
+    .draft-panel-title { font-size: var(--t-base); font-weight: 600; color: var(--fg); }
+    .draft-panel-meta  { font-size: var(--t-xs); color: var(--fg-3); margin-top: 2px; }
     .draft-panel-close {
-      background: none; border: 1px solid rgba(255,255,255,0.3);
-      color: var(--bg); font-size: var(--t-sm); cursor: pointer;
-      padding: 4px 12px; font-weight: 600;
+      background: none; border: none;
+      color: var(--fg-3); font-size: 20px; cursor: pointer;
+      padding: 4px 8px; line-height: 1;
     }
-    .draft-panel-close:hover { background: rgba(255,255,255,0.1); }
+    .draft-panel-close:hover { color: var(--fg); }
     .draft-panel-actions {
       padding: 10px 20px;
-      border-bottom: 1px solid #e8e8e8;
+      background: #f5f5f4;
       display: flex; gap: 10px; flex-shrink: 0;
       align-items: center;
     }
@@ -300,32 +355,31 @@
     .draft-panel-body br { display: block; content: ''; margin: 4px 0; }
     .draft-panel-body h2 {
       font-size: var(--t-base); font-weight: 700; margin: 20px 0 8px;
-      padding-bottom: 4px; border-bottom: 1px solid #e8e8e8;
-      font-family: var(--font); color: var(--fg);
+      font-family: 'DM Sans', sans-serif; color: var(--fg);
     }
     .draft-panel-body h3 {
       font-size: var(--t-sm); font-weight: 700; margin: 14px 0 6px;
-      font-family: var(--font); color: var(--fg);
+      font-family: 'DM Sans', sans-serif; color: var(--fg);
     }
     .draft-panel-body table {
-      border-collapse: collapse; width: 100%; margin: 12px 0; font-family: var(--font); font-size: 12px;
+      border-collapse: collapse; width: 100%; margin: 12px 0; font-size: 12px;
     }
     .draft-panel-body th, .draft-panel-body td {
-      border: 1px solid #e8e8e8; padding: 6px 10px; text-align: left;
+      border: 1px solid #e7e5e4; padding: 6px 10px; text-align: left;
     }
-    .draft-panel-body th { background: #f5f5f5; font-weight: 700; }
+    .draft-panel-body th { background: #f5f5f4; font-weight: 700; }
     .draft-loading {
       display: flex; align-items: center; gap: 10px;
-      padding: 16px 0; color: var(--fg); opacity: 0.5; font-size: var(--t-sm);
-      font-family: var(--font);
+      padding: 16px 0; color: var(--fg-3); font-size: var(--t-sm);
     }
     .draft-btn {
-      font-size: 10px; font-weight: 700; text-transform: uppercase;
-      letter-spacing: 0.5px; padding: 3px 10px; cursor: pointer;
-      border: 1px solid var(--fg); background: none; color: var(--fg);
-      white-space: nowrap;
+      font-size: 12px; font-weight: 600; padding: 5px 12px; cursor: pointer;
+      border: none; background: var(--surface); color: var(--fg);
+      border-radius: var(--radius-sm); box-shadow: var(--shadow-sm);
+      white-space: nowrap; font-family: inherit;
+      transition: box-shadow 0.12s, transform 0.12s;
     }
-    .draft-btn:hover { background: var(--fg); color: var(--bg); }
+    .draft-btn:hover { box-shadow: var(--shadow-md); transform: translateY(-1px); }
     .draft-panel-overlay {
       display: none; position: fixed; inset: 0;
       background: rgba(0,0,0,0.15); z-index: 199;
@@ -377,7 +431,7 @@
 
 <header class="app-header">
   <a class="app-logo" href="index.html">
-    <span class="app-logo-name">INDAccelerator</span>
+    <span class="app-logo-dot"></span>
   </a>
   <span class="app-header-context" id="headerSub">IND Readiness Map · 21 CFR §312.23</span>
   <div class="app-header-actions">
@@ -397,13 +451,12 @@
   <div class="map-inner stack-24">
 
     <!-- Page title + legend -->
-    <div style="display:flex;align-items:baseline;justify-content:space-between;gap:16px;flex-wrap:wrap;padding-bottom:16px">
-      <h1 style="font-size:var(--t-lg);font-weight:600">IND Readiness Map</h1>
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;padding-bottom:4px">
+      <h1 style="font-size:var(--t-xl);font-weight:700;letter-spacing:-0.5px">IND Readiness Map</h1>
       <div class="legend">
-        <div class="leg"><span class="status-label status-complete">Complete</span></div>
-        <div class="leg"><span class="status-label status-partial">Partial</span></div>
-        <div class="leg"><span class="status-label status-missing">Missing</span></div>
-        <div class="leg"><span class="status-label status-pending">Not started</span></div>
+        <div class="leg"><span style="width:8px;height:8px;border-radius:50%;background:var(--green);display:inline-block;margin-right:4px"></span>Complete</div>
+        <div class="leg"><span style="width:8px;height:8px;border-radius:50%;background:var(--accent);display:inline-block;margin-right:4px"></span>Partial</div>
+        <div class="leg"><span style="width:8px;height:8px;border-radius:50%;background:var(--red);display:inline-block;margin-right:4px"></span>Missing</div>
       </div>
     </div>
 
@@ -429,7 +482,7 @@
           <div class="stat-num" id="stat-partial">0</div>
           <div class="stat-text">
             <div class="stat-label">Partial</div>
-            <div class="stat-desc">Gaps present — additional studies needed</div>
+            <div class="stat-desc">Gaps present: additional studies needed</div>
             <div class="stat-bar-track"><div class="stat-bar-fill" id="bar-partial" style="width:0%"></div></div>
             <div class="stat-section-list" id="list-partial"></div>
           </div>
@@ -438,7 +491,7 @@
           <div class="stat-num" id="stat-missing">0</div>
           <div class="stat-text">
             <div class="stat-label">Missing</div>
-            <div class="stat-desc">No data — studies must be initiated</div>
+            <div class="stat-desc">No data. Studies must be initiated.</div>
             <div class="stat-bar-track"><div class="stat-bar-fill" id="bar-missing" style="width:0%"></div></div>
             <div class="stat-section-list" id="list-missing"></div>
           </div>
@@ -450,8 +503,8 @@
     <div class="sec8-panel" id="sec8">
       <div class="sec8-panel-header">
         <div>
-          <div class="sec8-eyebrow">Section 8 · Priority</div>
-          <div class="sec8-title" id="sec8-title">Pharmacology &amp; Toxicology Study Data</div>
+          <div class="sec8-eyebrow">§8 · Pharmacology &amp; Toxicology</div>
+          <div class="sec8-title" id="sec8-title">Study Data</div>
           <div class="sec8-ref" id="sec8-ref">21 CFR §312.23(a)(8) · ICH M3(R2)</div>
         </div>
         <div id="sec8-badge"></div>
@@ -463,7 +516,7 @@
     <div>
       <div class="section-heading-row">
         <h2>All IND Sections</h2>
-        <span>21 CFR §312.23(a) — status based on available data</span>
+        <span>21 CFR §312.23(a): status based on available data</span>
       </div>
       <div class="sections-grid" id="compactGrid"></div>
     </div>
@@ -488,14 +541,14 @@
 <div class="draft-panel" id="form1571Panel" style="width:700px">
   <div class="draft-panel-header">
     <div>
-      <div class="draft-panel-title">Form FDA 1571 — IND Cover Sheet</div>
+      <div class="draft-panel-title">Form FDA 1571: IND Cover Sheet</div>
       <div class="draft-panel-meta">21 CFR §312.23(a)(1) · OMB No. 0910-0014</div>
     </div>
     <button class="draft-panel-close" onclick="closeForm1571()">Close</button>
   </div>
   <div class="draft-panel-actions" style="gap:8px">
     <button class="btn btn-sm" onclick="window.print()">Print / Save PDF</button>
-    <span style="font-size:var(--t-xs);opacity:0.4">Pre-filled fields are editable — complete sponsor details before submitting</span>
+    <span style="font-size:var(--t-xs);opacity:0.4">Pre-filled fields are editable. Complete sponsor details before submitting.</span>
   </div>
   <div class="draft-panel-body" style="font-family:var(--font);padding:16px 20px" id="form1571Body"></div>
 </div>
@@ -611,11 +664,11 @@ function initRadarChart() {
         r: {
           min: 0, max: 1,
           ticks: { stepSize: 0.5, display: false },
-          grid: { color: '#e8e8e8' },
-          angleLines: { color: '#e8e8e8' },
+          grid: { color: '#e7e5e4' },
+          angleLines: { color: '#e7e5e4' },
           pointLabels: {
-            font: { size: 10, weight: '600' },
-            color: '#444',
+            font: { size: 11, weight: '600', family: 'DM Sans' },
+            color: '#44403c',
           },
         }
       },
@@ -771,6 +824,10 @@ function renderSec8(sec) {
   const container = document.getElementById('sec8-subsections');
   container.innerHTML = (sec.subsections || []).map(sub => renderSubsection(sub)).join('');
 
+  // Auto-open the first partial or missing subsection
+  const firstOpen = container.querySelector('.sub-item.partial, .sub-item.missing');
+  if (firstOpen) firstOpen.classList.add('open');
+
   updateRadar(sec.subsections || []);
 }
 
@@ -815,7 +872,6 @@ function renderSubsection(sub) {
     const tagCls   = { phase1_blocking: 'tag-blocking', recommended: 'tag-recommend', phase2_required: 'tag-phase2' }[priority] || 'tag-blocking';
     return `<div class="missing-item ${cls}">
       <div class="missing-icon">${icon}</div>
-      ${gapId ? `<span class="gap-id-badge">${esc(gapId)}</span>` : ''}
       <div class="missing-text">${esc(text)}</div>
       <span class="missing-tag ${tagCls}">${tagLabel}</span>
     </div>`;
@@ -867,40 +923,49 @@ function docItemHTML(d, inheritedStatus) {
     const icon = { complete: '✓', partial: '◑', missing: '✗' }[st] || '✗';
     return `<div class="sec-card-doc doc-${st}">
       <span class="sec-card-doc-icon">${icon}</span>
-      <span class="sec-card-doc-text">${esc(d)}</span>
+      <span class="sec-card-doc-name">${esc(d)}</span>
     </div>`;
   }
-  const st   = d.status || 'missing';
-  const icon = { complete: '✓', partial: '◑', missing: '✗' }[st] || '✗';
-  return `<div class="sec-card-doc doc-${st}">
+  const st    = d.status || 'missing';
+  const icon  = { complete: '✓', partial: '◑', missing: '✗' }[st] || '✗';
+  const hasNotes = !!d.notes;
+  // Notes rendered as a sibling <div> so CSS adjacent selector can toggle them
+  const docEl = `<div class="sec-card-doc doc-${st}"${hasNotes ? ' onclick="this.classList.toggle(\'open\')"' : ''}>
     <span class="sec-card-doc-icon">${icon}</span>
-    <span class="sec-card-doc-text">
-      ${esc(d.name || '')}
-      ${d.notes ? `<span class="sec-card-doc-notes">${esc(d.notes)}</span>` : ''}
-    </span>
+    <span class="sec-card-doc-name">${esc(d.name || '')}</span>
+    ${hasNotes ? '<span class="sec-card-doc-chevron">▶</span>' : ''}
   </div>`;
+  const notesEl = hasNotes
+    ? `<div class="sec-card-doc-notes">${esc(d.notes)}</div>`
+    : '';
+  return docEl + notesEl;
 }
 
 function compactCardHTML(sec) {
   const status = computeSectionColor(sec);
-  const icon   = statusIcon(status);
+  const uid    = 'scard-' + sec.number;
   const docs   = (sec.documents_needed || []).map(d => docItemHTML(d, status)).join('');
 
   return `
-    <div class="sec-card ${status}">
-      <div class="sec-card-header">
-        <div class="sec-card-num">§${sec.number}</div>
-        <div class="sec-card-status-icon">${icon}</div>
+    <div class="sec-card ${status}" id="${uid}">
+      <div class="sec-card-header" onclick="toggleSecCard('${uid}')">
+        <span class="sec-card-dot"></span>
+        <span class="sec-card-num">§${sec.number}</span>
+        <span class="sec-card-title-inline">${esc(sec.title)}</span>
+        <span class="sec-card-chevron">▶</span>
       </div>
       <div class="sec-card-body">
-        <div class="sec-card-title">${esc(sec.title)}</div>
         <div class="sec-card-ref">${esc(sec.regulatory_ref || '')}</div>
         ${docs ? `<div class="sec-card-docs">${docs}</div>` : ''}
-        <div style="padding-top:8px">
+        <div style="padding-top:10px">
           <button class="draft-btn" data-sec="${sec.number}" data-title="${esc(sec.title || '')}" onclick="openDraftPanel(parseInt(this.dataset.sec), this.dataset.title, event)">Draft §${sec.number}</button>
         </div>
       </div>
     </div>`;
+}
+
+function toggleSecCard(id) {
+  document.getElementById(id).classList.toggle('open');
 }
 
 function appendCompactCard(sec) {
@@ -1009,7 +1074,7 @@ function renderForm1571(profile, pd) {
             <input class="f1571-input" placeholder="e.g. ABC-123" />
           </div>
         </div>
-        ${drugClass ? `<div style="margin-top:5px"><div class="f1571-label">Drug class / mechanism</div><input class="f1571-input prefilled" value="${drugClass}${target ? ' — target: ' + target : ''}" /></div>` : ''}
+        ${drugClass ? `<div style="margin-top:5px"><div class="f1571-label">Drug class / mechanism</div><input class="f1571-input prefilled" value="${drugClass}${target ? ', target: ' + target : ''}" /></div>` : ''}
       </div>
 
       <!-- Box 5: IND type -->

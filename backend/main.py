@@ -276,60 +276,51 @@ COMPOUND: {compound or "unknown"}
 SELECTED TEXT:
 {text}
 
-Your job is to find ALL relationships described — not just the main chain. Real biological networks are interconnected webs, not lines. Find:
-- Branching: one entity activating or inhibiting MULTIPLE downstream targets simultaneously
-- Convergence: multiple upstream entities feeding into the same node
-- Feedback loops: downstream effects that loop back to regulate upstream nodes
-- Cross-talk: connections between different branches of the pathway
-- Co-regulation: two nodes jointly regulating a third
-- Parallel pathways running at the same time
-
-DO NOT produce a linear A→B→C→D chain. If the biology has branches, cross-connections, or feedback, capture them as explicit edges.
+Find ALL relationships — branches, convergence, feedback loops, cross-talk, co-regulation. DO NOT produce a linear chain. Capture the real interconnected network structure.
 
 Return ONLY a JSON object (no markdown, no commentary):
 
 {{
   "title": "<5-8 word title>",
-  "nodes": [
-    {{
-      "id": "n1",
-      "label": "<concise label, max 5 words>",
+  "nodes": {{
+    "<nodeId>": {{
+      "label": "<concise label, max 5 words, no quotes>",
       "type": "<compound|mechanism|signal|outcome|method|observation>",
-      "details": {{
-        "what_it_is": "<one sentence: what this entity is>",
-        "role": "<one sentence: its specific causal role in this passage>",
-        "from_text": "<direct quote or close paraphrase from the selected text, max 25 words>"
-      }}
+      "emoji": "<single emoji>",
+      "what_it_is": "<one sentence: what this entity is>",
+      "role": "<one sentence: its causal role in this passage>",
+      "from_text": "<direct quote from the selected text, max 25 words>"
     }}
-  ],
+  }},
   "edges": [
-    {{
-      "from": "n1",
-      "to": "n2",
-      "label": "<short verb: activates / inhibits / phosphorylates / recruits / produces / upregulates / requires / etc.>",
-      "type": "<activation|inhibition|feedback|bidirectional|association>"
-    }}
+    {{"from": "<nodeId>", "to": "<nodeId>", "label": "<short verb, no quotes>", "type": "<activation|inhibition|feedback|association>"}}
   ]
 }}
 
-Node types:
-- compound: drug, small molecule, ligand, receptor ligand
-- mechanism: kinase, phosphorylation event, transcription factor, molecular machine, pathway component
-- signal: second messenger, biomarker, intermediate, measured readout (cAMP, Ca2+, pERK)
-- outcome: cellular or phenotypic result (proliferation, apoptosis, differentiation, behavioral effect)
-- method: assay or experimental procedure
-- observation: empirical finding or measured result from this specific experiment
+Node ID rules: short alphanumeric only — no spaces, hyphens, or special characters (e.g. n1, egfr, camp, mtor, akt)
+4-14 nodes total. Every edge must reference existing node IDs.
 
-Rules:
-- 4-14 nodes — capture the real complexity, don't over-simplify
-- Every edge must reference node IDs that exist
-- If a node receives edges from 3+ other nodes, that convergence is important — keep it
-- If a node sends edges to 3+ other nodes, that divergence/branching is important — keep it
-- Feedback loops (B inhibits A where A activated B) must be captured as explicit back-edges
-- Use "inhibition" type for suppressive relationships (inhibits, blocks, reduces, suppresses)
-- Use "feedback" type for regulatory loops back to an upstream node
-- Use "activation" type for stimulatory relationships
-- Aim for a graph where most nodes have at least 2 connections"""
+NETWORK STRUCTURE RULES:
+- Capture branching: one node activating/inhibiting MULTIPLE targets simultaneously
+- Capture convergence: multiple upstream nodes feeding into the same node
+- Capture feedback: downstream effects looping back upstream (B regulates A which activated B)
+- Capture cross-talk between branches
+- Most nodes should have 2+ connections
+
+EMOJI GUIDE — pick based on actual biology:
+💊 drug/ligand/small molecule | 🔌 receptor | ⚡ kinase/enzyme/phosphorylation
+📝 transcription factor | 🌊 ion channel | 📡 second messenger (cAMP, Ca2+, IP3)
+🧬 protein complex or gene product | 📈 proliferation/survival/growth | 💀 apoptosis/cell death
+🔥 inflammation/cytokine | 🛡 neuroprotection/cytoprotection | 🎯 target engagement
+🧪 assay/method | 🐀 animal model | 📊 measured result | 🔴 disease state
+
+Node type definitions:
+- compound: drug, small molecule, ligand
+- mechanism: receptor, kinase, enzyme, signaling protein, pathway component
+- signal: second messenger, intermediate, measured readout (cAMP, Ca2+, pERK)
+- outcome: cellular or phenotypic result (proliferation, apoptosis, behavioral change)
+- method: assay or experimental procedure
+- observation: empirical finding or measured result"""
 
     msg = await client.messages.create(
         model="claude-sonnet-4-6",
